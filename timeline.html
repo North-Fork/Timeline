@@ -129,12 +129,20 @@ body {
 #tl-wrap {
   flex: 1;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   cursor: grab;
   background: #111827;
 }
 #tl-wrap.panning { cursor: grabbing; }
-#tl-svg { display: block; position: absolute; top: 0; left: 0; }
+#tl-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+#tl-svg { display: block; }
 
 /* ── Empty state ──────────────────────────────────────────── */
 #empty {
@@ -218,7 +226,7 @@ body {
 
 /* ── Bottom axis ──────────────────────────────────────────── */
 #tl-bottom {
-  position: absolute;
+  position: sticky;
   bottom: 0; left: 0; right: 0;
   height: 40px;
   background: #1f2937;
@@ -253,6 +261,7 @@ body {
     <button class="tb-btn" id="btn-zoomin" title="Zoom in">＋</button>
     <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
     <button class="tb-btn" id="btn-fit" title="Fit all events in view">Fit</button>
+    <button class="tb-btn" id="btn-today" title="Scroll to today">Today</button>
     <span id="zoom-level"></span>
     <span id="event-count"></span>
   </div>
@@ -261,6 +270,7 @@ body {
       <div style="font-size:40px">📅</div>
       <div>Drop an Excel file to get started</div>
     </div>
+    <div id="tl-header"><svg id="hdr-svg" style="display:block;"></svg></div>
     <svg id="tl-svg"></svg>
     <div id="tl-bottom"><svg id="btm-svg" style="display:block;width:100%;height:40px;"></svg></div>
   </div>
@@ -295,7 +305,7 @@ const LANE_H  = BAR_H + 8;  // height per lane
 const LANE_PAD = 10;          // top/bottom padding within a row
 const NS      = 'http://www.w3.org/2000/svg';
 
-// ── Color palette (per project) ──────────────────────────────────────────
+// ── Color palette (per category) ─────────────────────────────────────────
 const PALETTE = [
   '#6366f1','#ec4899','#f59e0b','#10b981',
   '#3b82f6','#ef4444','#8b5cf6','#14b8a6',
@@ -305,8 +315,8 @@ const PALETTE = [
 // ── State ────────────────────────────────────────────────────────────────
 let events    = [];
 let groups    = [];
-let projects  = [];
-let projColor = {};
+let projects   = [];
+let groupColor = {};
 let groupVis  = new Set();
 let projVis   = new Set();
 let minTs, maxTs;
@@ -315,13 +325,14 @@ let rowHeights = {};   // group -> row height in px
 let scale     = 1e-8;   // pixels per millisecond
 let panX      = 0;
 let dragging  = false;
-let dragStartX, dragStartPan;
+let dragStartX, dragStartPan, dragStartY, dragStartScrollTop;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 const dz       = document.getElementById('drop-zone');
 const fi       = document.getElementById('file-input');
 const wrap     = document.getElementById('tl-wrap');
 const tlSvg    = document.getElementById('tl-svg');
+const hdrSvg   = document.getElementById('hdr-svg');
 const emptyEl  = document.getElementById('empty');
 const filDiv   = document.getElementById('filters');
 const cntEl    = document.getElementById('event-count');
@@ -455,9 +466,9 @@ function parse(rows) {
   }
 
   events   = parsed;
-  groups   = [...new Set(events.map(e => e.group))].sort();
+  groups   = [...new Set(events.map(e => e.group))];
   projects = [...new Set(events.map(e => e.project))].sort();
-  projects.forEach((p, i) => projColor[p] = PALETTE[i % PALETTE.length]);
+  groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
   groupVis = new Set(groups);
   projVis  = new Set(projects);
   minTs    = Math.min(...events.map(e => e.startTs));
@@ -465,7 +476,13 @@ function parse(rows) {
   const earliestYear = new Date(minTs).getFullYear();
   AXIS_START = new Date(earliestYear, 0, 1).getTime();
 
-  computeLanes();
+  // Minimum effective width for lane stacking: at least 8px wide at fit-all scale,
+  // so point events that would visually overlap get assigned to separate lanes.
+  const W0 = Math.max(wrap.clientWidth, 1200);
+  const fitAllScale = (W0 - LABEL_W - 20) / Math.max(maxTs - minTs, 86400000);
+  const minEffMs = Math.max(86400000, 8 / fitAllScale);
+
+  computeLanes(minEffMs);
   buildFilters();
   fitView();
 }
@@ -498,20 +515,18 @@ function buildFilters() {
     }
   };
 
-  section('Projects', projects, projVis,  p => projColor[p]);
-  section('Groups',   groups,   groupVis, () => '#6b7280');
+  section('Categories', groups, groupVis, g => groupColor[g]);
 }
 
 // ── Lane stacking ─────────────────────────────────────────────────────────
-function computeLanes() {
+function computeLanes(minEffMs = 86400000) {
   laneCounts = {};
   rowHeights = {};
   for (const g of groups) {
     const gEvs = events.filter(e => e.group === g).sort((a, b) => a.startTs - b.startTs);
     const laneEnds = []; // effective end ts of last event placed in each lane
     for (const ev of gEvs) {
-      // Use at least 1 day of effective width so point events stack properly
-      const effEnd = Math.max(ev.endTs, ev.startTs + 86400000);
+      const effEnd = Math.max(ev.endTs, ev.startTs + minEffMs);
       let placed = false;
       for (let i = 0; i < laneEnds.length; i++) {
         if (ev.startTs >= laneEnds[i]) {
@@ -636,7 +651,7 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
   svgEl.appendChild(defs);
 
   const g = mk('g', { 'clip-path': `url(#${cpId})` });
-  let d = new Date(2012, 0, 1);
+  let d = new Date(new Date(AXIS_START).getFullYear(), 0, 1);
 
   while (d <= end) {
     const x      = tsToX(d.getTime());
@@ -683,13 +698,13 @@ function redraw() {
 
   // Compute cumulative Y offset for each visible group
   const groupY = {};
-  let curY = HDR_H;
+  let curY = 0;
   for (const g of visGroups) {
     groupY[g] = curY;
     curY += rowHeights[g] || ROW_H;
   }
   const contentH = curY;
-  const H = Math.max(contentH, wrap.clientHeight);
+  const H = contentH;
 
   tlSvg.setAttribute('width',  W);
   tlSvg.setAttribute('height', H);
@@ -697,13 +712,23 @@ function redraw() {
   emptyEl.style.display = 'none';
   tlSvg.innerHTML = '';
 
+  // ── Header SVG ────────────────────────────────────────────────────────
+  hdrSvg.setAttribute('width', W);
+  hdrSvg.setAttribute('height', HDR_H);
+  hdrSvg.innerHTML = '';
+  hdrSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: HDR_H, fill: '#1f2937' }));
+  hdrSvg.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: HDR_H, fill: '#1f2937' }));
+  hdrSvg.appendChild(mk('line', { x1: LABEL_W, y1: 0, x2: LABEL_W, y2: HDR_H, stroke: '#374151', 'stroke-width': 1 }));
+  hdrSvg.appendChild(svgTxt(12, HDR_H / 2 + 4, 'CATEGORY', {
+    fill: '#4b5563', 'font-size': 10, 'font-weight': '700', 'letter-spacing': '0.08em'
+  }));
+  drawMonthAxis(hdrSvg, W, HDR_H, false, 'cpHdr');
+
   // ── Defs (clip paths) ────────────────────────────────────────────────
   const defs = mk('defs');
   const cpEvent = mk('clipPath', { id: 'cpE' });
   cpEvent.appendChild(mk('rect', { x: LABEL_W, y: 0, width: W - LABEL_W, height: H }));
-  const cpHdr = mk('clipPath', { id: 'cpH' });
-  cpHdr.appendChild(mk('rect', { x: LABEL_W, y: 0, width: W - LABEL_W, height: HDR_H }));
-  defs.append(cpEvent, cpHdr);
+  defs.append(cpEvent);
   tlSvg.appendChild(defs);
 
   // ── Background ────────────────────────────────────────────────────────
@@ -735,25 +760,18 @@ function redraw() {
   for (const d of minDates) {
     const x = tsToX(d.getTime());
     if (x < LABEL_W || x > W) continue;
-    gridG.appendChild(mk('line', { x1: x, y1: HDR_H, x2: x, y2: H, stroke: '#1a2030', 'stroke-width': 1 }));
+    gridG.appendChild(mk('line', { x1: x, y1: 0, x2: x, y2: H, stroke: '#1a2030', 'stroke-width': 1 }));
   }
   // Major grid lines
   for (const d of majDates) {
     const x = tsToX(d.getTime());
     if (x < LABEL_W || x > W) continue;
-    gridG.appendChild(mk('line', { x1: x, y1: HDR_H, x2: x, y2: H, stroke: '#374151', 'stroke-width': 1 }));
+    gridG.appendChild(mk('line', { x1: x, y1: 0, x2: x, y2: H, stroke: '#374151', 'stroke-width': 1 }));
   }
   tlSvg.appendChild(gridG);
 
-  // ── Header background ─────────────────────────────────────────────────
-  tlSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: HDR_H, fill: '#1f2937' }));
-  tlSvg.appendChild(mk('line', { x1: 0, y1: HDR_H, x2: W, y2: HDR_H, stroke: '#374151', 'stroke-width': 1 }));
-
-  // ── Top month axis ticks ──────────────────────────────────────────────
-  drawMonthAxis(tlSvg, W, HDR_H, false, 'cpH');
-
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(e => groupVis.has(e.group) && projVis.has(e.project));
+  const visEvs = events.filter(e => groupVis.has(e.group));
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
 
@@ -764,7 +782,7 @@ function redraw() {
     const x2    = tsToX(ev.endTs);
     const barW  = Math.max(x2 - x1, 6);
     const barTop = rY + LANE_PAD + (ev.lane || 0) * LANE_H;
-    const color = projColor[ev.project];
+    const color = groupColor[ev.group];
 
     const g    = mk('g');
     g.style.cursor = 'pointer';
@@ -792,18 +810,33 @@ function redraw() {
         }));
       }
     } else {
-      const lx     = x1 + barW + 5;
-      const textY  = barTop + BAR_H / 2 + 4;
-      const textEl = svgTxt(lx, textY, ev.headline, {
-        fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
-      });
-      g.appendChild(textEl);
-      const textW = textEl.getComputedTextLength();
-      g.appendChild(mk('line', {
-        x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
-        stroke: color, 'stroke-width': 2,
-        style: 'pointer-events:none'
-      }));
+      const lx = x1 + barW + 5;
+      if (lx < W - 10) {
+        // Bound label width by the start of the next event in the same group+lane
+        let maxRight = W - 4;
+        for (const e2 of visEvs) {
+          if (e2 === ev || e2.group !== ev.group || (e2.lane || 0) !== (ev.lane || 0)) continue;
+          if (e2.startTs <= ev.startTs) continue;
+          const e2x = tsToX(e2.startTs);
+          if (e2x < maxRight) maxRight = e2x - 4;
+        }
+        const avail  = maxRight - lx;
+        const maxCh  = Math.max(0, Math.floor(avail / 7));
+        if (maxCh > 2) {
+          const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
+          const textY  = barTop + BAR_H / 2 + 4;
+          const textEl = svgTxt(lx, textY, label, {
+            fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
+          });
+          g.appendChild(textEl);
+          const textW = textEl.getComputedTextLength();
+          g.appendChild(mk('line', {
+            x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
+            stroke: color, 'stroke-width': 2,
+            style: 'pointer-events:none'
+          }));
+        }
+      }
     }
 
     g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
@@ -817,13 +850,13 @@ function redraw() {
     const todayG = mk('g', { 'clip-path': 'url(#cpE)' });
     // Vertical line
     todayG.appendChild(mk('line', {
-      x1: todayX, y1: HDR_H, x2: todayX, y2: H,
+      x1: todayX, y1: 0, x2: todayX, y2: H,
       stroke: '#f97316', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'
     }));
     // Triangle at top (pointing down into timeline)
     const ta = 6;
     todayG.appendChild(mk('polygon', {
-      points: `${todayX - ta},${HDR_H} ${todayX + ta},${HDR_H} ${todayX},${HDR_H + ta * 1.6}`,
+      points: `${todayX - ta},0 ${todayX + ta},0 ${todayX},${ta * 1.6}`,
       fill: '#f97316'
     }));
     // Triangle at bottom (pointing up)
@@ -838,10 +871,7 @@ function redraw() {
   const lblG = mk('g');
   lblG.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: H, fill: '#1f2937' }));
   lblG.appendChild(mk('line', { x1: LABEL_W, y1: 0, x2: LABEL_W, y2: H, stroke: '#374151', 'stroke-width': 1 }));
-  lblG.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: HDR_H, fill: '#1f2937' }));
-  lblG.appendChild(svgTxt(12, HDR_H / 2 + 4, 'GROUP', {
-    fill: '#4b5563', 'font-size': 10, 'font-weight': '700', 'letter-spacing': '0.08em'
-  }));
+  // category colour strip on left edge of label
   visGroups.forEach((g, i) => {
     const y  = groupY[g];
     const rh = rowHeights[g] || ROW_H;
@@ -883,15 +913,14 @@ function linkify(text) {
 // ── Modal ─────────────────────────────────────────────────────────────────
 function openModal(ev) {
   const titleEl = document.getElementById('m-title');
-  const color = projColor[ev.project] || '#e5e7eb';
+  const color = groupColor[ev.group] || '#e5e7eb';
   titleEl.textContent = ev.headline;
   titleEl.style.color = color;
   const duration = ev.end > ev.start
     ? `${fmtDate(ev.start)} → ${fmtDate(ev.end)}`
     : fmtDate(ev.start);
   document.getElementById('m-meta').innerHTML = [
-    `<b>Project:</b> ${ev.project}`,
-    `<b>Group:</b> ${ev.group}`,
+    `<b>Category:</b> ${ev.group}`,
     `<b>Date:</b> ${duration}`,
   ].join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;');
   document.getElementById('m-desc').innerHTML = linkify(ev.description || '(No description)');
@@ -916,8 +945,17 @@ function zoom(factor, pivotX) {
 document.getElementById('btn-zoomin').addEventListener('click',  () => zoom(1.5,     wrap.clientWidth / 2));
 document.getElementById('btn-zoomout').addEventListener('click', () => zoom(1 / 1.5, wrap.clientWidth / 2));
 document.getElementById('btn-fit').addEventListener('click', fitAll);
+document.getElementById('btn-today').addEventListener('click', () => {
+  panX = wrap.clientWidth - LABEL_W - (Date.now() - minTs) * scale;
+  redraw();
+});
+
+let spaceDown = false;
+window.addEventListener('keydown', e => { if (e.code === 'Space') { spaceDown = true; e.preventDefault(); } });
+window.addEventListener('keyup',   e => { if (e.code === 'Space') spaceDown = false; });
 
 wrap.addEventListener('wheel', e => {
+  if (!spaceDown) return;
   e.preventDefault();
   const r = wrap.getBoundingClientRect();
   zoom(e.deltaY < 0 ? 1.15 : 0.87, e.clientX - r.left);
@@ -925,14 +963,17 @@ wrap.addEventListener('wheel', e => {
 
 wrap.addEventListener('mousedown', e => {
   if (e.button !== 0) return;
-  dragging     = true;
-  dragStartX   = e.clientX;
-  dragStartPan = panX;
+  dragging            = true;
+  dragStartX          = e.clientX;
+  dragStartPan        = panX;
+  dragStartY          = e.clientY;
+  dragStartScrollTop  = wrap.scrollTop;
   wrap.classList.add('panning');
 });
 window.addEventListener('mousemove', e => {
   if (!dragging) return;
   panX = dragStartPan + (e.clientX - dragStartX);
+  wrap.scrollTop = dragStartScrollTop - (e.clientY - dragStartY);
   redraw();
 });
 window.addEventListener('mouseup', () => {
@@ -954,14 +995,14 @@ window.addEventListener('resize', () => { if (events.length) redraw(); });
 
 // ── Auto-load: switch between real file and synthetic data ────────────────
 // To load real file: uncomment the fetch block and remove loadTestData() call
-// fetch('timeline-test-data.xlsx')
-//   .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-//   .then(buf => {
-//     const wb   = XLSX.read(buf, { type: 'array' });
-//     const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
-//     parse(rows);
-//   })
-//   .catch(() => loadTestData());
+fetch('data/cv.xlsx')
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+  .then(buf => {
+    const wb   = XLSX.read(buf, { type: 'array' });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+    parse(rows);
+  })
+  .catch(() => loadTestData());
 
 // ── Synthetic test data ───────────────────────────────────────────────────
 function loadTestData() {
@@ -1019,7 +1060,7 @@ function loadTestData() {
   parse(rows);
 }
 
-loadTestData();
+// loadTestData();
 
 </script>
 </body>
