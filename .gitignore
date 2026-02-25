@@ -1,0 +1,10 @@
+# Excel temp files
+~$*.xlsx
+~$*.xls
+
+# Logs
+*.log
+/tmp/
+
+# macOS
+.DS_Store

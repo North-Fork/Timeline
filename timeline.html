@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline</title>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #111827;
+  color: #e5e7eb;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+#sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #1f2937;
+  border-right: 1px solid #374151;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#sidebar-title {
+  padding: 13px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b7280;
+  border-bottom: 1px solid #374151;
+  flex-shrink: 0;
+}
+#drop-zone {
+  margin: 12px;
+  border: 2px dashed #374151;
+  border-radius: 8px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-size: 12px;
+  color: #6b7280;
+  user-select: none;
+  flex-shrink: 0;
+}
+#drop-zone:hover, #drop-zone.over {
+  border-color: #6366f1;
+  background: #1e2033;
+  color: #e5e7eb;
+}
+#drop-zone .dz-icon { font-size: 22px; margin-bottom: 6px; }
+#drop-zone input[type=file] { display: none; }
+#drop-zone .dz-browse { color: #6366f1; font-weight: 600; }
+#filters {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 16px;
+}
+#filters::-webkit-scrollbar { width: 4px; }
+#filters::-webkit-scrollbar-track { background: transparent; }
+#filters::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+.filter-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 14px 0 6px;
+}
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #d1d5db;
+  transition: background 0.1s;
+}
+.filter-label:hover { background: #374151; }
+.filter-label input[type=checkbox] { cursor: pointer; accent-color: #6366f1; flex-shrink: 0; }
+.filter-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.filter-label > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Main ─────────────────────────────────────────────────── */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+#toolbar {
+  height: 40px;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+.tb-btn {
+  background: #374151;
+  border: none;
+  color: #d1d5db;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+.tb-btn:hover { background: #4b5563; color: #fff; }
+#zoom-level { font-size: 11px; color: #6b7280; min-width: 72px; }
+#event-count { font-size: 11px; color: #6b7280; margin-left: auto; }
+
+/* ── Timeline canvas area ─────────────────────────────────── */
+#tl-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  background: #111827;
+}
+#tl-wrap.panning { cursor: grabbing; }
+#tl-svg { display: block; position: absolute; top: 0; left: 0; }
+
+/* ── Empty state ──────────────────────────────────────────── */
+#empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  gap: 10px;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+#modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+#modal-bg.open { display: flex; }
+#modal {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 20px 24px;
+  max-width: 500px;
+  width: calc(100% - 40px);
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+#modal h2 { font-size: 16px; margin-bottom: 14px; }
+#modal .m-meta {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 14px;
+  line-height: 2;
+}
+#modal .m-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #d1d5db;
+  white-space: pre-wrap;
+}
+#modal .m-desc a { color: #6366f1; text-decoration: underline; }
+#modal .m-desc a:hover { color: #818cf8; }
+#modal-x {
+  position: absolute;
+  top: 12px; right: 14px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+#modal-x:hover { color: #e5e7eb; background: #374151; }
+
+/* ── Tooltip ──────────────────────────────────────────────── */
+#tooltip {
+  position: fixed;
+  background: #111827;
+  border: 1px solid #374151;
+  padding: 8px 12px;
+  border-radius: 6px;
+  max-width: 240px;
+  z-index: 300;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  display: none;
+}
+#tooltip .tt-headline { font-size: 16px; font-weight: 600; color: #e5e7eb; margin-bottom: 4px; }
+#tooltip .tt-desc     { font-size: 14px; color: #9ca3af; line-height: 1.5; margin-bottom: 6px; }
+#tooltip .tt-date     { font-size: 10px; font-weight: 700; color: #6b7280; letter-spacing: 0.04em; }
+
+/* ── Bottom axis ──────────────────────────────────────────── */
+#tl-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 40px;
+  background: #1f2937;
+  border-top: 1px solid #374151;
+  pointer-events: none;
+  z-index: 10;
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div id="sidebar">
+  <div id="sidebar-title">Timeline</div>
+  <div id="drop-zone">
+    <div class="dz-icon">📂</div>
+    <div>Drop Excel file here</div>
+    <div style="margin:5px 0;font-size:11px;color:#4b5563">or</div>
+    <label class="dz-browse" style="cursor:pointer">
+      Browse file
+      <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+    </label>
+  </div>
+  <div id="filters">
+    <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <div id="toolbar">
+    <button class="tb-btn" id="btn-zoomin" title="Zoom in">＋</button>
+    <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
+    <button class="tb-btn" id="btn-fit" title="Fit all events in view">Fit</button>
+    <span id="zoom-level"></span>
+    <span id="event-count"></span>
+  </div>
+  <div id="tl-wrap">
+    <div id="empty">
+      <div style="font-size:40px">📅</div>
+      <div>Drop an Excel file to get started</div>
+    </div>
+    <svg id="tl-svg"></svg>
+    <div id="tl-bottom"><svg id="btm-svg" style="display:block;width:100%;height:40px;"></svg></div>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-headline" id="tt-headline"></div>
+  <div class="tt-desc"     id="tt-desc"></div>
+  <div class="tt-date"     id="tt-date"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal-bg">
+  <div id="modal">
+    <button id="modal-x" title="Close">✕</button>
+    <h2 id="m-title"></h2>
+    <div class="m-meta" id="m-meta"></div>
+    <div class="m-desc" id="m-desc"></div>
+  </div>
+</div>
+
+<script>
+// ── Layout constants ─────────────────────────────────────────────────────
+const LABEL_W    = 150;   // group label column width (px)
+const HDR_H      = 48;    // time axis header height (px)
+const BTM_H      = 40;    // bottom axis height (px)
+const AXIS_START = new Date(2012, 0, 1).getTime(); // fixed axis start
+const ROW_H   = 64;    // minimum group row height (px)
+const BAR_H   = 28;    // event bar height (px)
+const BAR_Y   = (ROW_H - BAR_H) / 2;
+const LANE_H  = BAR_H + 8;  // height per lane
+const LANE_PAD = 10;          // top/bottom padding within a row
+const NS      = 'http://www.w3.org/2000/svg';
+
+// ── Color palette (per project) ──────────────────────────────────────────
+const PALETTE = [
+  '#6366f1','#ec4899','#f59e0b','#10b981',
+  '#3b82f6','#ef4444','#8b5cf6','#14b8a6',
+  '#f97316','#84cc16','#06b6d4','#a855f7'
+];
+
+// ── State ────────────────────────────────────────────────────────────────
+let events    = [];
+let groups    = [];
+let projects  = [];
+let projColor = {};
+let groupVis  = new Set();
+let projVis   = new Set();
+let minTs, maxTs;
+let laneCounts = {};   // group -> number of lanes needed
+let rowHeights = {};   // group -> row height in px
+let scale     = 1e-8;   // pixels per millisecond
+let panX      = 0;
+let dragging  = false;
+let dragStartX, dragStartPan;
+
+// ── DOM refs ─────────────────────────────────────────────────────────────
+const dz       = document.getElementById('drop-zone');
+const fi       = document.getElementById('file-input');
+const wrap     = document.getElementById('tl-wrap');
+const tlSvg    = document.getElementById('tl-svg');
+const emptyEl  = document.getElementById('empty');
+const filDiv   = document.getElementById('filters');
+const cntEl    = document.getElementById('event-count');
+const zoomEl   = document.getElementById('zoom-level');
+const modalBg  = document.getElementById('modal-bg');
+const tooltip  = document.getElementById('tooltip');
+
+let _hideTimer = null;
+function _cancelHide() { if (_hideTimer) { clearTimeout(_hideTimer); _hideTimer = null; } }
+function _scheduleHide() { _hideTimer = setTimeout(() => { tooltip.style.display = 'none'; _hideTimer = null; }, 180); }
+
+function showTooltip(ev, x, y) {
+  _cancelHide();
+  document.getElementById('tt-headline').textContent = ev.headline;
+  document.getElementById('tt-desc').innerHTML       = linkify(ev.description || '');
+  const dateStr = ev.end > ev.start
+    ? `${fmtDate(ev.start)} – ${fmtDate(ev.end)}`
+    : fmtDate(ev.start);
+  document.getElementById('tt-date').textContent = dateStr;
+  tooltip.style.display = 'block';
+  const tw = tooltip.offsetWidth;
+  const th = tooltip.offsetHeight;
+  tooltip.style.left = (x + 14 + tw > window.innerWidth ? x - tw - 10 : x + 14) + 'px';
+  tooltip.style.top  = (y + 14 + th > window.innerHeight ? y - th - 6  : y + 14) + 'px';
+}
+function hideTooltip() { _scheduleHide(); }
+
+tooltip.addEventListener('mouseenter', _cancelHide);
+tooltip.addEventListener('mouseleave', _scheduleHide);
+
+// ── File loading ─────────────────────────────────────────────────────────
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
+});
+dz.addEventListener('click', () => fi.click());
+fi.addEventListener('change', e => { if (e.target.files[0]) load(e.target.files[0]); });
+
+function load(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const wb   = XLSX.read(e.target.result, { type: 'binary' });
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+      parse(rows);
+    } catch (ex) { alert('Could not read file:\n' + ex.message); }
+  };
+  r.readAsBinaryString(file);
+}
+
+// ── Data parsing ─────────────────────────────────────────────────────────
+function pDate(v) {
+  const s = String(v).trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (!m) return null;
+  let yr = +m[3];
+  if (yr < 100) yr += yr < 50 ? 2000 : 1900;
+  return new Date(yr, +m[1] - 1, +m[2]);
+}
+
+function fmtDate(d) {
+  return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+}
+
+function normalizeRow(row) {
+  const n = {};
+  for (const k of Object.keys(row))
+    n[k.trim().toLowerCase().replace(/[\s_]+/g, '')] = row[k];
+  const g = (...ks) => {
+    for (const k of ks) if (n[k] !== undefined && n[k] !== '') return String(n[k]);
+    return '';
+  };
+  return {
+    startRaw:    g('startdate', 'start'),
+    endRaw:      g('enddate', 'end'),
+    headline:    g('headline', 'title', 'name', 'event'),
+    description: g('description', 'desc', 'details', 'notes', 'body'),
+    project:     g('project', 'proj'),
+    group:       g('group', 'grp', 'category'),
+  };
+}
+
+function parse(rows) {
+  const parsed = rows.map((r, i) => {
+    const nr    = normalizeRow(r);
+    const start = pDate(nr.startRaw);
+    if (!start) return null;
+    let end = pDate(nr.endRaw) || start;
+    if (end < start) end = start;
+    return {
+      id: i, start, end,
+      startTs: start.getTime(), endTs: end.getTime(),
+      headline:    nr.headline    || '(Untitled)',
+      description: nr.description || '',
+      project:     nr.project     || 'Unassigned',
+      group:       nr.group       || 'Ungrouped',
+    };
+  }).filter(Boolean);
+
+  if (!parsed.length) {
+    alert('No valid events found.\n\nExpected column names:\n  start date, end date, headline, description, project, group');
+    return;
+  }
+
+  events   = parsed;
+  groups   = [...new Set(events.map(e => e.group))].sort();
+  projects = [...new Set(events.map(e => e.project))].sort();
+  projects.forEach((p, i) => projColor[p] = PALETTE[i % PALETTE.length]);
+  groupVis = new Set(groups);
+  projVis  = new Set(projects);
+  minTs    = Math.min(...events.map(e => e.startTs));
+  maxTs    = Math.max(...events.map(e => e.endTs));
+
+  computeLanes();
+  buildFilters();
+  fitView();
+}
+
+// ── Filter UI ─────────────────────────────────────────────────────────────
+function buildFilters() {
+  filDiv.innerHTML = '';
+
+  const section = (title, items, vis, colorFn) => {
+    const h = document.createElement('div');
+    h.className = 'filter-section-title';
+    h.textContent = title;
+    filDiv.appendChild(h);
+    for (const item of items) {
+      const lbl = document.createElement('label');
+      lbl.className = 'filter-label';
+      const cb  = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = vis.has(item);
+      cb.addEventListener('change', () => {
+        if (cb.checked) vis.add(item); else vis.delete(item);
+        redraw();
+      });
+      const dot = document.createElement('span');
+      dot.className = 'filter-dot';
+      dot.style.background = colorFn(item);
+      const txt = document.createElement('span');
+      txt.textContent = item;
+      lbl.append(cb, dot, txt);
+      filDiv.appendChild(lbl);
+    }
+  };
+
+  section('Projects', projects, projVis,  p => projColor[p]);
+  section('Groups',   groups,   groupVis, () => '#6b7280');
+}
+
+// ── Lane stacking ─────────────────────────────────────────────────────────
+function computeLanes() {
+  laneCounts = {};
+  rowHeights = {};
+  for (const g of groups) {
+    const gEvs = events.filter(e => e.group === g).sort((a, b) => a.startTs - b.startTs);
+    const laneEnds = []; // effective end ts of last event placed in each lane
+    for (const ev of gEvs) {
+      // Use at least 1 day of effective width so point events stack properly
+      const effEnd = Math.max(ev.endTs, ev.startTs + 86400000);
+      let placed = false;
+      for (let i = 0; i < laneEnds.length; i++) {
+        if (ev.startTs >= laneEnds[i]) {
+          ev.lane = i;
+          laneEnds[i] = effEnd;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        ev.lane = laneEnds.length;
+        laneEnds.push(effEnd);
+      }
+    }
+    laneCounts[g] = Math.max(1, laneEnds.length);
+    rowHeights[g] = Math.max(ROW_H, laneCounts[g] * LANE_H + LANE_PAD * 2);
+  }
+}
+
+// ── Coordinate helpers ────────────────────────────────────────────────────
+const tsToX = ts => LABEL_W + (ts - minTs) * scale + panX;
+const xToTs = x  => minTs + (x - LABEL_W - panX) / scale;
+
+// ── Fit view ─────────────────────────────────────────────────────────────
+function fitView() {
+  const W         = wrap.clientWidth;
+  const oneYearMs = 365.25 * 86400000;
+  scale = (W - LABEL_W) / oneYearMs;  // one year fills the timeline width
+  panX  = -(AXIS_START - minTs) * scale; // start at Jan 1 2012
+  redraw();
+}
+
+function fitAll() {
+  const W     = wrap.clientWidth;
+  const range = Math.max(Date.now() - AXIS_START, 86400000);
+  scale = (W - LABEL_W - 20) / range;
+  panX  = -(AXIS_START - minTs) * scale;
+  redraw();
+}
+
+// ── SVG helpers ───────────────────────────────────────────────────────────
+const mk = (tag, a = {}) => {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(a)) e.setAttribute(k, v);
+  return e;
+};
+const svgTxt = (x, y, s, a = {}) => {
+  const t = mk('text', { x, y, 'font-family': 'system-ui, sans-serif', ...a });
+  t.textContent = s; return t;
+};
+
+// ── Tick generation ───────────────────────────────────────────────────────
+function getTickConfig() {
+  const ppd = scale * 86400000; // pixels per day
+  if (ppd > 60)  return { maj: addDays(7),    min: addDays(1),    fmt: d => fmt(d, 'Md') };
+  if (ppd > 15)  return { maj: addMonths(1),  min: addDays(7),    fmt: d => fmt(d, 'My') };
+  if (ppd > 4)   return { maj: addMonths(3),  min: addMonths(1),  fmt: d => fmt(d, 'My') };
+  if (ppd > 1)   return { maj: addYears(1),   min: addMonths(3),  fmt: d => fmt(d, 'Y')  };
+  if (ppd > 0.2) return { maj: addYears(5),   min: addYears(1),   fmt: d => fmt(d, 'Y')  };
+               return { maj: addYears(10),  min: addYears(5),   fmt: d => fmt(d, 'Y')  };
+}
+
+function fmt(d, pat) {
+  if (pat === 'Y')  return String(d.getFullYear());
+  if (pat === 'My') return d.toLocaleString('en-US', { month: 'short' }) + " '" + String(d.getFullYear()).slice(2);
+  if (pat === 'Md') return d.toLocaleString('en-US', { month: 'short', day: 'numeric' });
+  return d.toLocaleDateString();
+}
+
+const addDays   = n => d => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+const addMonths = n => d => { const r = new Date(d); r.setMonth(r.getMonth() + n); return r; };
+const addYears  = n => d => { const r = new Date(d); r.setFullYear(r.getFullYear() + n); return r; };
+
+function cleanStart(d, addFn) {
+  const ref = new Date(2000, 0, 1);
+  const ms  = addFn(ref) - ref;
+  const r   = new Date(d);
+  r.setHours(0, 0, 0, 0);
+  if (ms >= 365 * 86400000 * 8) {
+    const n = Math.round(ms / (365 * 86400000));
+    r.setFullYear(Math.ceil(r.getFullYear() / n) * n, 0, 1);
+  } else if (ms >= 365 * 86400000 * 3) {
+    r.setFullYear(Math.ceil(r.getFullYear() / 5) * 5, 0, 1);
+  } else if (ms >= 365 * 86400000) {
+    r.setMonth(0, 1);
+    if (r <= d) r.setFullYear(r.getFullYear() + 1);
+  } else if (ms >= 86 * 86400000) {
+    r.setDate(1);
+    while (r <= d) r.setMonth(r.getMonth() + 3);
+  } else if (ms >= 27 * 86400000) {
+    r.setDate(1);
+    if (r <= d) r.setMonth(r.getMonth() + 1);
+  } else if (ms >= 6 * 86400000) {
+    r.setDate(r.getDate() - r.getDay());
+    if (r <= d) r.setDate(r.getDate() + 7);
+  } else {
+    if (r <= d) r.setDate(r.getDate() + 1);
+  }
+  return r;
+}
+
+function generateTicks(addFn, start, end) {
+  const ticks = [];
+  let d = cleanStart(start, addFn);
+  let safety = 0;
+  while (d <= end && safety++ < 800) {
+    ticks.push(new Date(d));
+    d = addFn(d);
+  }
+  return ticks;
+}
+
+// ── Month axis (top or bottom) ────────────────────────────────────────────
+// fromBottom=false → ticks hang down from top edge; fromBottom=true → ticks rise from bottom edge
+function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
+  const now   = new Date();
+  const end   = new Date(now.getFullYear(), now.getMonth() + 1, 1); // start of next month
+  const defs  = mk('defs');
+  const cp    = mk('clipPath', { id: cpId });
+  cp.appendChild(mk('rect', { x: LABEL_W, y: 0, width: W - LABEL_W, height: axisH }));
+  defs.appendChild(cp);
+  svgEl.appendChild(defs);
+
+  const g = mk('g', { 'clip-path': `url(#${cpId})` });
+  let d = new Date(2012, 0, 1);
+
+  while (d <= end) {
+    const x      = tsToX(d.getTime());
+    const mo     = d.getMonth(); // 0=Jan … 6=Jul
+    const isJan   = mo === 0;
+    const isJuly  = mo === 6;
+    const isQuart = mo === 3 || mo === 9; // Apr / Oct
+
+    // Tick height: Jan=full, July=medium, Apr/Oct=25% above regular, other=short
+    const tickLen = isJan ? 18 : isJuly ? 12 : isQuart ? 8 : 5;
+    const stroke  = isJan ? '#9ca3af' : isJuly || isQuart ? '#6b7280' : '#374151';
+    const sw      = 3;
+
+    if (x >= LABEL_W - 1 && x <= W + 1) {
+      if (fromBottom) {
+        // ticks point upward from y=0
+        g.appendChild(mk('line', { x1: x, y1: 0, x2: x, y2: tickLen, stroke, 'stroke-width': sw }));
+        if (isJan) {
+          g.appendChild(svgTxt(x + 3, tickLen + 11, String(d.getFullYear()), {
+            fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
+          }));
+        }
+      } else {
+        // ticks point downward from y=axisH
+        g.appendChild(mk('line', { x1: x, y1: axisH - tickLen, x2: x, y2: axisH, stroke, 'stroke-width': sw }));
+        if (isJan) {
+          g.appendChild(svgTxt(x + 3, axisH - tickLen - 4, String(d.getFullYear()), {
+            fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
+          }));
+        }
+      }
+    }
+    d.setMonth(d.getMonth() + 1);
+  }
+  svgEl.appendChild(g);
+}
+
+// ── Main render ───────────────────────────────────────────────────────────
+function redraw() {
+  if (!events.length) return;
+
+  const W         = wrap.clientWidth;
+  const visGroups = groups.filter(g => groupVis.has(g));
+
+  // Compute cumulative Y offset for each visible group
+  const groupY = {};
+  let curY = HDR_H;
+  for (const g of visGroups) {
+    groupY[g] = curY;
+    curY += rowHeights[g] || ROW_H;
+  }
+  const contentH = curY;
+  const H = Math.max(contentH, wrap.clientHeight);
+
+  tlSvg.setAttribute('width',  W);
+  tlSvg.setAttribute('height', H);
+  tlSvg.style.display = 'block';
+  emptyEl.style.display = 'none';
+  tlSvg.innerHTML = '';
+
+  // ── Defs (clip paths) ────────────────────────────────────────────────
+  const defs = mk('defs');
+  const cpEvent = mk('clipPath', { id: 'cpE' });
+  cpEvent.appendChild(mk('rect', { x: LABEL_W, y: 0, width: W - LABEL_W, height: H }));
+  const cpHdr = mk('clipPath', { id: 'cpH' });
+  cpHdr.appendChild(mk('rect', { x: LABEL_W, y: 0, width: W - LABEL_W, height: HDR_H }));
+  defs.append(cpEvent, cpHdr);
+  tlSvg.appendChild(defs);
+
+  // ── Background ────────────────────────────────────────────────────────
+  tlSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: H, fill: '#111827' }));
+
+  // ── Tick lines + row backgrounds (clipped) ───────────────────────────
+  // Use adaptive major ticks for background grid lines only
+  const { maj: majAdd, min: minAdd } = getTickConfig();
+  const majDates = generateTicks(majAdd, new Date(minTs), new Date(maxTs));
+  const minDates = generateTicks(minAdd, new Date(minTs), new Date(maxTs));
+
+  const gridG = mk('g', { 'clip-path': 'url(#cpE)' });
+
+  // Row backgrounds
+  visGroups.forEach((g, i) => {
+    const y  = groupY[g];
+    const rh = rowHeights[g] || ROW_H;
+    gridG.appendChild(mk('rect', {
+      x: LABEL_W, y, width: W - LABEL_W, height: rh,
+      fill: i % 2 === 0 ? '#161d2b' : '#111827'
+    }));
+    gridG.appendChild(mk('line', {
+      x1: LABEL_W, y1: y + rh, x2: W, y2: y + rh,
+      stroke: '#1f2937', 'stroke-width': 1
+    }));
+  });
+
+  // Minor grid lines
+  for (const d of minDates) {
+    const x = tsToX(d.getTime());
+    if (x < LABEL_W || x > W) continue;
+    gridG.appendChild(mk('line', { x1: x, y1: HDR_H, x2: x, y2: H, stroke: '#1a2030', 'stroke-width': 1 }));
+  }
+  // Major grid lines
+  for (const d of majDates) {
+    const x = tsToX(d.getTime());
+    if (x < LABEL_W || x > W) continue;
+    gridG.appendChild(mk('line', { x1: x, y1: HDR_H, x2: x, y2: H, stroke: '#374151', 'stroke-width': 1 }));
+  }
+  tlSvg.appendChild(gridG);
+
+  // ── Header background ─────────────────────────────────────────────────
+  tlSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: HDR_H, fill: '#1f2937' }));
+  tlSvg.appendChild(mk('line', { x1: 0, y1: HDR_H, x2: W, y2: HDR_H, stroke: '#374151', 'stroke-width': 1 }));
+
+  // ── Top month axis ticks ──────────────────────────────────────────────
+  drawMonthAxis(tlSvg, W, HDR_H, false, 'cpH');
+
+  // ── Events (clipped) ──────────────────────────────────────────────────
+  const visEvs = events.filter(e => groupVis.has(e.group) && projVis.has(e.project));
+  const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
+  tlSvg.appendChild(evG); // append early so getComputedTextLength() works
+
+  for (const ev of visEvs) {
+    if (groupY[ev.group] === undefined) continue;
+    const rY    = groupY[ev.group];
+    const x1    = tsToX(ev.startTs);
+    const x2    = tsToX(ev.endTs);
+    const barW  = Math.max(x2 - x1, 6);
+    const barTop = rY + LANE_PAD + (ev.lane || 0) * LANE_H;
+    const color = projColor[ev.project];
+
+    const g    = mk('g');
+    g.style.cursor = 'pointer';
+    evG.appendChild(g); // must be in DOM before getComputedTextLength()
+    const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
+    g.appendChild(rect);
+
+    // Text label: inside bar if wide enough, otherwise to the right
+    if (barW > 22) {
+      const lx    = Math.max(x1 + 6, LABEL_W + 2);
+      const avail = barW - (lx - x1) - 6;
+      const maxCh = Math.max(0, Math.floor(avail / 7));
+      if (maxCh > 1) {
+        const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
+        const textY  = barTop + BAR_H / 2 + 4;
+        const textEl = svgTxt(lx, textY, label, {
+          fill: '#fff', 'font-size': 11, 'font-weight': '500'
+        });
+        g.appendChild(textEl);
+        const textW = textEl.getComputedTextLength();
+        g.appendChild(mk('line', {
+          x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
+          stroke: '#fff', 'stroke-width': 2, 'stroke-opacity': 0.7,
+          style: 'pointer-events:none'
+        }));
+      }
+    } else {
+      const lx     = x1 + barW + 5;
+      const textY  = barTop + BAR_H / 2 + 4;
+      const textEl = svgTxt(lx, textY, ev.headline, {
+        fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
+      });
+      g.appendChild(textEl);
+      const textW = textEl.getComputedTextLength();
+      g.appendChild(mk('line', {
+        x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
+        stroke: color, 'stroke-width': 2,
+        style: 'pointer-events:none'
+      }));
+    }
+
+    g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
+    g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); hideTooltip(); });
+    g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openModal(ev); });
+  }
+
+  // ── Today marker (clipped to event area) ─────────────────────────────
+  const todayX = tsToX(Date.now());
+  if (todayX >= LABEL_W && todayX <= W) {
+    const todayG = mk('g', { 'clip-path': 'url(#cpE)' });
+    // Vertical line
+    todayG.appendChild(mk('line', {
+      x1: todayX, y1: HDR_H, x2: todayX, y2: H,
+      stroke: '#f97316', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'
+    }));
+    // Triangle at top (pointing down into timeline)
+    const ta = 6;
+    todayG.appendChild(mk('polygon', {
+      points: `${todayX - ta},${HDR_H} ${todayX + ta},${HDR_H} ${todayX},${HDR_H + ta * 1.6}`,
+      fill: '#f97316'
+    }));
+    // Triangle at bottom (pointing up)
+    todayG.appendChild(mk('polygon', {
+      points: `${todayX - ta},${H} ${todayX + ta},${H} ${todayX},${H - ta * 1.6}`,
+      fill: '#f97316'
+    }));
+    tlSvg.appendChild(todayG);
+  }
+
+  // ── Label column (always on top) ──────────────────────────────────────
+  const lblG = mk('g');
+  lblG.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: H, fill: '#1f2937' }));
+  lblG.appendChild(mk('line', { x1: LABEL_W, y1: 0, x2: LABEL_W, y2: H, stroke: '#374151', 'stroke-width': 1 }));
+  lblG.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: HDR_H, fill: '#1f2937' }));
+  lblG.appendChild(svgTxt(12, HDR_H / 2 + 4, 'GROUP', {
+    fill: '#4b5563', 'font-size': 10, 'font-weight': '700', 'letter-spacing': '0.08em'
+  }));
+  visGroups.forEach((g, i) => {
+    const y  = groupY[g];
+    const rh = rowHeights[g] || ROW_H;
+    lblG.appendChild(mk('rect', {
+      x: 0, y, width: LABEL_W, height: rh,
+      fill: i % 2 === 0 ? '#1a2030' : '#161d2b'
+    }));
+    lblG.appendChild(mk('line', { x1: 0, y1: y + rh, x2: LABEL_W, y2: y + rh, stroke: '#374151', 'stroke-width': 0.5 }));
+    const short = g.length > 18 ? g.slice(0, 17) + '…' : g;
+    lblG.appendChild(svgTxt(12, y + rh / 2 + 5, short, { fill: '#d1d5db', 'font-size': 12, 'font-weight': '500' }));
+  });
+  tlSvg.appendChild(lblG);
+
+  cntEl.textContent = `${visEvs.length} of ${events.length} event${events.length !== 1 ? 's' : ''}`;
+  updateZoomLabel();
+
+  // ── Bottom axis ───────────────────────────────────────────────────────
+  const btmSvg = document.getElementById('btm-svg');
+  btmSvg.setAttribute('width', W);
+  btmSvg.innerHTML = '';
+  drawMonthAxis(btmSvg, W, BTM_H, true, 'cpBtm');
+}
+
+function updateZoomLabel() {
+  const ppd = scale * 86400000;
+  zoomEl.textContent = ppd >= 20  ? `${ppd.toFixed(0)}px/day`
+                     : ppd >= 1   ? `${ppd.toFixed(1)}px/day`
+                     :              `${(ppd * 30).toFixed(1)}px/mo`;
+}
+
+// ── Linkify ───────────────────────────────────────────────────────────────
+function linkify(text) {
+  return text.replace(/(https?:\/\/[\S]+|www\.[\S]+)/g, url => {
+    const href = url.startsWith('http') ? url : 'https://' + url;
+    return `<a href="${href}" target="_blank" rel="noopener">${url}</a>`;
+  });
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+function openModal(ev) {
+  const titleEl = document.getElementById('m-title');
+  const color = projColor[ev.project] || '#e5e7eb';
+  titleEl.textContent = ev.headline;
+  titleEl.style.color = color;
+  const duration = ev.end > ev.start
+    ? `${fmtDate(ev.start)} → ${fmtDate(ev.end)}`
+    : fmtDate(ev.start);
+  document.getElementById('m-meta').innerHTML = [
+    `<b>Project:</b> ${ev.project}`,
+    `<b>Group:</b> ${ev.group}`,
+    `<b>Date:</b> ${duration}`,
+  ].join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;');
+  document.getElementById('m-desc').innerHTML = linkify(ev.description || '(No description)');
+  modalBg.classList.add('open');
+}
+
+document.getElementById('modal-x').addEventListener('click', () => modalBg.classList.remove('open'));
+modalBg.addEventListener('click', e => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+window.addEventListener('keydown', e => { if (e.key === 'Escape') modalBg.classList.remove('open'); });
+
+// ── Zoom & pan ────────────────────────────────────────────────────────────
+const MIN_SCALE = 1e-11;
+const MAX_SCALE = 1 / 3600000;
+
+function zoom(factor, pivotX) {
+  const tsAt = xToTs(pivotX);
+  scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * factor));
+  panX  = pivotX - LABEL_W - (tsAt - minTs) * scale;
+  redraw();
+}
+
+document.getElementById('btn-zoomin').addEventListener('click',  () => zoom(1.5,     wrap.clientWidth / 2));
+document.getElementById('btn-zoomout').addEventListener('click', () => zoom(1 / 1.5, wrap.clientWidth / 2));
+document.getElementById('btn-fit').addEventListener('click', fitAll);
+
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = wrap.getBoundingClientRect();
+  zoom(e.deltaY < 0 ? 1.15 : 0.87, e.clientX - r.left);
+}, { passive: false });
+
+wrap.addEventListener('mousedown', e => {
+  if (e.button !== 0) return;
+  dragging     = true;
+  dragStartX   = e.clientX;
+  dragStartPan = panX;
+  wrap.classList.add('panning');
+});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  panX = dragStartPan + (e.clientX - dragStartX);
+  redraw();
+});
+window.addEventListener('mouseup', () => {
+  dragging = false;
+  wrap.classList.remove('panning');
+});
+
+let t0 = null;
+wrap.addEventListener('touchstart', e => { t0 = e.touches[0].clientX; }, { passive: true });
+wrap.addEventListener('touchmove',  e => {
+  if (t0 === null) return;
+  panX += e.touches[0].clientX - t0;
+  t0    = e.touches[0].clientX;
+  redraw();
+}, { passive: true });
+wrap.addEventListener('touchend', () => { t0 = null; });
+
+window.addEventListener('resize', () => { if (events.length) redraw(); });
+
+// ── Auto-load: switch between real file and synthetic data ────────────────
+// To load real file: uncomment the fetch block and remove loadTestData() call
+// fetch('timeline-test-data.xlsx')
+//   .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+//   .then(buf => {
+//     const wb   = XLSX.read(buf, { type: 'array' });
+//     const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+//     parse(rows);
+//   })
+//   .catch(() => loadTestData());
+
+// ── Synthetic test data ───────────────────────────────────────────────────
+function loadTestData() {
+  const rows = [
+    { 'start date': '01/15/12', 'end date': '06/30/12', headline: 'Project Kickoff',        description: 'Team assembled and initial project goals clearly established together.',          project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '03/01/12', 'end date': '09/15/12', headline: 'Research Phase',          description: 'Extensive field research and comprehensive literature review conducted.',           project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '07/01/12', 'end date': '12/31/12', headline: 'Prototype Build',         description: 'First interactive prototype built and tested with community members.',             project: 'Skins', group: 'AbTeC' },
+    { 'start date': '02/10/13', 'end date': '02/10/13', headline: 'Symposium',               description: 'Public symposium brought together scholars of Indigenous digital storytelling.',   project: 'IIF',   group: 'Events' },
+    { 'start date': '04/01/13', 'end date': '10/31/13', headline: 'Community Engagement',    description: 'Hands-on workshops delivered across five partner communities nationwide.',          project: 'Skins', group: 'AbTeC' },
+    { 'start date': '05/20/13', 'end date': '05/20/13', headline: 'Grant Award',             description: 'SSHRC Insight Grant awarded to support three years of research.',                  project: 'IIF',   group: 'Funding' },
+    { 'start date': '09/01/13', 'end date': '03/31/14', headline: 'Exhibition Design',       description: 'Full design and fabrication of large-scale interactive gallery installation.',     project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '01/10/14', 'end date': '01/10/14', headline: 'Partner Meeting',         description: 'Annual all-partner meeting convened in Vancouver to align priorities.',            project: 'Skins', group: 'Events' },
+    { 'start date': '04/15/14', 'end date': '08/15/14', headline: 'Summer Institute',        description: 'Intensive six-week program brought together an interdisciplinary student cohort.', project: 'Skins', group: 'AbTeC' },
+    { 'start date': '06/01/14', 'end date': '06/01/14', headline: 'Publication Released',    description: 'Co-authored volume on Indigenous media arts published by university press. www.jasonlewis.org',       project: 'IIF',   group: 'Outputs' },
+    { 'start date': '10/01/14', 'end date': '12/31/14', headline: 'Phase 2 Planning',        description: 'Strategic planning sessions held to scope the next major project phase.',          project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '01/01/15', 'end date': '06/30/15', headline: 'Software Development',   description: 'Focused development sprint produced a custom community storytelling platform.',    project: 'Skins', group: 'AbTeC' },
+    { 'start date': '03/15/15', 'end date': '03/15/15', headline: 'Conference Keynote',      description: 'Delivered keynote address at the ELO conference in Bergen, Norway.',              project: 'IIF',   group: 'Events' },
+    { 'start date': '07/01/15', 'end date': '12/31/15', headline: 'User Testing',            description: 'Iterative user testing cycles conducted with three distinct partner communities.', project: 'Skins', group: 'AbTeC' },
+    { 'start date': '09/10/15', 'end date': '09/10/15', headline: 'Funding Renewal',         description: 'Partnership infrastructure funding successfully renewed through CFI program.',     project: 'IIF',   group: 'Funding' },
+    { 'start date': '02/01/16', 'end date': '07/31/16', headline: 'Residency Program',       description: 'Launched artist-in-residence program, welcoming the inaugural creative cohort.',  project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '04/20/16', 'end date': '04/20/16', headline: 'Award Ceremony',          description: 'Recognized with national excellence award for outstanding contributions to media arts.', project: 'Skins', group: 'Events' },
+    { 'start date': '08/01/16', 'end date': '01/31/17', headline: 'Documentation',           description: 'Systematic archiving and documentation of all major project outputs completed.',   project: 'IIF',   group: 'Outputs' },
+    { 'start date': '01/15/17', 'end date': '07/15/17', headline: 'New Cohort',              description: 'Second student cohort onboarded with expanded interdisciplinary focus.',           project: 'Skins', group: 'AbTeC' },
+    { 'start date': '05/01/17', 'end date': '05/01/17', headline: 'Workshop Series',         description: 'Three-city workshop tour engaged over two hundred participants directly.',          project: 'IIF',   group: 'Events' },
+    { 'start date': '09/01/17', 'end date': '03/31/18', headline: 'Platform v2',             description: 'Major platform rebuild introduced new collaboration and publishing features.',     project: 'Skins', group: 'AbTeC' },
+    { 'start date': '11/15/17', 'end date': '11/15/17', headline: 'Journal Article',         description: 'Peer-reviewed article accepted and published in leading new media journal. www.jasonlewis.org',       project: 'IIF',   group: 'Outputs' },
+    { 'start date': '02/01/18', 'end date': '08/31/18', headline: 'International Tour',      description: 'Exhibition toured successfully across galleries in four different countries.',      project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '06/10/18', 'end date': '06/10/18', headline: 'Funding Secured',         description: 'New multi-year production grant awarded by the Canada Council for Arts.',         project: 'Skins', group: 'Funding' },
+    { 'start date': '10/01/18', 'end date': '04/30/19', headline: 'Evaluation Study',        description: 'Independent external evaluation assessed broad program impact and outcomes.',      project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '01/20/19', 'end date': '01/20/19', headline: 'Colloquium',              description: 'Intimate research colloquium convened twelve invited international scholars.',      project: 'IIF',   group: 'Events' },
+    { 'start date': '05/01/19', 'end date': '11/30/19', headline: 'Mobile App',              description: 'Companion mobile application developed to extend platform reach and access.',      project: 'Skins', group: 'AbTeC' },
+    { 'start date': '07/15/19', 'end date': '07/15/19', headline: 'Book Launch',             description: 'Celebrated launch of co-edited collection at well-attended public event.',         project: 'IIF',   group: 'Events' },
+    { 'start date': '03/01/20', 'end date': '09/30/20', headline: 'Remote Pivot',            description: 'All in-person programming successfully adapted for remote and online delivery.',   project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '05/15/20', 'end date': '05/15/20', headline: 'Virtual Exhibition',      description: 'Online exhibition attracted over eight thousand visitors from many countries.',    project: 'Skins', group: 'Events' },
+    { 'start date': '10/01/20', 'end date': '04/30/21', headline: 'Archival Project',        description: 'Digitization and structured archiving of rare historical community materials.',    project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '02/10/21', 'end date': '02/10/21', headline: 'Partnership Renewal',     description: 'Memoranda of Understanding renewed with three key university partners.',           project: 'Skins', group: 'Funding' },
+    { 'start date': '06/01/21', 'end date': '12/31/21', headline: 'Phase 3 Launch',          description: 'Third and most ambitious project phase officially launched with expanded team.',   project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '09/20/21', 'end date': '09/20/21', headline: 'Symposium',               description: 'Hybrid symposium reached two hundred participants across in-person and online.',   project: 'IIF',   group: 'Events' },
+    { 'start date': '01/01/22', 'end date': '06/30/22', headline: 'Curriculum Design',       description: 'New graduate-level curriculum modules developed and piloted with students.',       project: 'Skins', group: 'AbTeC' },
+    { 'start date': '04/01/22', 'end date': '04/01/22', headline: 'Grant Awarded',           description: 'SSHRC Partnership Grant of $2.4M awarded over a seven-year term.',               project: 'IIF',   group: 'Funding' },
+    { 'start date': '07/01/22', 'end date': '12/31/22', headline: 'Cohort 3',                description: 'Third student cohort of fourteen participants began intensive program.',           project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '10/15/22', 'end date': '10/15/22', headline: 'Conference Presentation', description: 'Research presented to international audience at ISEA 2022 in Barcelona.',         project: 'Skins', group: 'Events' },
+    { 'start date': '01/15/23', 'end date': '07/31/23', headline: 'Research Sprint',         description: 'Intensive six-month period of focused collaborative research and writing.',        project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '05/01/23', 'end date': '05/01/23', headline: 'Documentary Released',    description: 'Short documentary film released capturing the full scope of program impact. www.jasonlewis.org',     project: 'Skins', group: 'Outputs' },
+    { 'start date': '08/01/23', 'end date': '02/28/24', headline: 'Platform v3',             description: 'Next-generation platform rebuilt with integrated AI tools and new interface.',     project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '11/10/23', 'end date': '11/10/23', headline: 'Annual Gathering',        description: 'Network-wide annual gathering brought sixty participants from across Canada.',     project: 'IIF',   group: 'Events' },
+    { 'start date': '03/01/24', 'end date': '09/30/24', headline: 'Outreach Program',        description: 'Broad community outreach initiative delivered across five distinct regions.',      project: 'Skins', group: 'AbTeC' },
+    { 'start date': '06/15/24', 'end date': '06/15/24', headline: 'Award Nomination',        description: 'Project nominated for the prestigious Governor General Innovation Award.',        project: 'IIF',   group: 'Events' },
+    { 'start date': '10/01/24', 'end date': '03/31/25', headline: 'Evaluation Phase',        description: 'Scheduled mid-grant external evaluation assessed progress against objectives.',    project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '01/20/25', 'end date': '01/20/25', headline: 'Funding Renewal',         description: 'Phase 2 multi-year funding confirmed by both federal and provincial partners.',   project: 'Skins', group: 'Funding' },
+    { 'start date': '04/01/25', 'end date': '12/31/25', headline: 'Cohort 4',                description: 'Fourth student cohort launched with expanded Indigenous community partnerships.', project: 'IIF',   group: 'AbTeC' },
+    { 'start date': '07/10/25', 'end date': '07/10/25', headline: 'Summer Summit',           description: 'Annual summer research summit gathered all project leads and collaborators.',     project: 'Skins', group: 'Events' },
+    { 'start date': '09/01/25', 'end date': '02/28/26', headline: 'Final Report',            description: 'Preparing comprehensive final project report.', project: 'IIF',     group: 'Outputs' },
+  ];
+  parse(rows);
+}
+
+loadTestData();
+
+</script>
+</body>
+</html>
