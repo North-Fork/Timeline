@@ -287,7 +287,7 @@ body {
 const LABEL_W    = 150;   // group label column width (px)
 const HDR_H      = 48;    // time axis header height (px)
 const BTM_H      = 40;    // bottom axis height (px)
-const AXIS_START = new Date(2012, 0, 1).getTime(); // fixed axis start
+let AXIS_START = new Date(2012, 0, 1).getTime(); // updated to earliest event's year on load
 const ROW_H   = 64;    // minimum group row height (px)
 const BAR_H   = 28;    // event bar height (px)
 const BAR_Y   = (ROW_H - BAR_H) / 2;
@@ -393,14 +393,40 @@ function normalizeRow(row) {
   for (const k of Object.keys(row))
     n[k.trim().toLowerCase().replace(/[\s_]+/g, '')] = row[k];
   const g = (...ks) => {
-    for (const k of ks) if (n[k] !== undefined && n[k] !== '') return String(n[k]);
+    for (const k of ks) if (n[k] !== undefined && n[k] !== '') return String(n[k]).trim();
     return '';
   };
+
+  // Year/Month/Day parts format (e.g. Timeline-JS3 style)
+  let startRaw, endRaw;
+  if (n['year'] !== undefined) {
+    const yr  = g('year');
+    if (!yr) {
+      startRaw = '';  // no year → row skipped in parse()
+      endRaw   = '';
+    } else {
+      const mo  = g('month') || '1';
+      const dy  = g('day')   || '1';
+      startRaw  = `${mo}/${dy}/${yr}`;
+      const eyr = g('endyear');
+      if (eyr) {
+        const emo = g('endmonth') || '1';
+        const edy = g('endday')   || '1';
+        endRaw = `${emo}/${edy}/${eyr}`;
+      } else {
+        endRaw = '';  // treated as single-day in parse()
+      }
+    }
+  } else {
+    startRaw = g('startdate', 'start');
+    endRaw   = g('enddate', 'end');
+  }
+
   return {
-    startRaw:    g('startdate', 'start'),
-    endRaw:      g('enddate', 'end'),
+    startRaw,
+    endRaw,
     headline:    g('headline', 'title', 'name', 'event'),
-    description: g('description', 'desc', 'details', 'notes', 'body'),
+    description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
     project:     g('project', 'proj'),
     group:       g('group', 'grp', 'category'),
   };
@@ -424,7 +450,7 @@ function parse(rows) {
   }).filter(Boolean);
 
   if (!parsed.length) {
-    alert('No valid events found.\n\nExpected column names:\n  start date, end date, headline, description, project, group');
+    alert('No valid events found.\n\nSupported column formats:\n  • start date, end date, headline, description, project, group\n  • Year, Month, Day, End Year, End Month, End Day, headline, text, Group');
     return;
   }
 
@@ -436,6 +462,8 @@ function parse(rows) {
   projVis  = new Set(projects);
   minTs    = Math.min(...events.map(e => e.startTs));
   maxTs    = Math.max(...events.map(e => e.endTs));
+  const earliestYear = new Date(minTs).getFullYear();
+  AXIS_START = new Date(earliestYear, 0, 1).getTime();
 
   computeLanes();
   buildFilters();
