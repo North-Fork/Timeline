@@ -462,8 +462,8 @@ function normalizeRow(row) {
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
-    group:       g('group2', 'group', 'grp', 'category'),  // group_2 = second "Group" col (category)
-    org:         g('group'),                               // first "Group" col (organisational group)
+    group:       g('category', 'group', 'grp'),  // 'Category' col if present, else 'Group'
+    org:         g('group'),                   // 'Group' col = organisational group
     program:     g('program', 'prog'),
     project:     g('project', 'proj'),
   };
@@ -511,7 +511,9 @@ function parse(rows) {
     if (bi === -1) return -1;
     return ai - bi;
   });
-  orgs     = [...new Set(events.map(e => e.org).filter(Boolean))].sort();
+  // Only show org/program/project filters when they are distinct from category
+  const hasOrgDim = events.some(e => e.org && e.org !== e.group);
+  orgs     = hasOrgDim ? [...new Set(events.map(e => e.org).filter(Boolean))].sort() : [];
   programs = [...new Set(events.map(e => e.program).filter(Boolean))].sort();
   projects = [...new Set(events.map(e => e.project).filter(Boolean))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
@@ -822,12 +824,19 @@ function redraw() {
   tlSvg.appendChild(gridG);
 
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(e =>
-    groupVis.has(e.group) &&
-    (orgs.length     === 0 || e.org     === '' || orgVis.has(e.org)) &&
-    (programs.length === 0 || e.program === '' || programVis.has(e.program)) &&
-    (projects.length === 0 || e.project === '' || projVis.has(e.project))
-  );
+  const visEvs = events.filter(e => {
+    if (!groupVis.has(e.group)) return false;
+    // OR logic across Group / Program / Project:
+    // events with no tags in these dimensions always show;
+    // tagged events show if any one of their tags is checked
+    const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
+    if (noTags) return true;
+    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+    if (!hasTag) return true;
+    return (e.org     !== '' && orgVis.has(e.org))         ||
+           (e.program !== '' && programVis.has(e.program)) ||
+           (e.project !== '' && projVis.has(e.project));
+  });
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
 
