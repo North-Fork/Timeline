@@ -315,9 +315,13 @@ const PALETTE = [
 // ── State ────────────────────────────────────────────────────────────────
 let events    = [];
 let groups    = [];
-let projects   = [];
+let orgs      = [];
+let programs  = [];
+let projects  = [];
 let groupColor = {};
 let groupVis  = new Set();
+let orgVis    = new Set();
+let programVis = new Set();
 let projVis   = new Set();
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
@@ -378,7 +382,7 @@ function load(file) {
   r.onload = e => {
     try {
       const wb   = XLSX.read(e.target.result, { type: 'binary' });
-      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+      const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
       parse(rows);
     } catch (ex) { alert('Could not read file:\n' + ex.message); }
   };
@@ -400,6 +404,24 @@ function fmtDate(d) {
 }
 
 const stripHtml = s => s.replace(/<[^>]*>/g, '').trim();
+
+// Read a worksheet into row objects, deduplicating repeated column names (Group_2, etc.)
+function sheetToRows(ws) {
+  const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  if (!raw.length) return [];
+  const seen = {}, deduped = [];
+  for (const h of raw[0]) {
+    const key = (h !== null && h !== undefined && h !== '') ? String(h) : null;
+    if (!key) { deduped.push(null); continue; }
+    seen[key] = (seen[key] || 0) + 1;
+    deduped.push(seen[key] > 1 ? `${key}_${seen[key]}` : key);
+  }
+  return raw.slice(1).map(row => {
+    const obj = {};
+    deduped.forEach((h, i) => { if (h) obj[h] = row[i] ?? ''; });
+    return obj;
+  });
+}
 
 function normalizeRow(row) {
   const n = {};
@@ -440,8 +462,10 @@ function normalizeRow(row) {
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
+    group:       g('group2', 'group', 'grp', 'category'),  // group_2 = second "Group" col (category)
+    org:         g('group'),                               // first "Group" col (organisational group)
+    program:     g('program', 'prog'),
     project:     g('project', 'proj'),
-    group:       g('group', 'grp', 'category'),
   };
 }
 
@@ -457,8 +481,10 @@ function parse(rows) {
       startTs: start.getTime(), endTs: end.getTime(),
       headline:    nr.headline    || '(Untitled)',
       description: nr.description || '',
-      project:     nr.project     || 'Unassigned',
       group:       nr.group       || 'Ungrouped',
+      org:         nr.org         || '',
+      program:     nr.program     || '',
+      project:     nr.project     || '',
     };
   }).filter(Boolean);
 
@@ -485,10 +511,14 @@ function parse(rows) {
     if (bi === -1) return -1;
     return ai - bi;
   });
-  projects = [...new Set(events.map(e => e.project))].sort();
+  orgs     = [...new Set(events.map(e => e.org).filter(Boolean))].sort();
+  programs = [...new Set(events.map(e => e.program).filter(Boolean))].sort();
+  projects = [...new Set(events.map(e => e.project).filter(Boolean))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
-  groupVis = new Set(groups);
-  projVis  = new Set(projects);
+  groupVis   = new Set(groups);
+  orgVis     = new Set(orgs);
+  programVis = new Set(programs);
+  projVis    = new Set(projects);
   minTs    = Math.min(...events.map(e => e.startTs));
   maxTs    = Math.max(...events.map(e => e.endTs));
   const earliestYear = new Date(minTs).getFullYear();
@@ -534,6 +564,9 @@ function buildFilters() {
   };
 
   section('Categories', groups, groupVis, g => groupColor[g]);
+  if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280');
+  if (programs.length) section('Program',  programs, programVis, () => '#6b7280');
+  if (projects.length) section('Project',  projects, projVis,    () => '#6b7280');
 }
 
 // ── Lane stacking ─────────────────────────────────────────────────────────
@@ -789,7 +822,12 @@ function redraw() {
   tlSvg.appendChild(gridG);
 
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(e => groupVis.has(e.group));
+  const visEvs = events.filter(e =>
+    groupVis.has(e.group) &&
+    (orgs.length     === 0 || e.org     === '' || orgVis.has(e.org)) &&
+    (programs.length === 0 || e.program === '' || programVis.has(e.program)) &&
+    (projects.length === 0 || e.project === '' || projVis.has(e.project))
+  );
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
 
@@ -1013,7 +1051,7 @@ window.addEventListener('resize', () => { if (events.length) redraw(); });
 
 // ── Auto-load: switch between real file and synthetic data ────────────────
 // To load real file: uncomment the fetch block and remove loadTestData() call
-fetch('data/IIF-Timeline-Data.xlsx')
+fetch('data/IIF-Timeline-Data-Multi-Project.xlsx')
   .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
   .then(buf => {
     const wb   = XLSX.read(buf, { type: 'array' });
