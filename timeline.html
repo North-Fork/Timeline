@@ -469,13 +469,13 @@ function parse(rows) {
 
   events   = parsed;
   const GROUP_ORDER = [
-    'Dissemination',
     'Workshops',
     'Symposia and Partnership Meetings',
     'Residencies/Exhibitions',
     'Guest Lectures and Artist Talks',
     'Illustrating the Future Imaginary',
     'Archive',
+    'Dissemination',
     'Press/Reviews',
   ];
   groups = [...new Set(events.map(e => e.group))].sort((a, b) => {
