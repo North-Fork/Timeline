@@ -1,5 +1,18 @@
 # Changelog
 
+## Session 3 — 2026-02-26
+
+### File Organisation (all branches)
+- Renamed `data/cv/` → `data/cv-data/` on `main`, `Timeline-CV`, `Timeline-AbTeC`
+- Moved all timeline-named files from `data/` root into new `data/timeline-data/` subfolder on all three branches
+- Updated auto-load fetch paths to match new locations (`data/cv-data/cv.xlsx`, `data/timeline-data/IIF-Timeline-Data-Multi-Project.xlsx`)
+- Deleted untracked `reference/` folder (unused)
+
+### Branch Titles
+- Set per-branch `<title>` and `#sidebar-title`:  `main` → "Timeline", `Timeline-CV` → "CV Timeline", `Timeline-AbTeC` → "AbTeC Timeline"
+
+---
+
 ## Session 2 — 2026-02-25
 
 ### New Branches
