@@ -468,7 +468,23 @@ function parse(rows) {
   }
 
   events   = parsed;
-  groups   = [...new Set(events.map(e => e.group))];
+  const GROUP_ORDER = [
+    'Dissemination',
+    'Workshops',
+    'Symposia and Partnership Meetings',
+    'Residencies/Exhibitions',
+    'Guest Lectures and Artist Talks',
+    'Illustrating the Future Imaginary',
+    'Archive',
+    'Press/Reviews',
+  ];
+  groups = [...new Set(events.map(e => e.group))].sort((a, b) => {
+    const ai = GROUP_ORDER.indexOf(a), bi = GROUP_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
   projects = [...new Set(events.map(e => e.project))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
   groupVis = new Set(groups);
