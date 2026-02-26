@@ -822,12 +822,18 @@ function redraw() {
   tlSvg.appendChild(gridG);
 
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(e =>
-    groupVis.has(e.group) &&
-    (orgs.length     === 0 || e.org     === '' || orgVis.has(e.org)) &&
-    (programs.length === 0 || e.program === '' || programVis.has(e.program)) &&
-    (projects.length === 0 || e.project === '' || projVis.has(e.project))
-  );
+  const visEvs = events.filter(e => {
+    if (!groupVis.has(e.group)) return false;
+    // OR logic across Group / Program / Project:
+    // if none of these dimensions are in use, always show
+    // otherwise show if the event matches at least one checked value,
+    // or has no tags at all in these dimensions
+    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+    if (!hasTag) return true;
+    return (e.org     !== '' && orgVis.has(e.org))         ||
+           (e.program !== '' && programVis.has(e.program)) ||
+           (e.project !== '' && projVis.has(e.project));
+  });
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
 
