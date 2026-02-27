@@ -1,0 +1,13 @@
+AbTeC Timeline — Feature Wish List
+====================================
+
+PDF Export
+----------
+- Make PDF export work in Safari and Firefox (currently requires Chrome/Brave)
+  Note: blocked by browser differences in @page CSS, SVG scaling, and print APIs
+
+Offline Data Loading
+--------------------
+- Make double-click file:// loading work in Firefox and Safari
+  Note: currently blocked by stricter local file access policies in those browsers
+

@@ -4,7 +4,7 @@ AbTeC Timeline
 USE
 Timeline Expand/Contract or Zoom In/Out: spacebar+mousewheel
 
-PDF Export still requires alot of work.
+PDF Export still requires alot of work, and only works in Chrome or Brave unless you want to run it via a server. See Other Browsers below.
 
 RECOMMENDED: Chrome or Brave browser
 --------------------------------------
