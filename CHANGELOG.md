@@ -6,8 +6,13 @@
 - **PDF button** added to toolbar (after Today button)
 - **Year-range modal** prompts for Start Year / End Year with defaults from data range
 - **`buildExportSVG(y1, y2)`** generates a standalone 1100px SVG respecting all active filters: title bar (orange), top axis, row backgrounds, year grid lines, event bars with labels, today marker, label column, bottom axis
-- **Print window**: SVG opened via blob URL in a new tab; "Print / Save as PDF" button triggers `window.print()` then auto-closes the tab
+- **Print window**: SVG opened via blob URL in a new tab; "Print / Save as PDF" button triggers `window.print()` then auto-closes the tab; page size `11in × 8.5in` (US letter landscape) with 0.75in margins; `viewBox` + `width:100%` fills the full printable area
 - **Focus redraw**: `window.addEventListener('focus', redraw)` recovers the original window's UI after the print dialog unblocks the browser
+
+### Offline data loading (Timeline-AbTeC)
+- **`data/timeline-data/make_data_js.py`**: converts xlsx to `timeline-data.js` (`window.__TIMELINE_DATA__ = [...]`) for use without a local server
+- **Auto-load priority**: pre-generated JS (works with `file://` double-click in Chrome/Brave) → fetch xlsx (http/https) → synthetic fallback
+- **`README.txt`**: browser notes (Chrome/Brave for double-click; server URL for others), data update instructions
 
 ---
 
