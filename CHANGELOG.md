@@ -1,5 +1,16 @@
 # Changelog
 
+## Session 4 — 2026-02-26
+
+### PDF Export (Timeline-AbTeC)
+- **PDF button** added to toolbar (after Today button)
+- **Year-range modal** prompts for Start Year / End Year with defaults from data range
+- **`buildExportSVG(y1, y2)`** generates a standalone 1100px SVG respecting all active filters: title bar (orange), top axis, row backgrounds, year grid lines, event bars with labels, today marker, label column, bottom axis
+- **Print window**: SVG opened via blob URL in a new tab; "Print / Save as PDF" button triggers `window.print()` then auto-closes the tab
+- **Focus redraw**: `window.addEventListener('focus', redraw)` recovers the original window's UI after the print dialog unblocks the browser
+
+---
+
 ## Session 3 — 2026-02-26
 
 ### File Organisation (all branches)
