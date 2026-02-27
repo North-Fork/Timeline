@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Vibe-coding a timeline to track all of the research activity of Jason Lewis (www.jasonlewis.org) and his research studio-lab at Concordia University, Montreal, called Aboriginal Territories in Cyberspace (www.abtec.org).
+Vibe-coding a timeline to track all of the research activity of Jason Lewis (https://www.jasonlewis.org) and his research studio-lab at Concordia University, Montreal, called Aboriginal Territories in Cyberspace (https://www.abtec.org).
 
 ## Issue Tracking: Use Beads
 
