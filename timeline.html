@@ -160,54 +160,94 @@ body {
 }
 
 /* ── Modal ────────────────────────────────────────────────── */
-#modal-bg {
-  display: none;
+/* ── Drawer ───────────────────────────────────────────────── */
+#drawer {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
-#modal-bg.open { display: flex; }
-#modal {
+  top: 0; right: 0;
+  width: 380px;
+  height: 100%;
   background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 10px;
-  padding: 20px 24px;
-  max-width: 500px;
-  width: calc(100% - 40px);
-  position: relative;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  border-left: 1px solid #374151;
+  z-index: 200;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.4);
 }
-#modal h2 { font-size: 16px; margin-bottom: 14px; }
-#modal .m-meta {
-  font-size: 12px;
+#drawer.open { transform: translateX(0); }
+#drawer-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #374151;
+  flex-shrink: 0;
+  gap: 4px;
+}
+#drawer-nav { display: flex; gap: 4px; flex: 1; }
+.drawer-btn {
+  background: none;
+  border: none;
   color: #6b7280;
-  margin-bottom: 14px;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.drawer-btn:hover:not(:disabled) { color: #e5e7eb; background: #374151; }
+.drawer-btn:disabled { opacity: 0.25; cursor: default; }
+#drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px 24px;
+}
+#drawer-body h2 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.d-meta {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 16px;
   line-height: 2;
 }
-#modal .m-desc {
+.d-media {
+  margin-bottom: 16px;
+}
+.d-media iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+  border-radius: 6px;
+  display: block;
+}
+.d-media img {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+}
+.d-media-caption {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.d-media-credit {
+  font-size: 10px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.d-desc {
   font-size: 13px;
   line-height: 1.7;
   color: #d1d5db;
   white-space: pre-wrap;
 }
-#modal .m-desc a { color: #6366f1; text-decoration: underline; }
-#modal .m-desc a:hover { color: #818cf8; }
-#modal-x {
-  position: absolute;
-  top: 12px; right: 14px;
-  background: none;
-  border: none;
-  color: #6b7280;
-  font-size: 18px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-#modal-x:hover { color: #e5e7eb; background: #374151; }
+.d-desc a { color: #6366f1; text-decoration: underline; }
+.d-desc a:hover { color: #818cf8; }
 
 /* ── Tooltip ──────────────────────────────────────────────── */
 #tooltip {
@@ -329,12 +369,19 @@ body {
 </div>
 
 <!-- Modal -->
-<div id="modal-bg">
-  <div id="modal">
-    <button id="modal-x" title="Close">✕</button>
-    <h2 id="m-title"></h2>
-    <div class="m-meta" id="m-meta"></div>
-    <div class="m-desc" id="m-desc"></div>
+<div id="drawer">
+  <div id="drawer-header">
+    <div id="drawer-nav">
+      <button class="drawer-btn" id="drawer-prev" title="Previous event">◀</button>
+      <button class="drawer-btn" id="drawer-next" title="Next event">▶</button>
+    </div>
+    <button class="drawer-btn" id="drawer-x" title="Close">✕</button>
+  </div>
+  <div id="drawer-body">
+    <h2 id="d-title"></h2>
+    <div class="d-meta" id="d-meta"></div>
+    <div class="d-media" id="d-media"></div>
+    <div class="d-desc"  id="d-desc"></div>
   </div>
 </div>
 
@@ -405,7 +452,6 @@ const hdrSvg   = document.getElementById('hdr-svg');
 const emptyEl  = document.getElementById('empty');
 const filDiv   = document.getElementById('filters');
 const cntEl    = Object.assign(document.createElement('div'), { id: 'event-count' });
-const modalBg  = document.getElementById('modal-bg');
 const tooltip  = document.getElementById('tooltip');
 
 let _hideTimer = null;
@@ -543,11 +589,19 @@ function normalizeRow(row, format = 'abtec') {
       group:   g('category', 'group', 'grp'), // Category col = main grouping
       org:     g('group'),                    // Group col = organisational group
       program: g('program', 'prog'),
+      media:          g('media', 'url', 'video', 'image'),
+      mediaThumbnail: g('mediathumbnail', 'thumbnail'),
+      mediaCaption:   g('mediacaption', 'caption'),
+      mediaCredit:    g('mediacredit', 'credit'),
     };
   } else {
     // CV format: Group col is the main grouping; no org/program dimensions
     return { ...base,
-      group:   g('group', 'grp', 'category'),
+      group:          g('group', 'grp', 'category'),
+      media:          g('media', 'url', 'video', 'image'),
+      mediaThumbnail: g('mediathumbnail', 'thumbnail'),
+      mediaCaption:   g('mediacaption', 'caption'),
+      mediaCredit:    g('mediacredit', 'credit'),
     };
   }
 }
@@ -574,6 +628,10 @@ function parse(rows) {
       org:         nr.org         || '',
       program:     nr.program     || '',
       project:     nr.project     || '',
+      media:          nr.media          || '',
+      mediaThumbnail: nr.mediaThumbnail || '',
+      mediaCaption:   nr.mediaCaption   || '',
+      mediaCredit:    nr.mediaCredit    || '',
     };
   }).filter(Boolean);
 
@@ -996,7 +1054,7 @@ function redraw() {
 
     g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
     g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); hideTooltip(); });
-    g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openModal(ev); });
+    g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
   }
 
   // ── Today marker (clipped to event area) ─────────────────────────────
@@ -1058,28 +1116,156 @@ function linkify(text) {
   });
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────
-function openModal(ev) {
-  const titleEl = document.getElementById('m-title');
+// ── Drawer ────────────────────────────────────────────────────────────────
+const drawer   = document.getElementById('drawer');
+const btnPrev  = document.getElementById('drawer-prev');
+const btnNext  = document.getElementById('drawer-next');
+let activeDrawerId = null;
+const noembedCache = new Map();
+
+async function fetchNoembed(url) {
+  if (noembedCache.has(url)) return noembedCache.get(url);
+  const res  = await fetch(`https://noembed.com/embed?url=${encodeURIComponent(url)}`);
+  const data = await res.json();
+  noembedCache.set(url, data);
+  return data;
+}
+
+function preloadAdjacent() {
+  const vis = getVisibleEvents();
+  const idx = vis.findIndex(e => e.id === activeDrawerId);
+  [idx - 1, idx + 1].forEach(i => {
+    if (i >= 0 && i < vis.length) {
+      const ev = vis[i];
+      if (ev.media && /flickr\.com/.test(ev.media) && !noembedCache.has(ev.media))
+        fetchNoembed(ev.media).catch(() => {});
+    }
+  });
+}
+
+function getVisibleEvents() {
+  return events.filter(e => {
+    if (!groupVis.has(e.group)) return false;
+    const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
+    if (noTags) return true;
+    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+    if (!hasTag) return true;
+    return (e.org     !== '' && orgVis.has(e.org))         ||
+           (e.program !== '' && programVis.has(e.program)) ||
+           (e.project !== '' && projVis.has(e.project));
+  }).sort((a, b) => a.startTs - b.startTs);
+}
+
+async function renderMedia(ev, container) {
+  container.innerHTML = '';
+
+  const url   = ev.media || '';
+  const thumb = ev.mediaThumbnail || '';
+  const targetId = ev.id;
+
+  const metaHtml = (caption, credit) => {
+    let html = '';
+    if (caption) html += `<div class="d-media-caption">${caption}</div>`;
+    if (credit)  html += `<div class="d-media-credit">${credit}</div>`;
+    return html;
+  };
+
+  // Build video HTML (sync)
+  let vidHtml = '';
+  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?.*v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) {
+    vidHtml = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>`;
+  } else {
+    const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) vidHtml = `<iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" allowfullscreen></iframe>`;
+  }
+
+  // Case 1: video present → embed only, ignore thumbnail
+  if (vidHtml) {
+    container.innerHTML = vidHtml + metaHtml(ev.mediaCaption, ev.mediaCredit);
+    return;
+  }
+
+  // Case 1b: direct thumbnail URL → show image (no video)
+  if (thumb && /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i.test(thumb)) {
+    container.innerHTML = `<img src="${thumb}" alt="${ev.mediaCaption || ''}">${metaHtml(ev.mediaCaption, ev.mediaCredit)}`;
+    return;
+  }
+
+  // Case 2: direct image URL in media
+  if (/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(url)) {
+    container.innerHTML = `<img src="${url}" alt="${ev.mediaCaption || ''}">${metaHtml(ev.mediaCaption, ev.mediaCredit)}`;
+    return;
+  }
+
+  // Case 3: Flickr → async noembed for image (check media url first, then thumbnail)
+  const flickrUrl = /flickr\.com/.test(url) ? url : /flickr\.com/.test(thumb) ? thumb : null;
+  if (flickrUrl) {
+    container.innerHTML = '<div class="d-media-caption">Loading…</div>';
+    try {
+      const data   = await fetchNoembed(flickrUrl);
+      if (activeDrawerId !== targetId) return;
+      const imgUrl = data.media_url || data.thumbnail_url;
+      const imgHtml = imgUrl
+        ? `<img src="${imgUrl}" alt="${data.title || ''}">`
+        : `<a href="${flickrUrl}" target="_blank" style="color:#6366f1">View photo ↗</a>`;
+      container.innerHTML = imgHtml + metaHtml(ev.mediaCaption, ev.mediaCredit || data.author_name);
+    } catch {
+      if (activeDrawerId === targetId)
+        container.innerHTML = `<a href="${flickrUrl}" target="_blank" style="color:#6366f1">View photo ↗</a>${metaHtml(ev.mediaCaption, ev.mediaCredit)}`;
+    }
+    return;
+  }
+
+  // Case 5: video only (fallthrough — no image source found)
+  if (vidHtml) container.innerHTML = vidHtml + metaHtml(ev.mediaCaption, ev.mediaCredit);
+}
+
+function updateDrawerNav() {
+  const vis = getVisibleEvents();
+  const idx = vis.findIndex(e => e.id === activeDrawerId);
+  btnPrev.disabled = idx <= 0;
+  btnNext.disabled = idx < 0 || idx >= vis.length - 1;
+}
+
+async function openDrawer(ev) {
+  if (activeDrawerId === ev.id) { closeDrawer(); return; }
   const color = groupColor[ev.group] || '#e5e7eb';
+  const titleEl = document.getElementById('d-title');
   titleEl.textContent = ev.headline;
   titleEl.style.color = color;
   const duration = ev.end > ev.start
     ? `${fmtDate(ev.start)} → ${fmtDate(ev.end)}`
     : fmtDate(ev.start);
-  document.getElementById('m-meta').innerHTML = [
+  document.getElementById('d-meta').innerHTML = [
     `<b>Category:</b> ${ev.group}`,
     `<b>Date:</b> ${duration}`,
   ].join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;');
-  document.getElementById('m-desc').innerHTML = linkify(ev.description || '(No description)');
-  modalBg.classList.add('open');
+  document.getElementById('d-desc').innerHTML = linkify(ev.description || '');
+  activeDrawerId = ev.id;
+  drawer.classList.add('open');
+  updateDrawerNav();
+  await renderMedia(ev, document.getElementById('d-media'));
+  preloadAdjacent();
 }
 
-document.getElementById('modal-x').addEventListener('click', () => modalBg.classList.remove('open'));
-modalBg.addEventListener('click', e => { if (e.target === modalBg) modalBg.classList.remove('open'); });
+function closeDrawer() { drawer.classList.remove('open'); activeDrawerId = null; }
+
+btnPrev.addEventListener('click', () => {
+  const vis = getVisibleEvents();
+  const idx = vis.findIndex(e => e.id === activeDrawerId);
+  if (idx > 0) openDrawer(vis[idx - 1]);
+});
+btnNext.addEventListener('click', () => {
+  const vis = getVisibleEvents();
+  const idx = vis.findIndex(e => e.id === activeDrawerId);
+  if (idx >= 0 && idx < vis.length - 1) openDrawer(vis[idx + 1]);
+});
+
+document.getElementById('drawer-x').addEventListener('click', () => closeDrawer());
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    modalBg.classList.remove('open');
+    closeDrawer();
     exportModalBg.classList.remove('open');
   }
 });
