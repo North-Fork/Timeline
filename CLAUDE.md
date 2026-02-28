@@ -66,7 +66,7 @@ data/
 │   ├── cv.xlsx                             generated timeline data (Timeline-CV branch)
 │   └── generate_cv_xlsx.py                 converts cv.txt → cv.xlsx
 └── timeline-data/
-    ├── IIF-Timeline-Data-Multi-Project.xlsx  active AbTeC data (Timeline-AbTeC branch)
+    ├── IIF-Timeline-Data-Multi-Project.xlsx  active AbTeC data (Timeline-AbTeC* branches)
     ├── make_data_js.py                       converts xlsx → timeline-data.js
     ├── timeline-data.js                      generated JS with embedded data (auto-load)
     ├── timeline-test-data-synthetic.xlsx     synthetic test data (main branch)
@@ -74,25 +74,49 @@ data/
     └── *.xlsx                                older/reference versions
 ```
 
-**Before every commit:** run `python3 data/timeline-data/make_data_js.py` to regenerate
-`timeline-data.js` from the xlsx.
+**Whenever the xlsx changes:** run `python3 data/timeline-data/make_data_js.py` to regenerate
+`timeline-data.js` from the xlsx. This must be done before committing or testing.
+
+**No server needed:** `timeline-data.js` is loaded via `<script src>` which works with
+`file://`. `serve.sh` / http server only needed for xlsx drag-and-drop fallback path.
+
+### xlsx Columns (IIF-Timeline-Data-Multi-Project.xlsx)
+
+Key columns used by the parser (`normalizeRow`):
+
+| Column | Field | Notes |
+|---|---|---|
+| Year/Month/Day, End Year/Month/Day | start, end | TimelineJS split-date format |
+| Headline | headline, headlineUrl | May contain `<a href>` — URL extracted separately |
+| Title | headline (fallback) | Plain text; preferred over Headline for display |
+| Text | description | Event body text |
+| Category | group | Primary grouping (drives row colour + filter) |
+| Group | org | Organisational dimension |
+| Program | program | Program dimension |
+| Project | project | Project dimension |
+| Media | media | YouTube/Vimeo URL or direct image URL |
+| Media Thumbnail | mediaThumbnail | Direct image URL or Flickr page URL |
+| Media Caption | mediaCaption | Caption shown below media |
+| Media Credit | mediaCredit | Credit shown below media |
+| Team Members | teamMembers | Format: `Role: Name(s); Role: Name(s)` |
 
 ### How Components Interact
 
 ```
-serve.sh
-  └─ python3 -m http.server 8000
-       └─ serves timeline.html + data/
-
 timeline.html (browser)
-  ├─ on load: fetch("data/timeline-data/timeline-data.js")  ← requires server
-  │    └─ OR: user drag-and-drops an .xlsx onto the page    ← works as file://
-  ├─ SheetJS (xlsx.full.min.js, CDN) parses xlsx binary
+  ├─ on load: <script src="data/timeline-data/timeline-data.js">  ← works with file://
+  │    └─ OR: user drag-and-drops an .xlsx onto the page
+  ├─ detectFormat(rows) → 'abtec' (has Category col) or 'cv'
   ├─ normalizeRow() maps raw columns → internal event objects
   ├─ redraw() renders everything to SVG
-  │    ├─ #tl-header  (sticky top)   ← time axis
-  │    ├─ #tl-svg     (scrollable)   ← events + group labels
+  │    ├─ #tl-header  (sticky top)    ← time axis
+  │    ├─ #tl-svg     (scrollable)    ← events + group labels
   │    └─ #tl-bottom  (sticky bottom) ← bottom axis
+  ├─ Storybox (#drawer): slide-in panel showing event detail + media
+  │    ├─ renderMedia() → YouTube/Vimeo iframe, direct img, or Flickr via noembed.com
+  │    ├─ Prev/Next arrows with All/Category scope toggle
+  │    ├─ More Info ↗ link (from Headline href)
+  │    └─ Research Team section (from Team Members column)
   └─ PDF export: buildExportSVG() → blob URL → new tab → window.print()
 ```
 
@@ -103,3 +127,8 @@ timeline.html (browser)
 | `main` | synthetic test data | Timeline |
 | `Timeline-CV` | `data/cv-data/cv.xlsx` | CV Timeline |
 | `Timeline-AbTeC` | `data/timeline-data/IIF-Timeline-Data-Multi-Project.xlsx` | AbTeC Timeline |
+| `Timeline-AbTeC-Media` | `data/timeline-data/IIF-Timeline-Data-Multi-Project.xlsx` | AbTeC Timeline + Storybox media |
+| `Timeline-AbTeC-Prototype` | (archived) | superseded by Timeline-AbTeC |
+
+**Note:** CV and AbTeC formats are auto-detected by `detectFormat()` — both are handled
+by the same `timeline.html` codebase. The sidebar title updates automatically.
