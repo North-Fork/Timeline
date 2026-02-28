@@ -286,7 +286,7 @@ body {
 <!-- Sidebar -->
 <div id="sidebar">
   <div id="sidebar-title">
-    <span>AbTeC Timeline</span>
+    <span id="sidebar-title-text">AbTeC Timeline</span>
     <button class="tb-btn" id="btn-zoomin"  title="Zoom in">＋</button>
     <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
   </div>
@@ -487,7 +487,16 @@ function sheetToRows(ws) {
   });
 }
 
-function normalizeRow(row) {
+// Detect data format by sniffing column headers of the first row.
+// 'abtec' : has a Category column (main grouping) + Group (org) + Program dimensions
+// 'cv'    : uses Group as the main grouping; no Category/Org/Program columns
+function detectFormat(rows) {
+  if (!rows.length) return 'abtec';
+  const keys = Object.keys(rows[0]).map(k => k.trim().toLowerCase().replace(/[\s_]+/g, ''));
+  return keys.includes('category') ? 'abtec' : 'cv';
+}
+
+function normalizeRow(row, format = 'abtec') {
   const n = {};
   for (const k of Object.keys(row))
     n[k.trim().toLowerCase().replace(/[\s_]+/g, '')] = row[k];
@@ -521,21 +530,37 @@ function normalizeRow(row) {
     endRaw   = g('enddate', 'end');
   }
 
-  return {
+  const base = {
     startRaw,
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
-    group:       g('category', 'group', 'grp'),  // 'Category' col if present, else 'Group'
-    org:         g('group'),                   // 'Group' col = organisational group
-    program:     g('program', 'prog'),
     project:     g('project', 'proj'),
   };
+
+  if (format === 'abtec') {
+    return { ...base,
+      group:   g('category', 'group', 'grp'), // Category col = main grouping
+      org:     g('group'),                    // Group col = organisational group
+      program: g('program', 'prog'),
+    };
+  } else {
+    // CV format: Group col is the main grouping; no org/program dimensions
+    return { ...base,
+      group:   g('group', 'grp', 'category'),
+    };
+  }
 }
 
+const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
+
 function parse(rows) {
+  const format = detectFormat(rows);
+  const titleEl = document.getElementById('sidebar-title-text');
+  if (titleEl) titleEl.textContent = FORMAT_TITLES[format] ?? 'Timeline';
+
   const parsed = rows.map((r, i) => {
-    const nr    = normalizeRow(r);
+    const nr    = normalizeRow(r, format);
     const start = pDate(nr.startRaw);
     if (!start) return null;
     let end = pDate(nr.endRaw) || start;
