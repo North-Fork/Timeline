@@ -248,6 +248,9 @@ body {
 }
 .d-desc a { color: #6366f1; text-decoration: underline; }
 .d-desc a:hover { color: #818cf8; }
+.d-more { margin-top: 10px; font-size: 13px; }
+.d-more a { color: #6366f1; text-decoration: underline; }
+.d-more a:hover { color: #818cf8; }
 .d-team { margin-top: 16px; font-size: 13px; color: #d1d5db; }
 .d-team h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin: 0 0 6px; }
 .d-team-group { margin-bottom: 10px; }
@@ -385,6 +388,7 @@ body {
     <div class="d-meta" id="d-meta"></div>
     <div class="d-media" id="d-media"></div>
     <div class="d-desc"  id="d-desc"></div>
+    <div class="d-more"  id="d-more"></div>
     <div class="d-team"  id="d-team"></div>
   </div>
 </div>
@@ -517,7 +521,8 @@ function fmtDate(d) {
   return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 }
 
-const stripHtml = s => s.replace(/<[^>]*>/g, '').trim();
+const stripHtml  = s => s.replace(/<[^>]*>/g, '').trim();
+const extractUrl = s => { const m = s.match(/href=["']([^"']+)["']/i); return m ? m[1] : ''; };
 
 // Read a worksheet into row objects, deduplicating repeated column names (Group_2, etc.)
 function sheetToRows(ws) {
@@ -584,6 +589,7 @@ function normalizeRow(row, format = 'abtec') {
     startRaw,
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
+    headlineUrl: extractUrl(g('headline', 'name', 'event')),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
     project:     g('project', 'proj'),
   };
@@ -629,6 +635,7 @@ function parse(rows) {
       id: i, start, end,
       startTs: start.getTime(), endTs: end.getTime(),
       headline:    nr.headline    || '(Untitled)',
+      headlineUrl: nr.headlineUrl || '',
       description: nr.description || '',
       group:       nr.group       || 'Ungrouped',
       org:         nr.org         || '',
@@ -1246,6 +1253,10 @@ async function openDrawer(ev) {
     : fmtDate(ev.start);
   document.getElementById('d-meta').innerHTML = `<div>${duration}</div><div>${ev.group}</div>`;
   document.getElementById('d-desc').innerHTML = linkify(ev.description || '');
+  const moreEl = document.getElementById('d-more');
+  moreEl.innerHTML = ev.headlineUrl
+    ? `<a href="${ev.headlineUrl}" target="_blank">More Info ↗</a>`
+    : '';
   const teamEl = document.getElementById('d-team');
   if (ev.teamMembers) {
     const lines = ev.teamMembers.split(';').map(s => s.trim()).filter(Boolean).map(segment => {
