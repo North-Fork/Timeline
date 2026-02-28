@@ -1,6 +1,12 @@
 AbTeC Timeline — Feature Wish List
 ====================================
 
+Storybox (event detail drawer)
+-------------------------------
+- Pre-fetch Flickr CDN URLs into Media Thumbnail column (batch noembed script, ~1 req/sec)
+  so Flickr images load instantly without the noembed round-trip (tracked as Timeline-013)
+- Consider showing current position (e.g. 3 of 47) in navigation scope area
+
 PDF Export
 ----------
 - Make PDF export work in Safari and Firefox (currently requires Chrome/Brave)

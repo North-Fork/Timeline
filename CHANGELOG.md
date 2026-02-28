@@ -1,5 +1,39 @@
 # Changelog
 
+## Session 5 — 2026-02-27
+
+### Storybox (event detail drawer) — Timeline-AbTeC-Media branch
+
+- **Renamed**: the slide-in event detail panel is now called the **Storybox**
+- **Media embedding**: clicking an event opens the Storybox with embedded media
+  - YouTube and Vimeo URLs in the `Media` column render as iframes (video takes priority; thumbnail ignored when video is present)
+  - Flickr URLs resolved to direct image via noembed.com (CORS-friendly); checked in both `Media` and `Media Thumbnail` columns
+  - Direct image URLs (.jpg / .png etc.) rendered as `<img>`
+  - `noembedCache` + `preloadAdjacent()` for Flickr performance
+- **Toggle close**: clicking the same event again closes the Storybox
+- **Prev/next navigation**: ◀ ▶ arrows in Storybox header step through visible events chronologically
+- **Navigation scope toggle**: "All | Category" toggle next to arrows — "All" walks all visible events; "Category" walks only events in the same category as the current event
+- **More Info link**: if the `Headline` column contains an `<a href>`, a "More Info ↗" link appears after the description, opening in a new tab
+- **Research Team section**: `Team Members` column (format: `Role: Name(s); Role: Name(s)`) rendered with underlined roles, names on next line, spacing between groups
+- **Meta layout**: date (white) shown above category, no labels
+- **Description**: line-height tightened from 1.7 → 1.53
+
+### Parser updates
+- Added `Team Members` column to `normalizeRow` and parsed event objects
+- Added `headlineUrl` extraction from `Headline` HTML (`<a href>`) — uses `Headline` column directly (not `Title`) to preserve the link
+- Added `Media Thumbnail` column support; Flickr page URLs in thumbnail fall through to noembed
+
+### Data
+- `Media Thumbnail` column added to `IIF-Timeline-Data-Multi-Project.xlsx`
+- Flickr URLs copied from `Media` column into `Media Thumbnail` for ~516 rows
+- Skins 4.0 (row 526): Vimeo link added to `Media` column; direct thumbnail `.jpg` in `Media Thumbnail`
+- `Team Members` column (col V) added with role-structured data
+
+### Colour palette
+- Swapped colours for Residencies/Exhibitions (now purple `#8b5cf6`) and Dissemination (now amber `#f59e0b`)
+
+---
+
 ## Session 4 — 2026-02-26
 
 ### PDF Export (Timeline-AbTeC)

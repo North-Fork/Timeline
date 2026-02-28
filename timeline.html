@@ -197,6 +197,10 @@ body {
 }
 .drawer-btn:hover:not(:disabled) { color: #e5e7eb; background: #374151; }
 .drawer-btn:disabled { opacity: 0.25; cursor: default; }
+#nav-scope-toggle { display: inline-flex; border: 1px solid #374151; border-radius: 4px; overflow: hidden; margin-left: 6px; }
+.scope-btn { background: none; border: none; color: #6b7280; font-size: 11px; cursor: pointer; padding: 3px 8px; line-height: 1; }
+.scope-btn:hover { color: #e5e7eb; }
+.scope-btn.active { background: #374151; color: #e5e7eb; }
 #drawer-body {
   flex: 1;
   overflow-y: auto;
@@ -214,6 +218,7 @@ body {
   margin-bottom: 16px;
   line-height: 2;
 }
+.d-meta div:first-child { color: #ffffff; }
 .d-media {
   margin-bottom: 16px;
 }
@@ -374,12 +379,16 @@ body {
   <div class="tt-date"     id="tt-date"></div>
 </div>
 
-<!-- Modal -->
+<!-- Storybox -->
 <div id="drawer">
   <div id="drawer-header">
     <div id="drawer-nav">
       <button class="drawer-btn" id="drawer-prev" title="Previous event">◀</button>
       <button class="drawer-btn" id="drawer-next" title="Next event">▶</button>
+      <div id="nav-scope-toggle">
+        <button class="scope-btn active" id="scope-all">All</button>
+        <button class="scope-btn"        id="scope-cat">Category</button>
+      </div>
     </div>
     <button class="drawer-btn" id="drawer-x" title="Close">✕</button>
   </div>
@@ -427,8 +436,8 @@ const NS      = 'http://www.w3.org/2000/svg';
 
 // ── Color palette (per category) ─────────────────────────────────────────
 const PALETTE = [
-  '#6366f1','#ec4899','#f59e0b','#10b981',
-  '#3b82f6','#ef4444','#8b5cf6','#14b8a6',
+  '#6366f1','#ec4899','#8b5cf6','#10b981',
+  '#3b82f6','#ef4444','#f59e0b','#14b8a6',
   '#f97316','#84cc16','#06b6d4','#a855f7'
 ];
 
@@ -1135,6 +1144,29 @@ const drawer   = document.getElementById('drawer');
 const btnPrev  = document.getElementById('drawer-prev');
 const btnNext  = document.getElementById('drawer-next');
 let activeDrawerId = null;
+let navMode = 'all'; // 'all' | 'category'
+
+function getNavEvents() {
+  const vis = getVisibleEvents();
+  if (navMode === 'category' && activeDrawerId !== null) {
+    const cur = events.find(e => e.id === activeDrawerId);
+    if (cur) return vis.filter(e => e.group === cur.group);
+  }
+  return vis;
+}
+
+document.getElementById('scope-all').addEventListener('click', () => {
+  navMode = 'all';
+  document.getElementById('scope-all').classList.add('active');
+  document.getElementById('scope-cat').classList.remove('active');
+  updateDrawerNav();
+});
+document.getElementById('scope-cat').addEventListener('click', () => {
+  navMode = 'category';
+  document.getElementById('scope-cat').classList.add('active');
+  document.getElementById('scope-all').classList.remove('active');
+  updateDrawerNav();
+});
 const noembedCache = new Map();
 
 async function fetchNoembed(url) {
@@ -1236,10 +1268,10 @@ async function renderMedia(ev, container) {
 }
 
 function updateDrawerNav() {
-  const vis = getVisibleEvents();
-  const idx = vis.findIndex(e => e.id === activeDrawerId);
+  const nav = getNavEvents();
+  const idx = nav.findIndex(e => e.id === activeDrawerId);
   btnPrev.disabled = idx <= 0;
-  btnNext.disabled = idx < 0 || idx >= vis.length - 1;
+  btnNext.disabled = idx < 0 || idx >= nav.length - 1;
 }
 
 async function openDrawer(ev) {
@@ -1280,14 +1312,14 @@ async function openDrawer(ev) {
 function closeDrawer() { drawer.classList.remove('open'); activeDrawerId = null; }
 
 btnPrev.addEventListener('click', () => {
-  const vis = getVisibleEvents();
-  const idx = vis.findIndex(e => e.id === activeDrawerId);
-  if (idx > 0) openDrawer(vis[idx - 1]);
+  const nav = getNavEvents();
+  const idx = nav.findIndex(e => e.id === activeDrawerId);
+  if (idx > 0) openDrawer(nav[idx - 1]);
 });
 btnNext.addEventListener('click', () => {
-  const vis = getVisibleEvents();
-  const idx = vis.findIndex(e => e.id === activeDrawerId);
-  if (idx >= 0 && idx < vis.length - 1) openDrawer(vis[idx + 1]);
+  const nav = getNavEvents();
+  const idx = nav.findIndex(e => e.id === activeDrawerId);
+  if (idx >= 0 && idx < nav.length - 1) openDrawer(nav[idx + 1]);
 });
 
 document.getElementById('drawer-x').addEventListener('click', () => closeDrawer());
