@@ -1,5 +1,41 @@
 # Changelog
 
+## Session 6 — 2026-02-28
+
+### Research Team (Storybox)
+- **Grouped RA levels**: RA-Undergraduate, RA-Masters, RA-PhD now appear under a single "Research Assistant/s" heading (plural if >1 name total); sub-headings "Undergraduate", "Masters", "PhD" in italic grey
+- **"and" rule**: any team category with exactly two names joins them with "and" instead of a comma
+- **Co-investigator/s** and **Primary Investigator/s** labels now singular or plural based on name count
+- **Role labels**: changed from `<u>` underline to white text (`d-team-role` class)
+- **Spacing**: 5px between RA sub-sections; 2px between names reduced to 0px sublabel gap
+
+### Funders section (Storybox)
+- New **Funders** column (col W) in xlsx wired through normalizer → event objects → Storybox
+- Funders section rendered below Research Team; hidden when empty; semicolon-separated, one entry per line
+- Storybox body already `overflow-y: auto` so long lists scroll correctly
+
+### Search
+- **Search box** added to sidebar: text input, ◀ ▶ nav buttons, Abs/Rel toggle, result counter
+- **Abs mode**: results sorted chronologically, starts at earliest match
+- **Rel mode**: starts at first match at or after current viewport centre, wraps if all in past
+- Counter shows `N / total`; arrows disabled until results exist; clearing input resets state
+- Searches: headline, description, group, org, program, project, teamMembers, funders
+
+### Crosshair date line
+- Added to FEATURES-WISH-LIST.txt: z-ordering issue (appears above events instead of below); needs fresh investigation
+
+### Sidebar layout
+- **Three named sections** with divider lines: Title / View Controls / Search / File+PDF (scrolls with filters)
+- Zoom (＋ －), Fit, and Today buttons grouped together in **View Controls** section
+- Search box moved to its own section directly below View Controls
+- File drop zone + PDF button moved to bottom of scrollable filters area, re-appended after last Project item on each `buildFilters()` call
+- `groupY` promoted to module-level so `jumpToEvent()` can scroll vertically to matched event's row
+
+### Data
+- Reparsed `IIF-Timeline-Data-Multi-Project.xlsx` (1202 rows); Funders column added
+
+---
+
 ## Session 5 — 2026-02-27
 
 ### Storybox (event detail drawer) — Timeline-AbTeC-Media branch

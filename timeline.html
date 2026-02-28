@@ -29,18 +29,26 @@ body {
   overflow: hidden;
 }
 #sidebar-title {
-  padding: 8px 10px 8px 16px;
+  padding: 10px 12px 10px 16px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #f59e0b;
   border-bottom: 1px solid #374151;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
-#sidebar-title span { flex: 1; }
+#sidebar-controls {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #374151;
+  flex-shrink: 0;
+}
+#sidebar-controls .sb-btn { flex: 1; }
+#sidebar-files {
+  border-top: 1px solid #374151;
+  margin-top: 8px;
+}
 #drop-zone {
   margin: 12px;
   border: 2px dashed #374151;
@@ -66,9 +74,69 @@ body {
   display: flex;
   gap: 6px;
   padding: 0 12px 12px;
-  flex-shrink: 0;
 }
 .sb-btn { flex: 1; text-align: center; padding: 5px 4px; font-size: 12px; }
+#search-box {
+  padding: 10px 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #374151;
+}
+#search-input {
+  display: block;
+  width: 100%;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  color: #e5e7eb;
+  font-size: 12px;
+  padding: 5px 8px;
+  outline: none;
+  margin-bottom: 5px;
+}
+#search-input:focus { border-color: #6366f1; }
+#search-input::placeholder { color: #4b5563; }
+#search-count {
+  font-size: 11px;
+  color: #6b7280;
+  white-space: nowrap;
+  margin-left: auto;
+}
+#search-nav-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.search-nav-btn {
+  background: none;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  color: #9ca3af;
+  font-size: 10px;
+  padding: 4px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.search-nav-btn:hover:not(:disabled) { color: #e5e7eb; background: #374151; }
+.search-nav-btn:disabled { opacity: 0.25; cursor: default; }
+#search-mode-toggle {
+  display: inline-flex;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: 4px;
+}
+.search-mode-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 3px 7px;
+  line-height: 1;
+}
+.search-mode-btn:hover { color: #e5e7eb; }
+.search-mode-btn.active { background: #374151; color: #e5e7eb; }
 #filters {
   flex: 1;
   overflow-y: auto;
@@ -256,9 +324,13 @@ body {
 .d-more { margin-top: 10px; font-size: 13px; }
 .d-more a { color: #6366f1; text-decoration: underline; }
 .d-more a:hover { color: #818cf8; }
-.d-team { margin-top: 16px; font-size: 13px; color: #d1d5db; }
-.d-team h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin: 0 0 6px; }
+.d-team, .d-funders { margin-top: 16px; font-size: 13px; color: #d1d5db; }
+.d-team h3, .d-funders h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin: 0 0 6px; }
 .d-team-group { margin-bottom: 10px; }
+.d-team-role { color: #ffffff; font-weight: 500; }
+.d-team-sublabel { color: #9ca3af; font-style: italic; }
+.d-team-ra-level { margin-top: 5px; }
+.d-team-name { display: block; margin-top: 0; }
 
 /* ── Tooltip ──────────────────────────────────────────────── */
 #tooltip {
@@ -330,6 +402,23 @@ body {
   gap: 8px;
   margin-top: 4px;
 }
+
+/* ── Crosshair ────────────────────────────────────────────── */
+#crosshair-label {
+  position: fixed;
+  pointer-events: none;
+  z-index: 150;
+  background: rgba(17,24,39,0.9);
+  color: #f97316;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: system-ui, sans-serif;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #374151;
+  white-space: nowrap;
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -338,25 +427,41 @@ body {
 <div id="sidebar">
   <div id="sidebar-title">
     <span id="sidebar-title-text">AbTeC Timeline</span>
+  </div>
+  <div id="sidebar-controls">
     <button class="tb-btn" id="btn-zoomin"  title="Zoom in">＋</button>
     <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
+    <button class="tb-btn sb-btn" id="btn-fit"   title="Fit all events in view">Fit</button>
+    <button class="tb-btn sb-btn" id="btn-today" title="Scroll to today">Today</button>
   </div>
-  <div id="drop-zone">
-    <div class="dz-icon">📂</div>
-    <div>Drop Excel file here</div>
-    <div style="margin:5px 0;font-size:11px;color:#4b5563">or</div>
-    <label class="dz-browse" style="cursor:pointer">
-      Browse file
-      <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
-    </label>
-  </div>
-  <div id="sidebar-actions">
-    <button class="tb-btn sb-btn" id="btn-fit"    title="Fit all events in view">Fit</button>
-    <button class="tb-btn sb-btn" id="btn-today"  title="Scroll to today">Today</button>
-    <button class="tb-btn sb-btn" id="btn-export" title="Export PDF">PDF</button>
+  <div id="search-box">
+    <input id="search-input" type="text" placeholder="Search events…" autocomplete="off">
+    <div id="search-nav-row">
+      <button class="search-nav-btn" id="search-prev" title="Previous match" disabled>◀</button>
+      <button class="search-nav-btn" id="search-next" title="Next match" disabled>▶</button>
+      <div id="search-mode-toggle">
+        <button class="search-mode-btn active" id="search-abs" title="Search from earliest match">Abs</button>
+        <button class="search-mode-btn"        id="search-rel" title="Search forward from current view">Rel</button>
+      </div>
+      <span id="search-count"></span>
+    </div>
   </div>
   <div id="filters">
     <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
+    <div id="sidebar-files">
+      <div id="drop-zone">
+        <div class="dz-icon">📂</div>
+        <div>Drop Excel file here</div>
+        <div style="margin:5px 0;font-size:11px;color:#4b5563">or</div>
+        <label class="dz-browse" style="cursor:pointer">
+          Browse file
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
+        </label>
+      </div>
+      <div id="sidebar-actions">
+        <button class="tb-btn sb-btn" id="btn-export" title="Export PDF">PDF</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -398,9 +503,12 @@ body {
     <div class="d-media" id="d-media"></div>
     <div class="d-desc"  id="d-desc"></div>
     <div class="d-more"  id="d-more"></div>
-    <div class="d-team"  id="d-team"></div>
+    <div class="d-team"    id="d-team"></div>
+    <div class="d-funders" id="d-funders"></div>
   </div>
 </div>
+
+<div id="crosshair-label"></div>
 
 <!-- Export modal -->
 <div id="export-modal-bg">
@@ -455,10 +563,12 @@ let projVis   = new Set();
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
 let rowHeights = {};   // group -> row height in px
+let groupY     = {};   // group -> cumulative Y offset (updated each redraw)
 let scale     = 1e-8;   // pixels per millisecond
 let panX      = 0;
 let dragging  = false;
 let dragStartX, dragStartPan, dragStartY, dragStartScrollTop;
+let crosshairG = null, evGRef = null, crosshairSvgH = 0;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 const dz       = document.getElementById('drop-zone');
@@ -613,6 +723,7 @@ function normalizeRow(row, format = 'abtec') {
       mediaCaption:   g('mediacaption', 'caption'),
       mediaCredit:    g('mediacredit', 'credit'),
       teamMembers:    g('teammembers', 'team', 'members'),
+      funders:        g('funders', 'funder'),
     };
   } else {
     // CV format: Group col is the main grouping; no org/program dimensions
@@ -623,6 +734,7 @@ function normalizeRow(row, format = 'abtec') {
       mediaCaption:   g('mediacaption', 'caption'),
       mediaCredit:    g('mediacredit', 'credit'),
       teamMembers:    g('teammembers', 'team', 'members'),
+      funders:        g('funders', 'funder'),
     };
   }
 }
@@ -655,6 +767,7 @@ function parse(rows) {
       mediaCaption:   nr.mediaCaption   || '',
       mediaCredit:    nr.mediaCredit    || '',
       teamMembers:    nr.teamMembers    || '',
+      funders:        nr.funders        || '',
     };
   }).filter(Boolean);
 
@@ -709,6 +822,7 @@ function parse(rows) {
 
 // ── Filter UI ─────────────────────────────────────────────────────────────
 function buildFilters() {
+  const sidebarFiles = document.getElementById('sidebar-files');
   filDiv.innerHTML = '';
 
   const section = (title, items, vis, colorFn, afterHeader = null) => {
@@ -740,6 +854,7 @@ function buildFilters() {
   if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280');
   if (programs.length) section('Program',  programs, programVis, () => '#6b7280');
   if (projects.length) section('Project',  projects, projVis,    () => '#6b7280');
+  filDiv.appendChild(sidebarFiles);
 }
 
 // ── Lane stacking ─────────────────────────────────────────────────────────
@@ -874,6 +989,10 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
   defs.appendChild(cp);
   svgEl.appendChild(defs);
 
+  // Pixels per (average) month — drives month label verbosity
+  const ppm = scale * 30.44 * 86400000;
+  const monthFmt = ppm > 80 ? 'long' : ppm > 30 ? 'short' : null;
+
   const g = mk('g', { 'clip-path': `url(#${cpId})` });
   let d = new Date(new Date(AXIS_START).getFullYear(), 0, 1);
 
@@ -897,6 +1016,10 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
           g.appendChild(svgTxt(x + 3, tickLen + 11, String(d.getFullYear()), {
             fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
           }));
+        } else if (monthFmt) {
+          g.appendChild(svgTxt(x + 3, tickLen + 11, d.toLocaleString('en-US', { month: monthFmt }), {
+            fill: '#6b7280', 'font-size': 10, 'font-weight': '500'
+          }));
         }
       } else {
         // ticks point downward from y=axisH
@@ -904,6 +1027,10 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
         if (isJan) {
           g.appendChild(svgTxt(x + 3, axisH - tickLen - 4, String(d.getFullYear()), {
             fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
+          }));
+        } else if (monthFmt) {
+          g.appendChild(svgTxt(x + 3, axisH - tickLen - 4, d.toLocaleString('en-US', { month: monthFmt }), {
+            fill: '#6b7280', 'font-size': 10, 'font-weight': '500'
           }));
         }
       }
@@ -921,7 +1048,7 @@ function redraw() {
   const visGroups = groups.filter(g => groupVis.has(g));
 
   // Compute cumulative Y offset for each visible group
-  const groupY = {};
+  groupY = {};
   let curY = 0;
   for (const g of visGroups) {
     groupY[g] = curY;
@@ -994,6 +1121,9 @@ function redraw() {
   }
   tlSvg.appendChild(gridG);
 
+  crosshairSvgH = H;
+  crosshairG    = null; // re-created on every mousemove, inserted before evG
+
   // ── Events (clipped) ──────────────────────────────────────────────────
   const visEvs = events.filter(e => {
     if (!groupVis.has(e.group)) return false;
@@ -1010,6 +1140,7 @@ function redraw() {
   });
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
+  evGRef = evG;
 
   for (const ev of visEvs) {
     if (groupY[ev.group] === undefined) continue;
@@ -1291,17 +1422,81 @@ async function openDrawer(ev) {
     : '';
   const teamEl = document.getElementById('d-team');
   if (ev.teamMembers) {
-    const lines = ev.teamMembers.split(';').map(s => s.trim()).filter(Boolean).map(segment => {
-      const colon = segment.indexOf(':');
-      if (colon === -1) return `<div class="d-team-group">${segment}</div>`;
-      const role  = segment.slice(0, colon).trim();
-      const names = segment.slice(colon + 1).trim();
-      return `<div class="d-team-group"><u>${role}</u><br>${names}</div>`;
-    }).join('');
-    teamEl.innerHTML = `<h3>Research Team</h3>${lines}`;
+    // Parse segments into {role, names} objects
+    const parsed = ev.teamMembers.split(';').map(s => s.trim()).filter(Boolean).map(seg => {
+      const colon = seg.indexOf(':');
+      return colon === -1 ? { role: seg, names: '' } : { role: seg.slice(0, colon).trim(), names: seg.slice(colon + 1).trim() };
+    });
+
+    // Collect RA sub-levels
+    const RA_LEVELS = [
+      { key: 'RA-Undergraduate', label: 'Undergraduate' },
+      { key: 'RA-Masters',       label: 'Masters' },
+      { key: 'RA-PhD',           label: 'PhD' },
+    ];
+    const raMap = {};
+    RA_LEVELS.forEach(l => { raMap[l.key] = null; });
+    parsed.forEach(p => { if (raMap.hasOwnProperty(p.role)) raMap[p.role] = p.names; });
+    const hasRA = RA_LEVELS.some(l => raMap[l.key] !== null);
+    const raCount = RA_LEVELS.reduce((n, l) => raMap[l.key] !== null ? n + raMap[l.key].split(',').length : n, 0);
+
+    // Non-RA roles in display order
+    const NON_RA_ORDER = ['Staff', 'Co-investigator', 'Co-investigators', 'Primary Investigator'];
+    const nonRA = NON_RA_ORDER.map(r => parsed.find(p => p.role.toLowerCase() === r.toLowerCase())).filter(Boolean);
+    // Also catch any unrecognised roles
+    const knownRoles = new Set([...RA_LEVELS.map(l => l.key.toLowerCase()), ...NON_RA_ORDER.map(r => r.toLowerCase())]);
+    parsed.filter(p => !knownRoles.has(p.role.toLowerCase())).forEach(p => nonRA.push(p));
+
+    let html = '';
+
+    // Research Assistant block
+    if (hasRA) {
+      const raLabel = raCount > 1 ? 'Research Assistants' : 'Research Assistant';
+      html += `<div class="d-team-group"><span class="d-team-role">${raLabel}</span>`;
+      RA_LEVELS.forEach(l => {
+        if (raMap[l.key] === null) return;
+        const names = raMap[l.key].split(',').map(s => s.trim()).filter(Boolean);
+        const namesHtml = names.length === 2
+          ? `<span class="d-team-name">${names.join(' and ')}</span>`
+          : names.map(n => `<span class="d-team-name">${n}</span>`).join('');
+        html += `<div class="d-team-ra-level"><span class="d-team-sublabel">${l.label}</span>${namesHtml}</div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Remaining roles
+    const ROLE_PLURAL = {
+      'co-investigator':   ['Co-investigator',  'Co-investigators'],
+      'co-investigators':  ['Co-investigator',  'Co-investigators'],
+      'primary investigator':  ['Primary Investigator', 'Primary Investigators'],
+      'primary investigators': ['Primary Investigator', 'Primary Investigators'],
+    };
+    nonRA.forEach(p => {
+      let namesHtml = '';
+      let names = [];
+      if (p.names) {
+        names = p.names.split(',').map(s => s.trim()).filter(Boolean);
+        namesHtml = '<br>' + (names.length === 2 ? names.join(' and ') : names.map(n => `<span class="d-team-name">${n}</span>`).join(''));
+      }
+      const pair = ROLE_PLURAL[p.role.toLowerCase()];
+      const label = pair ? (names.length > 1 ? pair[1] : pair[0]) : p.role;
+      html += `<div class="d-team-group"><span class="d-team-role">${label}</span>${namesHtml}</div>`;
+    });
+
+    teamEl.innerHTML = `<h3>Research Team</h3>${html}`;
   } else {
     teamEl.innerHTML = '';
   }
+
+  const fundersEl = document.getElementById('d-funders');
+  if (ev.funders) {
+    const funders = ev.funders.split(';').map(s => s.trim()).filter(Boolean);
+    const fundersHtml = funders.map(f => `<span class="d-team-name">${f}</span>`).join('');
+    fundersEl.innerHTML = `<h3>Funders</h3>${fundersHtml}`;
+  } else {
+    fundersEl.innerHTML = '';
+  }
+
   activeDrawerId = ev.id;
   drawer.classList.add('open');
   updateDrawerNav();
@@ -1349,6 +1544,94 @@ document.getElementById('btn-today').addEventListener('click', () => {
   redraw();
 });
 
+// ── Search ────────────────────────────────────────────────────────────────
+let searchResults = [], searchIdx = -1, searchQuery = '', searchMode = 'absolute';
+const searchInput   = document.getElementById('search-input');
+const searchCount   = document.getElementById('search-count');
+const searchPrev    = document.getElementById('search-prev');
+const searchNext    = document.getElementById('search-next');
+const searchAbsBtn  = document.getElementById('search-abs');
+const searchRelBtn  = document.getElementById('search-rel');
+
+function updateSearchUI() {
+  const has = searchResults.length > 0;
+  searchPrev.disabled = !has;
+  searchNext.disabled = !has;
+  searchCount.textContent = has ? `${searchIdx + 1} / ${searchResults.length}` : (searchQuery ? 'No matches' : '');
+}
+
+function jumpToEvent(ev) {
+  panX = (wrap.clientWidth / 2) - LABEL_W - (ev.startTs - minTs) * scale;
+  redraw();
+  const rowTop = groupY[ev.group];
+  if (rowTop !== undefined) {
+    wrap.scrollTop = rowTop - wrap.clientHeight / 2 + (rowHeights[ev.group] || ROW_H) / 2;
+  }
+  openDrawer(ev);
+}
+
+function runSearch(q) {
+  searchQuery = q;
+  searchResults = events.filter(ev =>
+    [ev.headline, ev.description, ev.group, ev.org, ev.program, ev.project, ev.teamMembers, ev.funders]
+      .some(f => f && f.toLowerCase().includes(q))
+  ).sort((a, b) => a.startTs - b.startTs);
+
+  if (!searchResults.length) { searchIdx = -1; return; }
+
+  if (searchMode === 'relative') {
+    // Start from first result at or after the current view centre
+    const centreTs = xToTs(LABEL_W + (wrap.clientWidth - LABEL_W) / 2);
+    searchIdx = searchResults.findIndex(ev => ev.startTs >= centreTs);
+    if (searchIdx === -1) searchIdx = 0; // wrap to beginning if all are in the past
+  } else {
+    searchIdx = 0;
+  }
+}
+
+searchInput.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (!events.length) return;
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) { searchResults = []; searchIdx = -1; searchQuery = ''; updateSearchUI(); return; }
+  if (q !== searchQuery) runSearch(q);
+  else if (searchResults.length) searchIdx = (searchIdx + 1) % searchResults.length;
+  updateSearchUI();
+  if (searchResults.length) jumpToEvent(searchResults[searchIdx]);
+});
+
+searchPrev.addEventListener('click', () => {
+  if (!searchResults.length) return;
+  searchIdx = (searchIdx - 1 + searchResults.length) % searchResults.length;
+  updateSearchUI();
+  jumpToEvent(searchResults[searchIdx]);
+});
+
+searchNext.addEventListener('click', () => {
+  if (!searchResults.length) return;
+  searchIdx = (searchIdx + 1) % searchResults.length;
+  updateSearchUI();
+  jumpToEvent(searchResults[searchIdx]);
+});
+
+searchAbsBtn.addEventListener('click', () => {
+  searchMode = 'absolute';
+  searchAbsBtn.classList.add('active');
+  searchRelBtn.classList.remove('active');
+  searchQuery = ''; // force re-run on next search
+});
+
+searchRelBtn.addEventListener('click', () => {
+  searchMode = 'relative';
+  searchRelBtn.classList.add('active');
+  searchAbsBtn.classList.remove('active');
+  searchQuery = ''; // force re-run on next search
+});
+
+searchInput.addEventListener('input', () => {
+  if (!searchInput.value.trim()) { searchResults = []; searchIdx = -1; searchQuery = ''; updateSearchUI(); }
+});
+
 let spaceDown = false;
 window.addEventListener('keydown', e => { if (e.code === 'Space') { spaceDown = true; e.preventDefault(); } });
 window.addEventListener('keyup',   e => { if (e.code === 'Space') spaceDown = false; });
@@ -1389,6 +1672,46 @@ wrap.addEventListener('touchmove',  e => {
   redraw();
 }, { passive: true });
 wrap.addEventListener('touchend', () => { t0 = null; });
+
+// ── Crosshair ─────────────────────────────────────────────────────────────
+const crosshairLabel = document.getElementById('crosshair-label');
+const CROSSHAIR_GAP  = 20;
+
+function hideCrosshair() {
+  if (crosshairG) { crosshairG.remove(); crosshairG = null; }
+  crosshairLabel.style.display = 'none';
+}
+
+wrap.addEventListener('mousemove', e => {
+  if (!events.length) return;
+  const rect = wrap.getBoundingClientRect();
+  const svgX = e.clientX - rect.left;
+  if (svgX <= LABEL_W) { hideCrosshair(); return; }
+
+  // Y in #tl-svg coordinates (accounts for sticky header and scroll position)
+  const svgY = e.clientY - tlSvg.getBoundingClientRect().top;
+
+  if (crosshairG) crosshairG.remove();
+  crosshairG = mk('g', { 'pointer-events': 'none' });
+  crosshairG.appendChild(mk('line', {
+    x1: svgX, y1: 0, x2: svgX, y2: Math.max(0, svgY - CROSSHAIR_GAP),
+    stroke: '#ffffff', 'stroke-opacity': '0.3', 'stroke-width': 1
+  }));
+  crosshairG.appendChild(mk('line', {
+    x1: svgX, y1: svgY + CROSSHAIR_GAP, x2: svgX, y2: crosshairSvgH,
+    stroke: '#ffffff', 'stroke-opacity': '0.3', 'stroke-width': 1
+  }));
+  if (evGRef) tlSvg.insertBefore(crosshairG, evGRef);
+
+  const d = new Date(xToTs(svgX));
+  crosshairLabel.textContent   = fmtDate(d);
+  crosshairLabel.style.display = 'block';
+  const lw     = crosshairLabel.offsetWidth;
+  const labelX = (e.clientX + 8 + lw > rect.right) ? e.clientX - lw - 8 : e.clientX + 8;
+  crosshairLabel.style.left = labelX + 'px';
+  crosshairLabel.style.top  = (rect.top + 4) + 'px';
+});
+wrap.addEventListener('mouseleave', hideCrosshair);
 
 window.addEventListener('resize', () => { if (events.length) redraw(); });
 window.addEventListener('focus',  () => { if (events.length) redraw(); });
