@@ -29,14 +29,18 @@ body {
   overflow: hidden;
 }
 #sidebar-title {
-  padding: 13px 16px;
+  padding: 8px 10px 8px 16px;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: #f59e0b;
   border-bottom: 1px solid #374151;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
+#sidebar-title span { flex: 1; }
 #drop-zone {
   margin: 12px;
   border: 2px dashed #374151;
@@ -58,6 +62,13 @@ body {
 #drop-zone .dz-icon { font-size: 22px; margin-bottom: 6px; }
 #drop-zone input[type=file] { display: none; }
 #drop-zone .dz-browse { color: #6366f1; font-weight: 600; }
+#sidebar-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 12px 12px;
+  flex-shrink: 0;
+}
+.sb-btn { flex: 1; text-align: center; padding: 5px 4px; font-size: 12px; }
 #filters {
   flex: 1;
   overflow-y: auto;
@@ -102,16 +113,6 @@ body {
   overflow: hidden;
   min-width: 0;
 }
-#toolbar {
-  height: 40px;
-  background: #1f2937;
-  border-bottom: 1px solid #374151;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  flex-shrink: 0;
-}
 .tb-btn {
   background: #374151;
   border: none;
@@ -123,8 +124,7 @@ body {
   line-height: 1;
 }
 .tb-btn:hover { background: #4b5563; color: #fff; }
-#zoom-level { font-size: 11px; color: #6b7280; min-width: 72px; }
-#event-count { font-size: 11px; color: #6b7280; margin-left: auto; }
+#event-count { font-size: 11px; color: #6b7280; padding: 2px 0 6px; display: block; }
 
 /* ── Timeline canvas area ─────────────────────────────────── */
 #tl-wrap {
@@ -285,7 +285,11 @@ body {
 
 <!-- Sidebar -->
 <div id="sidebar">
-  <div id="sidebar-title">AbTeC Timeline</div>
+  <div id="sidebar-title">
+    <span>AbTeC Timeline</span>
+    <button class="tb-btn" id="btn-zoomin"  title="Zoom in">＋</button>
+    <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
+  </div>
   <div id="drop-zone">
     <div class="dz-icon">📂</div>
     <div>Drop Excel file here</div>
@@ -295,6 +299,11 @@ body {
       <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
     </label>
   </div>
+  <div id="sidebar-actions">
+    <button class="tb-btn sb-btn" id="btn-fit"    title="Fit all events in view">Fit</button>
+    <button class="tb-btn sb-btn" id="btn-today"  title="Scroll to today">Today</button>
+    <button class="tb-btn sb-btn" id="btn-export" title="Export PDF">PDF</button>
+  </div>
   <div id="filters">
     <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
   </div>
@@ -302,15 +311,6 @@ body {
 
 <!-- Main -->
 <div id="main">
-  <div id="toolbar">
-    <button class="tb-btn" id="btn-zoomin" title="Zoom in">＋</button>
-    <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
-    <button class="tb-btn" id="btn-fit" title="Fit all events in view">Fit</button>
-    <button class="tb-btn" id="btn-today" title="Scroll to today">Today</button>
-    <button class="tb-btn" id="btn-export" title="Export PDF">PDF</button>
-    <span id="zoom-level"></span>
-    <span id="event-count"></span>
-  </div>
   <div id="tl-wrap">
     <div id="empty">
       <div style="font-size:40px">📅</div>
@@ -404,8 +404,7 @@ const tlSvg    = document.getElementById('tl-svg');
 const hdrSvg   = document.getElementById('hdr-svg');
 const emptyEl  = document.getElementById('empty');
 const filDiv   = document.getElementById('filters');
-const cntEl    = document.getElementById('event-count');
-const zoomEl   = document.getElementById('zoom-level');
+const cntEl    = Object.assign(document.createElement('div'), { id: 'event-count' });
 const modalBg  = document.getElementById('modal-bg');
 const tooltip  = document.getElementById('tooltip');
 
@@ -599,18 +598,19 @@ function parse(rows) {
 
   computeLanes(minEffMs);
   buildFilters();
-  fitView();
+  fitAll();
 }
 
 // ── Filter UI ─────────────────────────────────────────────────────────────
 function buildFilters() {
   filDiv.innerHTML = '';
 
-  const section = (title, items, vis, colorFn) => {
+  const section = (title, items, vis, colorFn, afterHeader = null) => {
     const h = document.createElement('div');
     h.className = 'filter-section-title';
     h.textContent = title;
     filDiv.appendChild(h);
+    if (afterHeader) filDiv.appendChild(afterHeader);
     for (const item of items) {
       const lbl = document.createElement('label');
       lbl.className = 'filter-label';
@@ -630,7 +630,7 @@ function buildFilters() {
     }
   };
 
-  section('Categories', groups, groupVis, g => groupColor[g]);
+  section('Categories', groups, groupVis, g => groupColor[g], cntEl);
   if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280');
   if (programs.length) section('Program',  programs, programVis, () => '#6b7280');
   if (projects.length) section('Project',  projects, projVis,    () => '#6b7280');
@@ -1016,7 +1016,6 @@ function redraw() {
   tlSvg.appendChild(lblG);
 
   cntEl.textContent = `${visEvs.length} of ${events.length} event${events.length !== 1 ? 's' : ''}`;
-  updateZoomLabel();
 
   // ── Bottom axis ───────────────────────────────────────────────────────
   const btmSvg = document.getElementById('btm-svg');
@@ -1025,12 +1024,6 @@ function redraw() {
   drawMonthAxis(btmSvg, W, BTM_H, true, 'cpBtm');
 }
 
-function updateZoomLabel() {
-  const ppd = scale * 86400000;
-  zoomEl.textContent = ppd >= 20  ? `${ppd.toFixed(0)}px/day`
-                     : ppd >= 1   ? `${ppd.toFixed(1)}px/day`
-                     :              `${(ppd * 30).toFixed(1)}px/mo`;
-}
 
 // ── Linkify ───────────────────────────────────────────────────────────────
 function linkify(text) {
