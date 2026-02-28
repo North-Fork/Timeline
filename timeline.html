@@ -242,12 +242,15 @@ body {
 }
 .d-desc {
   font-size: 13px;
-  line-height: 1.7;
+  line-height: 1.53;
   color: #d1d5db;
   white-space: pre-wrap;
 }
 .d-desc a { color: #6366f1; text-decoration: underline; }
 .d-desc a:hover { color: #818cf8; }
+.d-team { margin-top: 16px; font-size: 13px; color: #d1d5db; }
+.d-team h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin: 0 0 6px; }
+.d-team-group { margin-bottom: 10px; }
 
 /* ── Tooltip ──────────────────────────────────────────────── */
 #tooltip {
@@ -382,6 +385,7 @@ body {
     <div class="d-meta" id="d-meta"></div>
     <div class="d-media" id="d-media"></div>
     <div class="d-desc"  id="d-desc"></div>
+    <div class="d-team"  id="d-team"></div>
   </div>
 </div>
 
@@ -593,6 +597,7 @@ function normalizeRow(row, format = 'abtec') {
       mediaThumbnail: g('mediathumbnail', 'thumbnail'),
       mediaCaption:   g('mediacaption', 'caption'),
       mediaCredit:    g('mediacredit', 'credit'),
+      teamMembers:    g('teammembers', 'team', 'members'),
     };
   } else {
     // CV format: Group col is the main grouping; no org/program dimensions
@@ -602,6 +607,7 @@ function normalizeRow(row, format = 'abtec') {
       mediaThumbnail: g('mediathumbnail', 'thumbnail'),
       mediaCaption:   g('mediacaption', 'caption'),
       mediaCredit:    g('mediacredit', 'credit'),
+      teamMembers:    g('teammembers', 'team', 'members'),
     };
   }
 }
@@ -632,6 +638,7 @@ function parse(rows) {
       mediaThumbnail: nr.mediaThumbnail || '',
       mediaCaption:   nr.mediaCaption   || '',
       mediaCredit:    nr.mediaCredit    || '',
+      teamMembers:    nr.teamMembers    || '',
     };
   }).filter(Boolean);
 
@@ -1237,11 +1244,21 @@ async function openDrawer(ev) {
   const duration = ev.end > ev.start
     ? `${fmtDate(ev.start)} → ${fmtDate(ev.end)}`
     : fmtDate(ev.start);
-  document.getElementById('d-meta').innerHTML = [
-    `<b>Category:</b> ${ev.group}`,
-    `<b>Date:</b> ${duration}`,
-  ].join('&nbsp;&nbsp;&middot;&nbsp;&nbsp;');
+  document.getElementById('d-meta').innerHTML = `<div>${duration}</div><div>${ev.group}</div>`;
   document.getElementById('d-desc').innerHTML = linkify(ev.description || '');
+  const teamEl = document.getElementById('d-team');
+  if (ev.teamMembers) {
+    const lines = ev.teamMembers.split(';').map(s => s.trim()).filter(Boolean).map(segment => {
+      const colon = segment.indexOf(':');
+      if (colon === -1) return `<div class="d-team-group">${segment}</div>`;
+      const role  = segment.slice(0, colon).trim();
+      const names = segment.slice(colon + 1).trim();
+      return `<div class="d-team-group"><u>${role}</u><br>${names}</div>`;
+    }).join('');
+    teamEl.innerHTML = `<h3>Research Team</h3>${lines}`;
+  } else {
+    teamEl.innerHTML = '';
+  }
   activeDrawerId = ev.id;
   drawer.classList.add('open');
   updateDrawerNav();
