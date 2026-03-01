@@ -931,17 +931,13 @@ function gdocExtractLink(tag) {
     const qm = href.match(/[?&]q=([^&]+)/);
     return qm ? decodeURIComponent(qm[1]) : href;
   };
-  // Look for the {text} pattern: the word "text" is hyperlinked and surrounded
-  // by literal { } in the text — i.e. {<a href="…">text</a>}
-  // Also handle the rarer case where the entire {text} string is the link text.
+  // Look for a {text} link: an <a> whose text content is exactly "text" (or
+  // "{text}" if the whole thing was hyperlinked). Google Docs places { and }
+  // as plain text around it, but may insert empty spans between them and the
+  // <a>, so sibling checks are unreliable — link text is the safe signal.
   for (const a of tag.querySelectorAll('a[href]')) {
-    const linkText = (a.textContent || '').trim().toLowerCase();
-    const braced =
-      linkText === '{text}' ||
-      (linkText === 'text' &&
-        (a.previousSibling?.textContent || '').trimEnd().endsWith('{') &&
-        (a.nextSibling?.textContent  || '').trimStart().startsWith('}'));
-    if (braced) return { url: unwrap(a), label: 'Text' };
+    if (/^text$|^\{text\}$/i.test((a.textContent || '').trim()))
+      return { url: unwrap(a), label: 'Text' };
   }
   // Fall back to first link
   const a = tag.querySelector('a[href]');
