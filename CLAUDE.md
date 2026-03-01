@@ -66,7 +66,7 @@ data/
 │   ├── cv.xlsx                             generated timeline data (Timeline-CV branch)
 │   └── generate_cv_xlsx.py                 converts cv.txt → cv.xlsx
 └── timeline-data/
-    ├── AbTeC-Timeline-Data.xlsx  active AbTeC data (Timeline-AbTeC* branches)
+    ├── timeline-data.xlsx  active AbTeC data (Timeline-AbTeC* branches)
     ├── make_data_js.py                       converts xlsx → timeline-data.js
     ├── timeline-data.js                      generated JS with embedded data (auto-load)
     ├── timeline-test-data-synthetic.xlsx     synthetic test data (main branch)
@@ -80,7 +80,7 @@ data/
 **No server needed:** `timeline-data.js` is loaded via `<script src>` which works with
 `file://`. `serve.sh` / http server only needed for xlsx drag-and-drop fallback path.
 
-### xlsx Columns (AbTeC-Timeline-Data.xlsx)
+### xlsx Columns (timeline-data.xlsx)
 
 Key columns used by the parser (`normalizeRow`):
 
@@ -126,8 +126,8 @@ timeline.html (browser)
 |---|---|---|
 | `main` | synthetic test data | Timeline |
 | `Timeline-CV` | `data/cv-data/cv.xlsx` | CV Timeline |
-| `Timeline-AbTeC` | `data/timeline-data/AbTeC-Timeline-Data.xlsx` | AbTeC Timeline |
-| `Timeline-AbTeC-Media` | `data/timeline-data/AbTeC-Timeline-Data.xlsx` | AbTeC Timeline + Storybox media |
+| `Timeline-AbTeC` | `data/timeline-data/timeline-data.xlsx` | AbTeC Timeline |
+| `Timeline-AbTeC-Media` | `data/timeline-data/timeline-data.xlsx` | AbTeC Timeline + Storybox media |
 | `Timeline-AbTeC-Prototype` | (archived) | superseded by Timeline-AbTeC |
 
 **Note:** CV and AbTeC formats are auto-detected by `detectFormat()` — both are handled

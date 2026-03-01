@@ -57,7 +57,7 @@ Browsers other than Chrome/Brave block local file access, so the data cannot loa
 Three ways to load data:
 
 **1. Pre-generated local file (default, fastest)**
-The timeline loads `AbTeC-Timeline-Data.xlsx` automatically on startup via the pre-built `data/timeline-data/timeline-data.js` file.
+The timeline loads `timeline-data.xlsx` automatically on startup via the pre-built `data/timeline-data/timeline-data.js` file.
 
 **2. Drag and drop**
 Drag any `.xlsx` file onto the drop zone in the sidebar.
@@ -69,7 +69,7 @@ Paste a published Google Sheets URL into the URL field in the sidebar and click 
 
 ## Keeping Local Data Current
 
-When `AbTeC-Timeline-Data.xlsx` is updated, regenerate the pre-built data file:
+When `timeline-data.xlsx` is updated, regenerate the pre-built data file:
 
 ```
 python3 data/timeline-data/make_data_js.py

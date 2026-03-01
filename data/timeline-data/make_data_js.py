@@ -15,7 +15,7 @@ try:
 except ImportError:
     sys.exit("openpyxl not found — install with:  pip3 install openpyxl")
 
-src = Path(__file__).parent / "AbTeC-Timeline-Data.xlsx"
+src = Path(__file__).parent / "timeline-data.xlsx"
 dst = Path(__file__).parent / "timeline-data.js"
 
 wb = openpyxl.load_workbook(src, read_only=True, data_only=True)
