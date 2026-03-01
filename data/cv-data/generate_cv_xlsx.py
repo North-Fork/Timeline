@@ -7,7 +7,7 @@ wb = Workbook()
 ws = wb.active
 ws.title = "CV"
 
-headers = ["start date", "end date", "headline", "description", "project", "group"]
+headers = ["start date", "end date", "headline", "description", "project", "group", "org", "program"]
 ws.append(headers)
 
 PRESENT = "02/25/2026"
@@ -16,6 +16,8 @@ GRP_ORDER = [
     "Employment", "Honors", "Education", "Creative Works", "Books/Chapters",
     "Journal Articles", "Keynotes", "Solo Exhibitions",
     "Group Exhibitions", "Productions",
+    "Funding (PI)", "Funding (Co-I)", "Funding (Internal)",
+    "Courses Taught", "Supervision", "Service",
 ]
 
 rows = [
@@ -701,8 +703,848 @@ rows = [
      "Film. Director & Producer. Hawaiian International Film Festival (HIFF), Nov. 2022.",
      "AbTeC", "Productions"),
 
+    # ── FUNDING (PI) — EXTERNAL ────────────────────────────────────────────
+    ("11/24/2025", "11/24/2025",
+     "Impact Partnership Award",
+     "$50,000. Social Sciences and Humanities Research Council.",
+     "Recognition", "Funding (PI)"),
+
+    ("04/01/2025", "03/31/2029",
+     "Transmediating Indigenous Art",
+     "$378,974. Social Sciences and Humanities Research Council.",
+     "Research", "Funding (PI)"),
+
+    ("08/15/2024", "08/14/2026",
+     "An Abundant Data Trust",
+     "$284,000. The Schmidt Family Foundation — 11th Hour Project.",
+     "AI", "Funding (PI)"),
+
+    ("03/01/2023", "02/28/2029",
+     "Abundant Intelligences: Expanding AI through Indigenous Knowledge Systems",
+     "$22,830,281. New Frontiers in Research Fund.",
+     "AI", "Funding (PI)"),
+
+    ("06/01/2023", "05/30/2025",
+     "Foundations of Abundant Intelligences",
+     "$675,000. The MacArthur Foundation.",
+     "AI", "Funding (PI)"),
+
+    ("04/01/2023", "03/31/2029",
+     "Partnership for Abundant Intelligences",
+     "$2,499,875. Social Sciences and Humanities Research Council.",
+     "AI", "Funding (PI)"),
+
+    ("04/01/2023", "03/31/2029",
+     "Indigenous Futures Research Centre",
+     "$450,609. Canada Foundation for Innovation.",
+     "IIF", "Funding (PI)"),
+
+    ("01/01/2023", "07/01/2023",
+     "Abundant Intelligences Residency 1",
+     "$26,000. Montalvo Arts Center.",
+     "AI", "Funding (PI)"),
+
+    ("08/15/2022", "08/14/2023",
+     "Abundant Intelligences: Year 01",
+     "$98,000. The Schmidt Family Foundation — 11th Hour Project.",
+     "AI", "Funding (PI)"),
+
+    ("03/15/2022", "10/30/2022",
+     "Abundant Intelligences",
+     "$20,000. Social Sciences and Humanities Research Council.",
+     "AI", "Funding (PI)"),
+
+    ("04/01/2022", "03/03/2024",
+     "L'art autochtone dans les environnements virtuels",
+     "$221,905. Fonds de recherche Société et culture Québec.",
+     "AbTeC", "Funding (PI)"),
+
+    ("01/15/2022", "01/15/2025",
+     "Expanding Skins Workshops on Aboriginal Storytelling in Digital Media",
+     "$498,000. Hewitt Foundation.",
+     "AbTeC", "Funding (PI)"),
+
+    ("01/25/2021", "03/30/2022",
+     "Building Capacity with the Skins Workshops",
+     "$30,000. Indigenous Screen Office.",
+     "AbTeC", "Funding (PI)"),
+
+    ("03/01/2019", "12/31/2019",
+     "Building Indigenous Capacity & Community in Digital Media Sectors",
+     "$250,000. Canada Council for the Arts. Co-lead.",
+     "AbTeC", "Funding (PI)"),
+
+    ("01/15/2019", "06/01/2019",
+     "Indigenous Protocol and Artificial Intelligence Workshops",
+     "$49,026. Social Sciences and Humanities Research Council.",
+     "AI", "Funding (PI)"),
+
+    ("09/01/2018", "06/01/2019",
+     "Indigenous Protocol and Artificial Intelligence Workshops",
+     "$80,000. Canadian Institute for Advanced Research.",
+     "AI", "Funding (PI)"),
+
+    ("04/01/2018", "12/31/2018",
+     "Skins 6.0: Kanaeokana — Workshop on Aboriginal Storytelling and Video Game Design",
+     "$389,000. Kanaeokana Network (Hawaii).",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2017", "12/31/2017",
+     "Skins 5.0: Kanaeokana — Workshop on Aboriginal Storytelling and Video Game Design",
+     "$187,000. Kanaeokana Network (Hawaii).",
+     "AbTeC", "Funding (PI)"),
+
+    ("07/01/2016", "07/01/2017",
+     "Blueberry Pie in the Martian Sky",
+     "$60,000. Canada Council for the Arts. Research Director / Executive Producer. Artist: Scott Benesiinaabandan.",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2015", "03/31/2022",
+     "Initiative for Indigenous Futures Partnership",
+     "$2,491,613. Social Sciences and Humanities Research Council.",
+     "IIF", "Funding (PI)"),
+
+    ("06/01/2014", "05/31/2017",
+     "Trudeau Fellowship",
+     "$225,000. Pierre Elliott Trudeau Foundation.",
+     "Recognition", "Funding (PI)"),
+
+    ("06/01/2014", "11/03/2014",
+     "Initiative for Indigenous Futures — Letter of Intent",
+     "$20,000. Social Sciences and Humanities Research Council.",
+     "IIF", "Funding (PI)"),
+
+    ("07/01/2012", "09/30/2013",
+     "The P.o.E.M.M. Cycle 6–10",
+     "$58,000. Canada Council for the Arts. Artist.",
+     "PoEMM", "Funding (PI)"),
+
+    ("04/01/2012", "03/03/2015",
+     "TyP3: Protocoles, Plateformes, et Publics pour textes digitaux",
+     "$163,556. Fonds québécois de la recherche sur la société et la culture.",
+     "Research", "Funding (PI)"),
+
+    ("04/15/2012", "04/15/2013",
+     "Skins Workshop",
+     "$2,500. J. W. McConnell Family Foundation.",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2012", "12/30/2013",
+     "Abstracted Pow Wow",
+     "$59,000. Canada Council for the Arts. Research Director / Executive Producer. Artist: Scott Benesiinaabandan.",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2011", "03/30/2014",
+     "Skins, Storytellers and Second Lives: A Partnership for Developing Aboriginal New Media",
+     "$367,000. Social Sciences and Humanities Research Council.",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2010", "06/30/2011",
+     "Words Found on an Empty Beach",
+     "$38,000. Canada Council for the Arts. Artist.",
+     "Creative", "Funding (PI)"),
+
+    ("07/01/2009", "06/30/2010",
+     "TimeTraveller™",
+     "$60,000. Canada Council for the Arts. Research Director / Executive Producer. Artist: Skawennati Tricia Fragnito.",
+     "AbTeC", "Funding (PI)"),
+
+    ("07/01/2009", "06/30/2012",
+     "Ecriture complex: nouveaux modèles pour la typographie informatique",
+     "$95,000. Fonds québécois de la recherche sur la société et la culture.",
+     "Research", "Funding (PI)"),
+
+    ("04/01/2009", "03/31/2012",
+     "Building Aboriginal Territories in Cyberspace",
+     "$149,000. Fonds québécois de la recherche sur la société et la culture.",
+     "AbTeC", "Funding (PI)"),
+
+    ("04/01/2007", "03/31/2010",
+     "Between Reading and Looking: Writing-Designing-Programming with Computational Media",
+     "$193,000. Social Sciences and Humanities Research Council.",
+     "Research", "Funding (PI)"),
+
+    ("04/01/2006", "03/30/2009",
+     "Aboriginal Territories in Cyberspace",
+     "$239,000. Social Sciences and Humanities Research Council.",
+     "AbTeC", "Funding (PI)"),
+
+    ("06/01/2005", "01/06/2007",
+     "Software for Interactive, Variable and Performative Texts",
+     "$62,000. Hexagram Institute for Research/Creation in Media Arts and Technologies.",
+     "Research", "Funding (PI)"),
+
+    ("05/01/2004", "04/30/2007",
+     "The Next Text",
+     "$39,000. Fonds québécois de la recherche sur la société et la culture.",
+     "Research", "Funding (PI)"),
+
+    ("06/01/2004", "01/05/2005",
+     "Writing the Next Text",
+     "$39,000. Hexagram Institute for Research/Creation in Media Arts and Technologies.",
+     "Research", "Funding (PI)"),
+
+    ("01/15/1995", "09/30/1995",
+     "Life is Bait",
+     "$11,000. Arts Council of England. Co-grant holder.",
+     "Early Career", "Funding (PI)"),
+
+    # ── FUNDING (Co-I) — EXTERNAL ──────────────────────────────────────────
+    ("04/01/2022", "03/30/2029",
+     "R3AI: Shifting Paradigms for a Robust, Reasoning, & Responsible AI",
+     "$124,000,000. Canada First Research Excellence Fund. Core Applicant. PI: Luc Vinet.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2022", "03/30/2024",
+     "Meeting 30×30 and the Paris Agreement: Leveraging Digital Solutions for Nature-Based Solutions",
+     "$256,623. Natural Sciences and Engineering Research Council. PI: Eliane Ubalijoro.",
+     "Research", "Funding (Co-I)"),
+
+    ("03/31/2022", "03/30/2028",
+     "Infrastructure Beyond Extractivism: Material Approaches to Restoring Indigenous Jurisdiction",
+     "$2,296,866. Social Sciences and Humanities Research Council. PI: Dayna Scott.",
+     "IIF", "Funding (Co-I)"),
+
+    ("03/31/2021", "03/30/2023",
+     "Jurisdiction Back: Infrastructure beyond Extractivism",
+     "$246,725. New Frontiers in Research Fund. PI: Dayna Scott.",
+     "IIF", "Funding (Co-I)"),
+
+    ("04/01/2020", "03/31/2027",
+     "Hexagram Strategic Cluster",
+     "$1,827,000. Fonds de recherche du Québec Société et culture. PI: Jean Dubois.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2019", "03/31/2024",
+     "The Land as our Teacher: Land-based Pedagogy for/by Indigenous Youth",
+     "$333,000. Social Sciences and Humanities Research Council. PI: Elizabeth Fast.",
+     "AbTeC", "Funding (Co-I)"),
+
+    ("04/01/2018", "12/31/2025",
+     "Inuit Futures in Arts Leadership: The Pilimmaksarniq/Pijariuqsarniq Project",
+     "$2,499,774. Social Sciences and Humanities Research Council. PI: Heather Igliolorte.",
+     "IIF", "Funding (Co-I)"),
+
+    ("04/01/2017", "03/23/2024",
+     "Six Seasons of the Asiniskow Ithiniwak: Reclamation, Regeneration, and Reconciliation",
+     "$2,500,000. Social Sciences and Humanities Research Council. PI: Mavis Reimer.",
+     "IIF", "Funding (Co-I)"),
+
+    ("04/01/2016", "03/23/2019",
+     "A First Peoples Storytelling Exchange: Intersection College and Community Circles",
+     "$240,000. Social Sciences and Humanities Research Council. PI: Susan Briscoe.",
+     "AbTeC", "Funding (Co-I)"),
+
+    ("04/01/2014", "03/03/2019",
+     "HexagramCIAM – Centre Interuniversitaire des Arts Médiatiques",
+     "$1,048,500. Fonds québécois de la recherche sur la société et la culture. PI: Christopher Salter.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2013", "03/30/2014",
+     "GRAND: Graphics, Animation & New Media — Collaborating Network Investigator Grant",
+     "$18,000. Networks of Centres of Excellence of Canada. PI: Kellogg Booth.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2012", "03/30/2013",
+     "GRAND: Graphics, Animation & New Media — Collaborating Network Investigator Grant",
+     "$10,000. Networks of Centres of Excellence of Canada. PI: Kellogg Booth.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2011", "03/30/2014",
+     "Hexagram CIAM",
+     "$367,000. Fonds Québécois de la Recherche sur la société et la culture. PIs: Nicolas Reeves, Giséle Trudel.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2011", "03/30/2012",
+     "GRAND: Graphics, Animation & New Media — Collaborating Network Investigator Grant",
+     "$6,000. Networks of Centres of Excellence of Canada. PI: Kellogg Booth.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2008", "03/31/2011",
+     "Migration, Memory, Media: Emergent Technologies for Interactive Narrative Storytelling",
+     "$119,000. Fonds québécois de la recherche sur la société et la culture. PI: Matt Soar.",
+     "Research", "Funding (Co-I)"),
+
+    ("04/01/2006", "03/30/2007",
+     "Mobile Digital Commons Network Phase II",
+     "$1,152,000. Heritage Canada. PIs: Michael Longford, Sara Diamond.",
+     "Research", "Funding (Co-I)"),
+
+    ("05/01/2004", "04/30/2007",
+     "Expanding the Interface",
+     "$135,000. Fonds québécois de la recherche sur la société et la culture. PI: Michael Longford.",
+     "Research", "Funding (Co-I)"),
+
+    ("08/01/2004", "03/31/2005",
+     "Mobile Digital Commons Network",
+     "$422,000. Heritage Canada. PIs: Michael Longford, Sara Diamond.",
+     "Research", "Funding (Co-I)"),
+
+    # ── FUNDING (INTERNAL) ─────────────────────────────────────────────────
+    ("06/01/2019", "05/31/2025",
+     "Concordia University Research Chair (Tier 1)",
+     "$275,000. Concordia University.",
+     "Concordia", "Funding (Internal)"),
+
+    ("02/13/2019", "10/02/2019",
+     "Archiving Indigenous Digital Arts Conference",
+     "$1,800. Centre for Interdisciplinary Studies in Culture and Society, Concordia University.",
+     "Concordia", "Funding (Internal)"),
+
+    ("10/01/2019", "10/01/2019",
+     "Archiving Indigenous Digital Arts Conference",
+     "$5,965. Gail and Stephen A. Jarislowsky Institute for Studies in Canadian Art.",
+     "Concordia", "Funding (Internal)"),
+
+    ("10/31/2017", "08/01/2018",
+     "Future Imaginary Lecture Series",
+     "$5,000. Concordia University.",
+     "IIF", "Funding (Internal)"),
+
+    ("11/01/2016", "10/31/2017",
+     "Aid to Research Related Events — Future Imaginary Lecture Series",
+     "$5,000. Concordia University.",
+     "IIF", "Funding (Internal)"),
+
+    ("06/01/2014", "05/31/2019",
+     "Concordia University Research Chair (Tier 1)",
+     "$275,000. Concordia University.",
+     "Concordia", "Funding (Internal)"),
+
+    ("10/01/2012", "09/30/2014",
+     "Game Designer-in-Residency Program",
+     "$100,000. Office of Research, Research Development Fund.",
+     "Concordia", "Funding (Internal)"),
+
+    ("01/10/2012", "09/30/2014",
+     "Strategy to Frame and Strengthen Production Based Game Research",
+     "$50,000. Concordia University.",
+     "Concordia", "Funding (Internal)"),
+
+    ("01/11/2011", "10/31/2012",
+     "Vital to the General Public Welfare: An Exhibition of Research/Creation Outcomes",
+     "$5,000. Concordia University.",
+     "Creative", "Funding (Internal)"),
+
+    ("10/01/2010", "09/30/2011",
+     "Aboriginal Territories in Cyberspace: First Contact",
+     "$5,000. Office of Research ARRE.",
+     "AbTeC", "Funding (Internal)"),
+
+    ("03/18/2010", "03/30/2010",
+     "Skins Summer Institute",
+     "$100,000. Office of Research, Research Development Fund. Co-investigator: Skawennati Tricia Fragnito.",
+     "AbTeC", "Funding (Internal)"),
+
+    ("01/01/2004", "12/31/2011",
+     "SSHRC Travel Grants",
+     "$10,000. Fine Arts Faculty. Six separate grants.",
+     "Research", "Funding (Internal)"),
+
+    ("04/01/2004", "03/30/2005",
+     "Participatory Tangible Board",
+     "$50,000. Fine Arts-Engineering Seed Grants.",
+     "Research", "Funding (Internal)"),
+
+    ("04/01/2004", "03/30/2005",
+     "Saying Red: Integrating Video Objects and Dynamic Typography",
+     "$50,000. Fine Arts-Engineering Seed Grants.",
+     "Creative", "Funding (Internal)"),
+
+    ("01/01/2004", "12/31/2008",
+     "Hexagram Travel Grants",
+     "$8,000. Fine Arts Faculty. Four separate grants.",
+     "Research", "Funding (Internal)"),
+
+    # ── COURSES TAUGHT ─────────────────────────────────────────────────────
+    ("01/01/2024", "04/30/2024",
+     "DART634 Indigenous Futurisms",
+     "Graduate seminar. Concordia University, Winter 2024.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2023", "04/30/2023",
+     "DART634 Indigenous Futurisms",
+     "Graduate seminar. Concordia University, Winter 2023.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2023", "04/30/2023",
+     "DART630 The Future Imaginary",
+     "Graduate seminar. Concordia University, Winter 2023.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2022", "04/30/2022",
+     "DART630 The Future Imaginary",
+     "Graduate seminar. Concordia University, Winter 2022.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2021", "04/30/2021",
+     "DART630 The Future Imaginary",
+     "Graduate seminar. Concordia University, Winter 2021.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2019", "04/30/2019",
+     "DART630 The Future Imaginary",
+     "Graduate seminar. Concordia University, Winter 2019.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2018", "12/31/2018",
+     "CART 345 Computational Texts and Typography I",
+     "Undergraduate course. Concordia University, Fall 2018.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2018", "04/30/2018",
+     "DART630 The Future Imaginary",
+     "Graduate seminar. Concordia University, Winter 2018.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2017", "12/31/2017",
+     "CART 345 Computational Texts and Typography I",
+     "Undergraduate course. Concordia University, Fall 2017.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2016", "12/31/2016",
+     "CART 253a/b Creative Computation I",
+     "Undergraduate course, two sections. Concordia University, Fall 2016.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2015", "12/31/2015",
+     "CART 253a/b Creative Computation I",
+     "Undergraduate course, two sections. Concordia University, Fall 2015.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2014", "12/31/2014",
+     "CART 253a/b Creative Computation I",
+     "Undergraduate course, two sections. Concordia University, Fall 2014.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2013", "04/30/2013",
+     "CART 345 Computational Texts & Typography I / CART 444 Portfolio Studio",
+     "Undergraduate courses. Concordia University, Winter 2013.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2012", "12/31/2012",
+     "CART 253a/b Creative Computation I",
+     "Undergraduate course, two sections. Concordia University, Fall 2012.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2012", "04/30/2012",
+     "CART 345 Computational Texts & Typography I / CART 444 Portfolio Studio",
+     "Undergraduate courses. Concordia University, Winter 2012.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2011", "12/31/2011",
+     "CART 253aa/a Creative Computation I/II",
+     "Undergraduate course, two sections. Concordia University, Fall 2011.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2011", "04/30/2011",
+     "CART 253aa/a Creative Computation I/II",
+     "Undergraduate course, two sections. Concordia University, Winter 2011.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2010", "12/31/2010",
+     "CART 345 Computational Texts & Typography I",
+     "Undergraduate course. Concordia University, Fall 2010.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2008", "04/30/2008",
+     "CART 253aa/a Creative Computation I/II",
+     "Undergraduate course, two sections. Concordia University, Winter 2008.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2007", "12/31/2007",
+     "DART 503 Theories of Interactivity / CART 355c Topics in Kinetic Imagery (The Next Text)",
+     "Graduate and undergraduate courses. Concordia University, Fall 2007.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2007", "04/30/2007",
+     "CART 253a/b Languages of Programming",
+     "Undergraduate course, two sections. Concordia University, Winter 2007.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2006", "12/31/2006",
+     "DART 503 Theories of Interactivity / CART 355c Topics in Kinetic Imagery (The Next Text)",
+     "Graduate and undergraduate courses. Concordia University, Fall 2006.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2006", "04/30/2006",
+     "CART 253a/aa The Languages of Programming",
+     "Undergraduate course, two sections. Concordia University, Winter 2006.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2005", "12/31/2005",
+     "CART 355b Topics in Kinetic Imagery (The Next Text) / DART 503 Theories of Interactivity",
+     "Undergraduate and graduate courses. Concordia University, Fall 2005.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2005", "04/30/2005",
+     "DFAR 253a/b The Languages of Programming",
+     "Undergraduate course, two sections. Concordia University, Winter 2005.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2004", "04/30/2004",
+     "DFAR 452 TriMedia Productions / DFAR 353a The Languages of Programming",
+     "Undergraduate courses. Concordia University, Winter 2004.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2003", "12/31/2003",
+     "DFAR 451 Interactive Media / DFAR 498 Bending Bits",
+     "Undergraduate courses. Concordia University, Fall 2003.",
+     "Concordia", "Courses Taught"),
+
+    ("01/01/2003", "04/30/2003",
+     "DFAR 353a/aa The Languages of Programming",
+     "Undergraduate course, two sections. Concordia University, Winter 2003.",
+     "Concordia", "Courses Taught"),
+
+    ("09/01/2002", "12/31/2002",
+     "DFAR 451a/b Interactive Media",
+     "Undergraduate course, two sections. Concordia University, Fall 2002.",
+     "Concordia", "Courses Taught"),
+
+    # ── SUPERVISION ────────────────────────────────────────────────────────
+    # Postdoctoral Fellows
+    ("01/01/2025", PRESENT,
+     "Postdoctoral Fellow: Melemaikalani Moniz",
+     "Postdoctoral Fellow in Abundant Soils. Concordia University.",
+     "AI", "Supervision"),
+
+    ("01/01/2024", "12/31/2026",
+     "Postdoctoral Fellow: Ceyda Yolgörmez",
+     "Horizon Postdoctoral Fellow in Abundant Intelligences. Concordia University.",
+     "AI", "Supervision"),
+
+    ("01/01/2019", "12/31/2021",
+     "Postdoctoral Fellow: Leuli Eschraghi",
+     "Horizon Postdoctoral Fellow in Indigenous Futures. Concordia University.",
+     "IIF", "Supervision"),
+
+    # Doctoral Advisees
+    ("01/01/2023", PRESENT,
+     "PhD Supervisor: Juliet Mackie",
+     "Reconstituting Indigenous Identities through Portraiture and Storytelling. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2021", "12/31/2024",
+     "PhD Supervisor: Mel Lefebvre",
+     "Healing Through Ancestral Skin Marking: Traditional Tattooing as Healing and (Re)connection for Indigenous People. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2019", "12/31/2023",
+     "PhD Co-supervisor: Jessica Barudin",
+     "Re-connecting Through Women's Teachings, Language and Movement. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2017", "12/31/2023",
+     "PhD Supervisor: Suzanne Kite",
+     "Lakota Epistemology, Performance Practice, and Digital Technology. Concordia University.",
+     "AI", "Supervision"),
+
+    ("01/01/2017", PRESENT,
+     "PhD Secondary Supervisor: Nafisa Sarwath",
+     "Indigenous knowledge, resilience and adaptive capacity. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2016", "12/31/2021",
+     "PhD Secondary Supervisor: Michelle Brown",
+     "(Re)Coding Resurgence: Indigenous Digital Media Kinnections. University of Hawaii Mānoa.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2007", "12/31/2014",
+     "PhD Co-supervisor: Elizabeth LaPensée",
+     "Experiencing Stories: Narrative and Experience in Interactive Media. Simon Fraser University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2008", "12/31/2012",
+     "PhD Secondary Supervisor: Miao Song",
+     "Experiencing Stories: Narrative and Experience in Interactive Media. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2008", "12/31/2011",
+     "PhD Secondary Supervisor: David Johnston",
+     "Aesthetic Animism: Digital Poetry as Ontological Probe. Concordia University.",
+     "Research", "Supervision"),
+
+    ("01/01/2005", "12/31/2008",
+     "PhD Committee Member: Rozita Naghshin",
+     "Software Design as an Aesthetic Design Practice. Concordia University.",
+     "Concordia", "Supervision"),
+
+    # Masters Thesis Advisees
+    ("01/01/2022", PRESENT,
+     "Masters Supervisor: Vanessa Racine",
+     "Anishinaabe Love: Epistemologies & Videogames. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2022", "12/31/2025",
+     "Masters Committee: Tarcisio Cataldi Tegani",
+     "Speculative Vexillology: Exploring National Identity and Imagining Afro-Brazilian Futures through Flags. Concordia University.",
+     "Concordia", "Supervision"),
+
+    ("01/01/2021", "12/31/2024",
+     "Masters Supervisor: Caeleigh Lightning Long",
+     "Wawêsiwîn: The Act of Dressing Up — A Research Cree-ation Project. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2018", "12/31/2023",
+     "Masters Supervisor: Sébastien Aubin",
+     "Designing Culturally Grounded Cree Syllabaries. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2018", "12/31/2021",
+     "Masters Supervisor: Waylon Wilson",
+     "Tuscarora Virtual Realities. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2017", "12/31/2019",
+     "Masters Supervisor: Maize Longboat",
+     "Haudenosaunee Storytelling via Video Games. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2016", "12/31/2020",
+     "Masters Co-supervisor: Nicholas Gwyn Shulman",
+     "Network Arts: Seeing and Making Network Organisms. Concordia University.",
+     "Research", "Supervision"),
+
+    ("01/01/2014", "12/31/2024",
+     "Masters Supervisor: Morgan Kennedy",
+     "Storied Indigeneity in Videogames: Post-Indian Warriors and Indie Japan. Concordia University.",
+     "AbTeC", "Supervision"),
+
+    ("01/01/2012", "12/31/2015",
+     "Masters Co-supervisor: Nikolaos Chandolias",
+     "KinectEcho: Gesture and Vocal Recognition in New Media, Interactive Art and Live Events. Concordia University.",
+     "Research", "Supervision"),
+
+    ("01/01/2006", "12/31/2007",
+     "Masters Supervisor: Leslie Plumb",
+     "Transversal Entanglements: Research-Creation and the Design Process for Inflexions. Concordia University.",
+     "Research", "Supervision"),
+
+    ("01/01/2004", "12/31/2008",
+     "Masters Co-supervisor: Mia Song",
+     "Computer-Assisted Interactive Documentary and Performance Arts in Illimitable Space. Concordia University.",
+     "Research", "Supervision"),
+
+    ("01/01/2003", "12/31/2005",
+     "Masters Committee: Rozita Naghshin",
+     "CASE Tool Simplification Via Task-Sensitive Metaphor. Concordia University.",
+     "Concordia", "Supervision"),
+
+    # ── SERVICE ────────────────────────────────────────────────────────────
+    # Administrative roles
+    ("01/01/2010", "12/31/2018",
+     "Acting Chair",
+     "Department of Design and Computation Arts, Concordia University. Various 1-to-2-week terms.",
+     "Concordia", "Service"),
+
+    ("09/01/2003", "08/31/2013",
+     "Computation Arts Undergraduate Program Director / Co-director",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    ("09/01/2005", "08/31/2008",
+     "Graduate Program Director",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    ("09/01/2003", "08/31/2014",
+     "Computation Lab Director",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    # Departmental committees
+    ("01/01/2008", "12/31/2020",
+     "Personnel Committee",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2002", "12/31/2014",
+     "CART Curriculum Committee, Chair",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2002", PRESENT,
+     "Undergraduate and Graduate Admissions Committees",
+     "Department of Design and Computation Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    # Faculty committees
+    ("01/01/2005", "12/31/2008",
+     "Faculty Research Advisory Committee",
+     "Faculty of Fine Arts, Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2005", "12/31/2008",
+     "Hexagram-Concordia Steering Committee",
+     "Concordia University.",
+     "Concordia", "Service"),
+
+    # University roles
+    ("01/01/2020", PRESENT,
+     "Co-director, Indigenous Futures Research Center",
+     "Concordia University.",
+     "IIF", "Service"),
+
+    ("01/01/2020", PRESENT,
+     "Indigenous Directions Leadership Council",
+     "Concordia University.",
+     "IIF", "Service"),
+
+    ("01/01/2015", PRESENT,
+     "Milieux Research Institute Advisory Board",
+     "Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2015", "12/31/2018",
+     "Senate Research Committee",
+     "Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2009", "12/31/2018",
+     "Board Member (Founding), Research Centre on Technoculture, Art and Gaming (TAG)",
+     "Concordia University.",
+     "Concordia", "Service"),
+
+    ("01/01/2011", "12/31/2014",
+     "Faculty Senate",
+     "Concordia University.",
+     "Concordia", "Service"),
+
+    # External committees
+    ("01/01/2025", "12/31/2028",
+     "Advisory Board, Digital Technologies Research Centre",
+     "National Research Council of Canada.",
+     "Research", "Service"),
+
+    ("01/01/2021", "12/31/2023",
+     "Advisory Council on Artificial Intelligence",
+     "Government of Canada.",
+     "AI", "Service"),
+
+    ("01/01/2020", "12/31/2022",
+     "Canadian Commission for UNESCO Working Groups on AI Ethics & the Sustainable Development Goals",
+     "",
+     "AI", "Service"),
+
+    ("01/01/2016", "12/31/2022",
+     "Board Member, imagineNATIVE Film + Media Arts Festival",
+     "",
+     "AbTeC", "Service"),
+
+    ("01/01/2010", "12/31/2016",
+     "Founding Member, New Media Advisory Board, imagineNATIVE Film + Media Arts Festival",
+     "",
+     "AbTeC", "Service"),
+
+    ("01/01/2006", PRESENT,
+     "Co-Director, Aboriginal Territories in Cyberspace Research Network",
+     "",
+     "AbTeC", "Service"),
+
+    ("01/01/2013", "12/31/2016",
+     "First Peoples Literary Prize Incubating Committee & Founding Advisory Board",
+     "Blue Metropolis International Literary Festival, Montreal, QC.",
+     "AbTeC", "Service"),
+
 ]
 
+def derive_cv_dimensions(rows_in):
+    """Add org (institution) and program (funding agency) columns.
+    - org is set only for Employment and Education rows.
+    - program (agency) and project (role) are set only for Funding rows.
+    - All other rows get empty strings so they appear as untagged in the filter.
+    """
+    early_career_orgs = [
+        ('Arts Alliance Laboratory', 'Arts Alliance Laboratory'),
+        ('Arts Alliance Ventures',   'Arts Alliance Ventures'),
+        ('Interval Research',        'Interval Research Corporation'),
+        ('Fitch',                    'Fitch, Inc.'),
+        ('Lollapalooza',             "Lollapalooza '94 Tour"),
+        ('Carnegie Research Fellow', 'Institute for Research on Learning'),
+        ('Stanford University',      'Stanford University'),
+    ]
+    edu_orgs = [
+        ('Royal College of Art', 'Royal College of Art'),
+        ('Freie Universität',    'Freie Universität Berlin'),
+        ('Stanford University',  'Stanford University'),
+    ]
+    # Ordered by specificity (longer/more specific first)
+    agencies = [
+        ('Social Sciences and Humanities Research Council', 'Social Sciences and Humanities Research Council'),
+        ('Natural Sciences and Engineering Research Council','Natural Sciences and Engineering Research Council'),
+        ('Canada First Research Excellence Fund',           'Canada First Research Excellence Fund'),
+        ('New Frontiers in Research Fund',                  'New Frontiers in Research Fund'),
+        ('Pierre Elliott Trudeau Foundation',               'Pierre Elliott Trudeau Foundation'),
+        ('Fonds de recherche',                              'Fonds de recherche du Québec'),
+        ('Fonds québécois',                                 'Fonds québécois de la recherche'),
+        ('MacArthur Foundation',                            'The MacArthur Foundation'),
+        ('Schmidt Family Foundation',                       'Schmidt Family Foundation'),
+        ('Canada Foundation for Innovation',                'Canada Foundation for Innovation'),
+        ('Canada Council for the Arts',                     'Canada Council for the Arts'),
+        ('Hexagram Institute',                              'Hexagram Institute'),
+        ('Heritage Canada',                                 'Heritage Canada'),
+        ('Hewitt Foundation',                               'Hewitt Foundation'),
+        ('Kanaeokana Network',                              'Kanaeokana Network'),
+        ('Indigenous Screen Office',                        'Indigenous Screen Office'),
+        ('Arts Council of England',                         'Arts Council of England'),
+        ('McConnell Family Foundation',                     'J. W. McConnell Family Foundation'),
+        ('Montalvo Arts Center',                            'Montalvo Arts Center'),
+        ('Fine Arts-Engineering Seed Grants',               'Concordia Fine Arts-Engineering'),
+        ('Fine Arts Faculty',                               'Concordia Fine Arts Faculty'),
+        ('Office of Research',                              'Concordia Office of Research'),
+        ('Jarislowsky Institute',                           'Jarislowsky Institute'),
+        ('Concordia University',                            'Concordia University'),
+    ]
+
+    result = []
+    for row in rows_in:
+        start, end, headline, desc, _project, group = row[:6]
+        org = ''
+        program = ''
+        role = ''
+
+        if group == 'Education':
+            for keyword, institution in edu_orgs:
+                if keyword in headline:
+                    org = institution
+                    break
+
+        elif group == 'Employment':
+            org = 'Concordia University'  # default; overridden for pre-Concordia
+            for keyword, institution in early_career_orgs:
+                if keyword in headline:
+                    org = institution
+                    break
+
+        elif group in ('Funding (PI)', 'Funding (Co-I)', 'Funding (Internal)'):
+            for keyword, agency in agencies:
+                if keyword in desc:
+                    program = agency
+                    break
+            if group == 'Funding (PI)':
+                if 'Artist.' in desc:
+                    role = 'Artist'
+                elif 'Research Director' in desc:
+                    role = 'Research Director'
+                elif 'Fellow' in headline:
+                    role = 'Fellow'
+                elif 'Co-lead' in desc:
+                    role = 'Co-lead'
+                elif 'Co-grant holder' in desc:
+                    role = 'Co-grant Holder'
+                else:
+                    role = 'Primary Investigator'
+            elif group == 'Funding (Co-I)':
+                role = 'Core Applicant' if 'Core Applicant' in desc else 'Co-investigator'
+            else:  # Funding (Internal)
+                role = 'Internal'
+
+        result.append((start, end, headline, desc, role, group, org, program))
+    return result
+
+
+rows = derive_cv_dimensions(rows)
 rows.sort(key=lambda r: GRP_ORDER.index(r[5]) if r[5] in GRP_ORDER else 99)
 
 for row in rows:

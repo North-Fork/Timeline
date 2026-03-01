@@ -201,6 +201,7 @@ body {
 #filters::-webkit-scrollbar-track { background: transparent; }
 #filters::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
 .filter-panel-title {
+  display: flex; align-items: baseline; gap: 6px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -209,6 +210,11 @@ body {
   padding: 10px 4px 4px;
   border-bottom: 1px solid #374151;
   margin-bottom: 4px;
+}
+.filter-panel-title #event-count {
+  margin-left: auto; padding: 0;
+  font-size: 11px; font-weight: 400;
+  text-transform: none; letter-spacing: 0;
 }
 .filter-section-title {
   font-size: 10px;
@@ -237,6 +243,30 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ── Accordion filter layout ──────────────────────────────────────────── */
+.accordion-section { margin-bottom: 2px; }
+.accordion-header {
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer; user-select: none;
+  padding: 10px 4px 4px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #6b7280;
+}
+.accordion-header:hover { color: #9ca3af; }
+.accordion-arrow {
+  display: inline-block; font-size: 8px; flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.accordion-arrow.open { transform: rotate(90deg); }
+.accordion-body { overflow: hidden; }
+.accordion-body.collapsed { display: none; }
+.filter-all-none { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
+.filter-all-none button {
+  font-size: 10px; padding: 1px 6px;
+  background: transparent; border: 1px solid #374151;
+  color: #6b7280; border-radius: 3px; cursor: pointer; line-height: 1.4;
+}
+.filter-all-none button:hover { background: #374151; color: #e5e7eb; }
 
 /* ── Main ─────────────────────────────────────────────────── */
 #main {
@@ -635,6 +665,10 @@ let groupVis  = new Set();
 let orgVis    = new Set();
 let programVis = new Set();
 let projVis   = new Set();
+let FILTER_LAYOUT  = 'accordion'; // 'accordion' | 'chips-bar' | 'doc-toggles' | 'tabs'
+let categoryGroups = [];          // [{ title, items }] — category accordion groups; one entry per source document
+let accordionState = new Map();   // section title → boolean (true = expanded); persists across buildFilters() calls
+let dimLabels = { orgs: 'Group', programs: 'Program', projects: 'Project' }; // renamed per format
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
 let rowHeights = {};   // group -> row height in px
@@ -1224,9 +1258,11 @@ function normalizeRow(row, format = 'abtec') {
       funders:        g('funders', 'funder'),
     };
   } else {
-    // CV format: Group col is the main grouping; no org/program dimensions
+    // CV format: Group col = category; org = institution; program = funding agency; project = funding role
     return { ...base,
       group:          g('group', 'grp', 'category'),
+      org:            g('org', 'institution'),
+      program:        g('program', 'prog'),
       media:          g('media', 'url', 'video', 'image'),
       mediaThumbnail: g('mediathumbnail', 'thumbnail'),
       mediaCaption:   g('mediacaption', 'caption'),
@@ -1299,6 +1335,10 @@ function parse(rows) {
   programs = [...new Set(events.map(e => e.program).filter(Boolean))].sort();
   projects = [...new Set(events.map(e => e.project).filter(Boolean))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
+  categoryGroups = [{ title: 'Categories', items: groups }]; // seam for multi-document grouping
+  dimLabels = format === 'cv'
+    ? { orgs: 'Institution', programs: 'Funding Agency', projects: 'Role' }
+    : { orgs: 'Group',       programs: 'Program',        projects: 'Project' };
   groupVis   = new Set(groups);
   orgVis     = new Set(orgs);
   programVis = new Set(programs);
@@ -1348,46 +1388,119 @@ function syncDimVis() {
   }
 }
 
-function buildFilters() {
-  const sidebarFiles = document.getElementById('sidebar-files');
-  filDiv.innerHTML = '';
+// ── Filter UI helpers ──────────────────────────────────────────────────────
 
+// Creates checkbox labels for `items` and appends them to `container`.
+// Shared by all filter layout renderers.
+function makeFilterItems(container, items, vis, colorFn, isDim, syncDims) {
+  for (const item of items) {
+    const lbl = document.createElement('label');
+    lbl.className = 'filter-label';
+    const cb  = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = vis.has(item);
+    cb.addEventListener('change', () => {
+      if (cb.checked) vis.add(item); else vis.delete(item);
+      if (isDim) { syncCategoryVis(); buildFilters(); }
+      else if (syncDims && cb.checked) { syncDimVis(); buildFilters(); }
+      redraw();
+    });
+    const dot = document.createElement('span');
+    dot.className = 'filter-dot';
+    dot.style.background = colorFn(item);
+    const txt = document.createElement('span');
+    txt.textContent = item;
+    lbl.append(cb, dot, txt);
+    container.appendChild(lbl);
+  }
+}
+
+// Returns a .filter-all-none div with All + None buttons for a filter section.
+function makeAllNoneButtons(items, vis, isDim, syncDims) {
+  const wrap = document.createElement('div');
+  wrap.className = 'filter-all-none';
+  const btnAll = document.createElement('button');
+  btnAll.textContent = 'All';
+  btnAll.addEventListener('click', e => {
+    e.stopPropagation();
+    items.forEach(i => vis.add(i));
+    if (isDim)    syncCategoryVis();
+    if (syncDims) syncDimVis();
+    buildFilters(); redraw();
+  });
+  const btnNone = document.createElement('button');
+  btnNone.textContent = 'None';
+  btnNone.addEventListener('click', e => {
+    e.stopPropagation();
+    items.forEach(i => vis.delete(i));
+    if (isDim) syncCategoryVis();
+    buildFilters(); redraw();
+  });
+  wrap.append(btnAll, btnNone);
+  return wrap;
+}
+
+// ── Layout renderers ───────────────────────────────────────────────────────
+
+function buildFiltersAccordion() {
   const panelTitle = document.createElement('div');
   panelTitle.className = 'filter-panel-title';
   panelTitle.textContent = 'Filters';
+  panelTitle.appendChild(cntEl);
   filDiv.appendChild(panelTitle);
 
-  const section = (title, items, vis, colorFn, afterHeader = null, isDim = false, syncDims = false) => {
-    const h = document.createElement('div');
-    h.className = 'filter-section-title';
-    h.textContent = title;
-    filDiv.appendChild(h);
-    if (afterHeader) filDiv.appendChild(afterHeader);
-    for (const item of items) {
-      const lbl = document.createElement('label');
-      lbl.className = 'filter-label';
-      const cb  = document.createElement('input');
-      cb.type = 'checkbox'; cb.checked = vis.has(item);
-      cb.addEventListener('change', () => {
-        if (cb.checked) vis.add(item); else vis.delete(item);
-        if (isDim) { syncCategoryVis(); buildFilters(); }
-        else if (syncDims && cb.checked) { syncDimVis(); buildFilters(); }
-        redraw();
-      });
-      const dot = document.createElement('span');
-      dot.className = 'filter-dot';
-      dot.style.background = colorFn(item);
-      const txt = document.createElement('span');
-      txt.textContent = item;
-      lbl.append(cb, dot, txt);
-      filDiv.appendChild(lbl);
-    }
+  // Creates one collapsible accordion section and appends it to filDiv.
+  const addSection = (title, items, vis, colorFn, isDim, syncDims) => {
+    if (!accordionState.has(title)) accordionState.set(title, true);
+    const isOpen = accordionState.get(title);
+
+    const sec = document.createElement('div');
+    sec.className = 'accordion-section';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'accordion-header';
+    const arrow = document.createElement('span');
+    arrow.className = 'accordion-arrow' + (isOpen ? ' open' : '');
+    arrow.textContent = '▶';
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = title;
+    const allNone = makeAllNoneButtons(items, vis, isDim, syncDims);
+    hdr.append(arrow, titleSpan, allNone);
+
+    const body = document.createElement('div');
+    body.className = 'accordion-body' + (isOpen ? '' : ' collapsed');
+    makeFilterItems(body, items, vis, colorFn, isDim, syncDims);
+
+    hdr.addEventListener('click', e => {
+      if (e.target.closest('.filter-all-none')) return;
+      const open = !accordionState.get(title);
+      accordionState.set(title, open);
+      arrow.classList.toggle('open', open);
+      body.classList.toggle('collapsed', !open);
+    });
+
+    sec.append(hdr, body);
+    filDiv.appendChild(sec);
   };
 
-  if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280', null, true);
-  if (programs.length) section('Program',  programs, programVis, () => '#6b7280', null, true);
-  if (projects.length) section('Project',  projects, projVis,    () => '#6b7280', null, true);
-  section('Categories', groups, groupVis, g => groupColor[g], cntEl, false, true);
+  if (orgs.length)     addSection(dimLabels.orgs,     orgs,     orgVis,     () => '#6b7280', true,  false);
+  if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false);
+  if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
+  for (const grp of categoryGroups) {
+    addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true);
+  }
+}
+
+function buildFiltersChipsBar()    { /* TODO option 3: horizontal pill bar above timeline */ }
+function buildFiltersDocToggles()  { /* TODO option 4: document master toggles + sub-filters */ }
+function buildFiltersTabs()        { /* TODO option 5: tabbed sidebar panels */ }
+
+function buildFilters() {
+  const sidebarFiles = document.getElementById('sidebar-files');
+  filDiv.innerHTML = '';
+  if      (FILTER_LAYOUT === 'accordion')   buildFiltersAccordion();
+  else if (FILTER_LAYOUT === 'chips-bar')   buildFiltersChipsBar();
+  else if (FILTER_LAYOUT === 'doc-toggles') buildFiltersDocToggles();
+  else if (FILTER_LAYOUT === 'tabs')        buildFiltersTabs();
   filDiv.appendChild(sidebarFiles);
 }
 
