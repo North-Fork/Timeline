@@ -1,5 +1,18 @@
 # Changelog
 
+## Session 11 — 2026-02-28
+
+### Google Doc CV loader (in-browser)
+- Paste any published Google Doc URL into the URL field → Load button auto-detects `/document/d/` and calls `loadFromGDoc()` instead of `loadFromGSheet()`
+- `isGDocUrl(url)`: simple detection predicate
+- `parseGDoc(html)`: JS port of `fetch_cv_from_gdoc.py` using `DOMParser`; same 3-strategy parser (date-prefix + `\xa0\xa0+` split, continuation line, bibliography year extraction)
+- `gdocParseDateRange(s)`: full JS port of Python date parser; handles `M.YY`, `M.YY-present`, `M.YY-M.YY`, `M.YYYY`, `YYYY`, `YYYY-YY`, `YYYY-YYYY`, full month-name forms
+- `loadFromGDoc(url)`: fetches published HTML (with `corsproxy.io` fallback for CORS), calls `parseGDoc`, then `parse(rows)` directly; status shows entry count on success
+- 27-section `GDOC_SECTION_MAP` + `GDOC_PROJECT_MAP` match Python equivalents exactly
+- Outputs rows with `'start date'`/`'end date'`/`'group'`/`'project'` keys → detected as `cv` format by `detectFormat()`; timeline title auto-updates to "CV Timeline"
+
+---
+
 ## Session 10 — 2026-02-28
 
 ### Print section
