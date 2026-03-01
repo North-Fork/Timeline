@@ -100,11 +100,26 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#sidebar-actions {
+#sidebar-print {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  border-top: 1px solid #374151;
+  flex-shrink: 0;
+}
+#sidebar-print .print-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4b5563;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+#sidebar-print .print-btns {
   display: flex;
   gap: 6px;
-  padding: 0 12px 12px;
 }
+#sidebar-print .print-btns .sb-btn { flex: 1; }
 .sb-btn { flex: 1; text-align: center; padding: 5px 4px; font-size: 12px; }
 #search-box {
   padding: 10px 12px;
@@ -505,9 +520,13 @@ body {
           <span id="gsheet-status"></span>
         </div>
       </div>
-      <div id="sidebar-actions">
-        <button class="tb-btn sb-btn" id="btn-export" title="Export PDF">PDF</button>
-      </div>
+    </div>
+  </div>
+  <div id="sidebar-print">
+    <div class="print-label">Print</div>
+    <div class="print-btns">
+      <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
+      <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
     </div>
   </div>
 </div>
@@ -1981,6 +2000,43 @@ function loadTestData() {
 
 // loadTestData();
 
+// ── Markdown Export ───────────────────────────────────────────────────────
+document.getElementById('btn-export-md').addEventListener('click', () => {
+  if (!events.length) return;
+
+  const title  = document.getElementById('sidebar-title').textContent;
+  const visEvs = getVisibleEvents();
+
+  // Bucket by category, preserving display order
+  const byGroup = {};
+  for (const e of visEvs) {
+    (byGroup[e.group] ??= []).push(e);
+  }
+
+  const exportDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const rangeStart = fmtDate(visEvs[0].start);
+  const rangeEnd   = fmtDate(visEvs[visEvs.length - 1].end);
+  const lines = [`# ${title}`, '', `*${rangeStart} – ${rangeEnd} · ${visEvs.length} events · exported ${exportDate}*`, ''];
+
+  for (const g of groups.filter(g => byGroup[g])) {
+    lines.push(`## ${g}`, '');
+    for (const e of byGroup[g]) {
+      const dateStr = e.end > e.start ? `${fmtDate(e.start)} – ${fmtDate(e.end)}` : fmtDate(e.start);
+      lines.push(`- **${dateStr}** — ${e.headline}`);
+    }
+    lines.push('');
+  }
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  const y1md = visEvs[0].start.getFullYear();
+  const y2md = visEvs[visEvs.length - 1].end.getFullYear();
+  a.download = `AbTeC-Timeline-List-${y1md}-${y2md}.md`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+});
+
 // ── PDF Export ────────────────────────────────────────────────────────────
 const exportModalBg = document.getElementById('export-modal-bg');
 
@@ -2005,6 +2061,7 @@ document.getElementById('export-go').addEventListener('click', () => {
   exportModalBg.classList.remove('open');
   const svgString = buildExportSVG(y1, y2);
   const html = `<!DOCTYPE html><html><head>
+  <title>AbTeC-Timeline-Visual-${y1}-${y2}</title>
   <style>
     @page {
       size: 11in 8.5in;
@@ -2032,8 +2089,9 @@ document.getElementById('export-go').addEventListener('click', () => {
   <script>
     document.getElementById('print-btn').addEventListener('click', function() {
       window.print();
-      window.close();
     });
+    window.onload = function() { window.print(); };
+    window.onafterprint = function() { window.close(); };
   <\/script>
 </body></html>`;
   const blob = new Blob([html], { type: 'text/html' });

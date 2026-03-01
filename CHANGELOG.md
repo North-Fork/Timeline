@@ -1,5 +1,25 @@
 # Changelog
 
+## Session 10 — 2026-02-28
+
+### Print section
+- New **Print** section pinned to the bottom of the sidebar (outside the scrollable filter area)
+- Contains two buttons: **List** (Markdown export) and **Timeline** (PDF export)
+- Replaces the old `#sidebar-actions` row that was buried inside the file loader
+
+### List (Markdown) export
+- Exports all currently visible events (respects active filters) as a `.md` file
+- Grouped by category in display order; each entry: `**date** — headline`
+- File header includes title, date range, event count, and export date
+- Default filename: `AbTeC-Timeline-List-{startYear}-{endYear}.md`
+
+### Timeline (PDF) export
+- Print dialogue now opens automatically when the export tab loads (`window.onload`)
+- Export tab closes automatically after the dialogue is dismissed (`window.onafterprint`)
+- `<title>` tag in the blob page sets the browser's default save-as filename to `AbTeC-Timeline-Visual-{y1}-{y2}`
+
+---
+
 ## Session 9 — 2026-02-28
 
 ### Filters — two-way category/dimension sync
