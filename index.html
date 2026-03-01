@@ -926,13 +926,19 @@ function gdocExtractTitle(text) {
 }
 
 function gdocExtractLink(tag) {
+  const unwrap = a => {
+    let href = a.getAttribute('href') || '';
+    const qm = href.match(/[?&]q=([^&]+)/);
+    return qm ? decodeURIComponent(qm[1]) : href;
+  };
+  // Prefer a {text} link — signals a full-text / publication link
+  for (const a of tag.querySelectorAll('a[href]')) {
+    if (/^\{text\}$/i.test((a.textContent || '').trim()))
+      return { url: unwrap(a), label: 'Text' };
+  }
+  // Fall back to first link
   const a = tag.querySelector('a[href]');
-  if (!a) return '';
-  let href = a.getAttribute('href') || '';
-  // Unwrap Google's redirect: https://www.google.com/url?q=ACTUAL_URL&...
-  const qm = href.match(/[?&]q=([^&]+)/);
-  if (qm) href = decodeURIComponent(qm[1]);
-  return href;
+  return a ? { url: unwrap(a), label: 'More Info' } : { url: '', label: 'More Info' };
 }
 
 function parseGDoc(html) {
@@ -962,9 +968,10 @@ function parseGDoc(html) {
       const [start, end] = gdocParseDateRange(cleanDate);
       if (start) {
         const restClean = rest.replace(/\xa0/g, ' ').replace(/\s*\{[^}]*\}\s*$/, '').trim();
-        const headlineVal = entryLink ? `<a href="${entryLink}">${restClean}</a>` : restClean;
+        const headlineVal = entryLink.url ? `<a href="${entryLink.url}">${restClean}</a>` : restClean;
         const row = { 'start date': start, 'end date': end || start,
-          'headline': headlineVal, 'description': '', 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
+          'headline': headlineVal, 'headline link label': entryLink.url ? entryLink.label : '',
+          'description': '', 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
         rows.push(row); lastRow = row;
         continue;
       }
@@ -986,9 +993,10 @@ function parseGDoc(html) {
       const year = years[years.length - 1];
       const d = gdocFmt(year);
       const titleText = gdocExtractTitle(cleanFull);
-      const headlineVal = entryLink ? `<a href="${entryLink}">${titleText}</a>` : titleText;
+      const headlineVal = entryLink.url ? `<a href="${entryLink.url}">${titleText}</a>` : titleText;
       const row = { 'start date': d, 'end date': d,
-        'headline': headlineVal, 'description': cleanFull, 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
+        'headline': headlineVal, 'headline link label': entryLink.url ? entryLink.label : '',
+        'description': cleanFull, 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
       rows.push(row); lastRow = row;
     }
   }
@@ -1133,7 +1141,8 @@ function normalizeRow(row, format = 'abtec') {
     startRaw,
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
-    headlineUrl: extractUrl(g('headline', 'name', 'event')),
+    headlineUrl:       extractUrl(g('headline', 'name', 'event')),
+    headlineLinkLabel: g('headlinelinklabel'),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
     project:     g('project', 'proj'),
   };
@@ -1181,7 +1190,8 @@ function parse(rows) {
       id: i, start, end,
       startTs: start.getTime(), endTs: end.getTime(),
       headline:    nr.headline    || '(Untitled)',
-      headlineUrl: nr.headlineUrl || '',
+      headlineUrl:       nr.headlineUrl       || '',
+      headlineLinkLabel: nr.headlineLinkLabel || '',
       description: nr.description || '',
       group:       nr.group       || 'Ungrouped',
       org:         nr.org         || '',
@@ -1910,7 +1920,7 @@ async function openDrawer(ev) {
   document.getElementById('d-desc').innerHTML = linkify(ev.description || '');
   const moreEl = document.getElementById('d-more');
   moreEl.innerHTML = ev.headlineUrl
-    ? `<a href="${ev.headlineUrl}" target="_blank">More Info ↗</a>`
+    ? `<a href="${ev.headlineUrl}" target="_blank">${ev.headlineLinkLabel || 'More Info'} ↗</a>`
     : '';
   const teamEl = document.getElementById('d-team');
   if (ev.teamMembers) {
