@@ -1,5 +1,24 @@
 # Changelog
 
+## Session 7 — 2026-02-28
+
+### Google Sheets loader
+- URL input + Load button added to file section in sidebar
+- Accepts published Google Sheets URLs (pubhtml, pub, standard /d/{key}/, with optional ?gid=)
+- Tries direct fetch first; falls back to corsproxy.io if CORS blocks
+- Cache-busting timestamp + `cache: 'no-store'` on every fetch to avoid stale data
+- Last-used URL saved to localStorage (pre-filled on next open, not auto-fetched)
+- Status feedback: Loading… / ✓ Loaded / Failed / Invalid URL
+
+### Data source rename
+- Source file renamed from `IIF-Timeline-Data-Multi-Project.xlsx` → `AbTeC-Timeline-Data.xlsx`
+- `make_data_js.py` and `CLAUDE.md` updated accordingly
+
+### Backlog
+- `Timeline-m48`: Auto-sync Google Sheets via GitHub Actions (P3, not yet started)
+
+---
+
 ## Session 6 — 2026-02-28
 
 ### Research Team (Storybox)

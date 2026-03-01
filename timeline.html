@@ -70,6 +70,36 @@ body {
 #drop-zone .dz-icon { font-size: 22px; margin-bottom: 6px; }
 #drop-zone input[type=file] { display: none; }
 #drop-zone .dz-browse { color: #6366f1; font-weight: 600; }
+#gsheet-box {
+  padding: 0 12px 8px;
+}
+#gsheet-input {
+  display: block;
+  width: 100%;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  color: #e5e7eb;
+  font-size: 11px;
+  padding: 5px 8px;
+  outline: none;
+  margin-bottom: 5px;
+}
+#gsheet-input:focus { border-color: #6366f1; }
+#gsheet-input::placeholder { color: #4b5563; }
+#gsheet-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#gsheet-status {
+  font-size: 11px;
+  color: #6b7280;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 #sidebar-actions {
   display: flex;
   gap: 6px;
@@ -458,6 +488,13 @@ body {
           <input type="file" id="file-input" accept=".xlsx,.xls,.csv">
         </label>
       </div>
+      <div id="gsheet-box">
+        <input id="gsheet-input" type="text" placeholder="Google Sheets URL…" autocomplete="off" spellcheck="false">
+        <div id="gsheet-row">
+          <button class="tb-btn sb-btn" id="btn-gsheet-load">Load</button>
+          <span id="gsheet-status"></span>
+        </div>
+      </div>
       <div id="sidebar-actions">
         <button class="tb-btn sb-btn" id="btn-export" title="Export PDF">PDF</button>
       </div>
@@ -625,6 +662,80 @@ function load(file) {
   };
   r.readAsBinaryString(file);
 }
+
+// ── Google Sheets loader ──────────────────────────────────────────────────
+const GSHEET_LS_KEY = 'timeline-gsheet-url';
+const GSHEET_PROXY  = 'https://corsproxy.io/?';
+
+const gsheetInput  = document.getElementById('gsheet-input');
+const gsheetStatus = document.getElementById('gsheet-status');
+
+// Pre-fill from localStorage (but don't fetch)
+const savedGSheetUrl = localStorage.getItem(GSHEET_LS_KEY);
+if (savedGSheetUrl) gsheetInput.value = savedGSheetUrl;
+
+function parseGSheetUrl(url) {
+  url = url.trim();
+  // Published "pub" or "pubhtml" format: /d/e/{key}/pub...
+  let m = url.match(/\/spreadsheets\/d\/e\/([^\/]+)\//);
+  if (m) return `https://docs.google.com/spreadsheets/d/e/${m[1]}/pub?output=csv`;
+  // Standard format: /d/{key}/
+  m = url.match(/\/spreadsheets\/d\/([^\/]+)\//);
+  if (m) {
+    const gid = (url.match(/[?&]gid=(\d+)/) || [])[1];
+    return `https://docs.google.com/spreadsheets/d/${m[1]}/pub?output=csv${gid ? `&single=true&gid=${gid}` : ''}`;
+  }
+  return null;
+}
+
+async function loadFromGSheet(url) {
+  const csvUrl = parseGSheetUrl(url);
+  if (!csvUrl) { gsheetStatus.textContent = 'Invalid URL'; gsheetStatus.style.color = '#ef4444'; return; }
+
+  gsheetStatus.textContent = 'Loading…';
+  gsheetStatus.style.color = '#6b7280';
+
+  const bust = `&t=${Date.now()}`;
+  const tryFetch = async u => {
+    const r = await fetch(u, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.text();
+  };
+
+  let csvText;
+  try {
+    csvText = await tryFetch(csvUrl + bust);
+  } catch {
+    try {
+      csvText = await tryFetch(GSHEET_PROXY + encodeURIComponent(csvUrl + bust));
+    } catch (ex) {
+      gsheetStatus.textContent = 'Failed: ' + ex.message;
+      gsheetStatus.style.color = '#ef4444';
+      return;
+    }
+  }
+
+  try {
+    const wb   = XLSX.read(csvText, { type: 'string' });
+    const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
+    parse(rows);
+    localStorage.setItem(GSHEET_LS_KEY, url);
+    gsheetStatus.textContent = '✓ Loaded';
+    gsheetStatus.style.color = '#22c55e';
+  } catch (ex) {
+    gsheetStatus.textContent = 'Parse error: ' + ex.message;
+    gsheetStatus.style.color = '#ef4444';
+  }
+}
+
+document.getElementById('btn-gsheet-load').addEventListener('click', () => {
+  const url = gsheetInput.value.trim();
+  if (url) loadFromGSheet(url);
+});
+
+gsheetInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { const url = gsheetInput.value.trim(); if (url) loadFromGSheet(url); }
+});
 
 // ── Data parsing ─────────────────────────────────────────────────────────
 function pDate(v) {
