@@ -1584,10 +1584,10 @@ function buildFiltersAccordion() {
 
   if (orgs.length)     addSection(dimLabels.orgs,     orgs,     orgVis,     () => '#6b7280', true,  false);
   if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false, programGroups.length ? programGroups : null);
+  if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
   for (const grp of categoryGroups) {
     addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true);
   }
-  if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
 }
 
 function buildFiltersChipsBar()    { /* TODO option 3: horizontal pill bar above timeline */ }

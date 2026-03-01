@@ -113,6 +113,8 @@ Click **Timeline** to export the current view as a PDF. Enter the year range whe
 
 ## Data Format
 
+> **NOTE for Nancy/AbTeC Team** — we need to validate the Group:Program:Project taxonomy, and update the IIF data to reflect properly.
+
 The timeline auto-detects whether a file contains research/project data or CV data based on its column headers.
 
 ### Research Data
