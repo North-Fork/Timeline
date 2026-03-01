@@ -925,6 +925,16 @@ function gdocExtractTitle(text) {
   return (parts[0] || text).trim().slice(0, 200);
 }
 
+function gdocExtractLink(tag) {
+  const a = tag.querySelector('a[href]');
+  if (!a) return '';
+  let href = a.getAttribute('href') || '';
+  // Unwrap Google's redirect: https://www.google.com/url?q=ACTUAL_URL&...
+  const qm = href.match(/[?&]q=([^&]+)/);
+  if (qm) href = decodeURIComponent(qm[1]);
+  return href;
+}
+
 function parseGDoc(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const rows = [];
@@ -943,6 +953,8 @@ function parseGDoc(html) {
 
     if (!group) continue;
 
+    const entryLink = gdocExtractLink(tag);
+
     // Strategy 1: date prefix + \xa0\xa0+ separator
     const [dateCandidate, rest] = gdocSplitNbsp(rawTag);
     if (dateCandidate) {
@@ -950,8 +962,9 @@ function parseGDoc(html) {
       const [start, end] = gdocParseDateRange(cleanDate);
       if (start) {
         const restClean = rest.replace(/\xa0/g, ' ').replace(/\s*\{[^}]*\}\s*$/, '').trim();
+        const headlineVal = entryLink ? `<a href="${entryLink}">${restClean}</a>` : restClean;
         const row = { 'start date': start, 'end date': end || start,
-          'headline': restClean, 'description': '', 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
+          'headline': headlineVal, 'description': '', 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
         rows.push(row); lastRow = row;
         continue;
       }
@@ -972,8 +985,10 @@ function parseGDoc(html) {
     if (years.length) {
       const year = years[years.length - 1];
       const d = gdocFmt(year);
+      const titleText = gdocExtractTitle(cleanFull);
+      const headlineVal = entryLink ? `<a href="${entryLink}">${titleText}</a>` : titleText;
       const row = { 'start date': d, 'end date': d,
-        'headline': gdocExtractTitle(cleanFull), 'description': cleanFull, 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
+        'headline': headlineVal, 'description': cleanFull, 'group': group, 'project': GDOC_PROJECT_MAP[group] || '' };
       rows.push(row); lastRow = row;
     }
   }
