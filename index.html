@@ -2622,11 +2622,16 @@ document.getElementById('btn-export-md').addEventListener('click', () => {
   const rangeEnd   = fmtDate(visEvs[visEvs.length - 1].end);
   const lines = [`# ${title}`, '', `*${rangeStart} – ${rangeEnd} · ${visEvs.length} events · exported ${exportDate}*`, ''];
 
-  for (const g of groups.filter(g => byGroup[g])) {
-    lines.push(`## ${g}`, '');
-    for (const e of byGroup[g]) {
+  const visGroups = groups.filter(g => byGroup[g]);
+  for (let si = 0; si < visGroups.length; si++) {
+    const g    = visGroups[si];
+    const evs  = byGroup[g];
+    const sNum = si + 1;
+    lines.push(`## ${g} (${evs.length})`, '');
+    for (let ei = 0; ei < evs.length; ei++) {
+      const e       = evs[ei];
       const dateStr = e.end > e.start ? `${fmtDate(e.start)} – ${fmtDate(e.end)}` : fmtDate(e.start);
-      lines.push(`- **${dateStr}** — ${e.headline}`);
+      lines.push(`- **${sNum}.${ei + 1}** **${dateStr}** — ${e.headline}`);
     }
     lines.push('');
   }
