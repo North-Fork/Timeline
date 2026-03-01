@@ -175,6 +175,16 @@ body {
 #filters::-webkit-scrollbar { width: 4px; }
 #filters::-webkit-scrollbar-track { background: transparent; }
 #filters::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+.filter-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  padding: 10px 4px 4px;
+  border-bottom: 1px solid #374151;
+  margin-bottom: 4px;
+}
 .filter-section-title {
   font-size: 10px;
   font-weight: 700;
@@ -936,6 +946,11 @@ function buildFilters() {
   const sidebarFiles = document.getElementById('sidebar-files');
   filDiv.innerHTML = '';
 
+  const panelTitle = document.createElement('div');
+  panelTitle.className = 'filter-panel-title';
+  panelTitle.textContent = 'Filters';
+  filDiv.appendChild(panelTitle);
+
   const section = (title, items, vis, colorFn, afterHeader = null) => {
     const h = document.createElement('div');
     h.className = 'filter-section-title';
@@ -961,10 +976,10 @@ function buildFilters() {
     }
   };
 
-  section('Categories', groups, groupVis, g => groupColor[g], cntEl);
   if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280');
   if (programs.length) section('Program',  programs, programVis, () => '#6b7280');
   if (projects.length) section('Project',  projects, projVis,    () => '#6b7280');
+  section('Categories', groups, groupVis, g => groupColor[g], cntEl);
   filDiv.appendChild(sidebarFiles);
 }
 

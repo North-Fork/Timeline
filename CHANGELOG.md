@@ -5,6 +5,7 @@
 ### UI
 - Group labels in timeline left column now word-wrap intelligently up to 3 lines (centred vertically) instead of truncating; applied to both main SVG and PDF export
 - `wrapLabel()` and `svgWrappedLabel()` helpers added
+- Filter panel reorganised: sections now ordered Group → Program → Project → Categories; top of panel labelled **Filters** (`.filter-panel-title` class); individual category sections retain their own names
 
 ### Data
 - Added Abundant Intelligences group to AbTeC-Timeline-Data.xlsx (1203 rows)
