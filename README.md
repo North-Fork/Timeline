@@ -4,6 +4,8 @@ Developer: Jason Edward Lewis with heavy lifting from Claude Code.
 
 Developed to capture the research work of [Aboriginal Territories in Cyberspace](https://abtec.org), [Obx Labs](https://www.obxlabs.net), and [other work](https://jasonlewis.org) I've done.
 
+Also works for CVs. See Data Formats below.
+
 ---
 
 ## Data Source
@@ -80,11 +82,31 @@ pip3 install openpyxl
 
 ---
 
+## Export
+
+The **Export** section is pinned at the bottom of the sidebar.
+
+### List
+
+Click **List** to download a Markdown (`.md`) file of all currently visible events. The file is grouped by category in display order and includes a header with the title, date range, event count, and export date. Active filters are respected — only events visible on the canvas are exported. Default filename: `AbTeC-Timeline-List-{startYear}-{endYear}.md`.
+
+### Timeline
+
+Click **Timeline** to export the current view as a PDF. Enter the year range when prompted. A print-ready SVG opens in a new tab; the print dialogue appears automatically — choose **Save as PDF** in your browser's print panel. Default filename: `AbTeC-Timeline-Visual-{startYear}-{endYear}`.
+
+> **Note:** PDF export requires Chrome or Brave. Firefox and Safari are not currently supported due to browser differences in print and SVG handling.
+
+---
+
 ## Data Format
+
+The timeline auto-detects whether a file contains research/project data or CV data based on its column headers.
+
+### Research Data
 
 The source file is an Excel workbook (`.xlsx`). The first row must be a header row. The following columns are recognised:
 
-### Dates (required)
+#### Dates (required)
 
 | Column | Notes |
 |--------|-------|
@@ -95,7 +117,7 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 | End Month | End month (optional) |
 | End Day | End day (optional) |
 
-### Event Content
+#### Event Content
 
 | Column | Notes |
 |--------|-------|
@@ -103,7 +125,7 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 | Headline | May contain an `<a href="…">` link — the URL becomes the **More Info** link in the Storybox |
 | Text | Body text shown in the Storybox (HTML allowed) |
 
-### Categorisation
+#### Categorisation
 
 | Column | Notes |
 |--------|-------|
@@ -112,7 +134,7 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 | Program | Program dimension (e.g. IIF) |
 | Project | Project dimension (e.g. Skins, Isuma) |
 
-### Media (all optional)
+#### Media (all optional)
 
 | Column | Notes |
 |--------|-------|
@@ -121,7 +143,7 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 | Media Caption | Caption shown below the media |
 | Media Credit | Credit line shown below the media |
 
-### Team & Funders (optional)
+#### Team & Funders (optional)
 
 | Column | Format |
 |--------|--------|
@@ -130,10 +152,14 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 
 Recognised team roles (in display order): `RA-Undergraduate`, `RA-Masters`, `RA-PhD`, `Staff`, `Co-investigator(s)`, `Primary Investigator`
 
----
+### CV Data
 
-## PDF Export
+CV data can be loaded in two ways:
 
-Click the **PDF** button in the sidebar. Enter a year range when prompted. A print-ready SVG opens in a new tab — click **Print / Save as PDF**.
+**From an Excel file (`.xlsx`)**
 
-> **Note:** PDF export requires Chrome or Brave. Firefox and Safari are not currently supported due to browser differences in print and SVG handling.
+The workbook should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Run `data/cv-data/make_cv_data_js.py` after any changes to regenerate the local data file.
+
+**From a published Google Doc**
+
+Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*. Recognised section headings include Employment, Education, Honors and Awards, Books, Book Chapters, Journal Articles, Conference Presentations, Keynotes, Invited Lectures, Solo/Group Exhibitions, Film Screenings, Commissions, Poetry, and more.
