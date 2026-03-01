@@ -1,6 +1,7 @@
 """Generate cv.xlsx from Jason Edward Lewis CV data."""
 import openpyxl
 from openpyxl import Workbook
+from pathlib import Path
 
 wb = Workbook()
 ws = wb.active
@@ -712,6 +713,6 @@ for col in ws.columns:
     max_len = max(len(str(cell.value or "")) for cell in col)
     ws.column_dimensions[col[0].column_letter].width = min(max_len + 2, 60)
 
-path = "/Users/jasonlocal/Documents/Timeline/data/cv.xlsx"
+path = Path(__file__).parent / "cv.xlsx"
 wb.save(path)
 print(f"Saved {len(rows)} rows to {path}")
