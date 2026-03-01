@@ -29,6 +29,7 @@ body {
   overflow: hidden;
 }
 #sidebar-title {
+  position: relative;
   padding: 10px 12px 10px 16px;
   font-size: 15px;
   font-weight: 700;
@@ -36,6 +37,15 @@ body {
   color: #f59e0b;
   border-bottom: 1px solid #374151;
   flex-shrink: 0;
+}
+#sidebar-byline {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  font-size: 8px;
+  font-weight: 400;
+  color: #4b5563;
+  letter-spacing: 0;
 }
 #sidebar-controls {
   display: flex;
@@ -482,6 +492,7 @@ body {
 <div id="sidebar">
   <div id="sidebar-title">
     <span id="sidebar-title-text">AbTeC Timeline</span>
+    <span id="sidebar-byline">by JEL and Claude</span>
   </div>
   <div id="sidebar-controls">
     <button class="tb-btn" id="btn-zoomin"  title="Zoom in">＋</button>
