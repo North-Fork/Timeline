@@ -1,5 +1,36 @@
 # Changelog
 
+## Session 12 — 2026-02-28
+
+### GDoc CV parser — link extraction
+- `gdocExtractLink(tag)` extracts the first hyperlink from each entry and unwraps Google's redirect wrapper
+- `{text}` convention: if an entry contains `{`*text*`}` where the word *text* is hyperlinked, that URL is used preferentially and the Storybox shows **Text ↗** instead of **More Info ↗**
+- Detection matches on link text being exactly `"text"` (or `"{text}"`) — robust to Google Docs inserting empty spans around the braces
+- `headlineLinkLabel` field threads through `normalizeRow` → `parse()` → event object → Storybox renderer
+
+### Drop zone — plain-text CV support
+- Drop zone now accepts `.txt` files in addition to `.xlsx`
+- `parseCVText(text)` mirrors `parseGDoc()` logic: section heading detection, date-prefix + tab/2+ spaces split, continuation lines, bibliography year extraction
+- `load()` branches on `.txt` extension and reads as UTF-8 text
+- Drop zone label updated to "Drop Excel or text file here or Browse file" (single line, inline link style)
+- File input `accept` attribute updated to include `.txt`
+
+### Data / file organisation
+- `AbTeC-Timeline-Data.xlsx` renamed to `timeline-data.xlsx`; `make_data_js.py` updated
+- Old reference xlsx files moved to `ARCHIVE/`
+- `data/cv-data/cv.txt` is an example file only — not auto-loaded; must be dragged in or browsed
+
+### README
+- New **Export** section (above Data Format) documents List and Timeline buttons
+- **Data Format** split into Research Data and CV Data subsections
+- CV Data subsection expanded: three loading methods, entry format table, `{text}` link convention, clarification that no CV file auto-loads
+- **Using Your Own Data** section explains how to replace `timeline-data.xlsx` or `cv.txt`
+
+### Backlog
+- `Timeline-lkr`: CV Insights — visualize career evolution using Claude API (P3, new branch `Timeline-CV-Insights`)
+
+---
+
 ## Session 11 — 2026-02-28
 
 ### Google Doc CV loader (in-browser)
