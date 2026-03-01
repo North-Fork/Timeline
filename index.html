@@ -942,6 +942,34 @@ function parse(rows) {
 }
 
 // ── Filter UI ─────────────────────────────────────────────────────────────
+
+// Recompute groupVis: a category is checked iff at least one of its events
+// passes the current org/program/project filter.
+function syncCategoryVis() {
+  const noTagDims = orgs.length === 0 && programs.length === 0 && projects.length === 0;
+  groupVis = new Set(groups.filter(g => events.some(e => {
+    if (e.group !== g) return false;
+    if (noTagDims) return true;
+    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+    if (!hasTag) return true;
+    return (e.org     !== '' && orgVis.has(e.org))         ||
+           (e.program !== '' && programVis.has(e.program)) ||
+           (e.project !== '' && projVis.has(e.project));
+  })));
+}
+
+// Ensure any org/program/project that has events in a checked category is also checked.
+function syncDimVis() {
+  for (const g of groupVis) {
+    for (const e of events) {
+      if (e.group !== g) continue;
+      if (e.org)     orgVis.add(e.org);
+      if (e.program) programVis.add(e.program);
+      if (e.project) projVis.add(e.project);
+    }
+  }
+}
+
 function buildFilters() {
   const sidebarFiles = document.getElementById('sidebar-files');
   filDiv.innerHTML = '';
@@ -951,7 +979,7 @@ function buildFilters() {
   panelTitle.textContent = 'Filters';
   filDiv.appendChild(panelTitle);
 
-  const section = (title, items, vis, colorFn, afterHeader = null) => {
+  const section = (title, items, vis, colorFn, afterHeader = null, isDim = false, syncDims = false) => {
     const h = document.createElement('div');
     h.className = 'filter-section-title';
     h.textContent = title;
@@ -964,6 +992,8 @@ function buildFilters() {
       cb.type = 'checkbox'; cb.checked = vis.has(item);
       cb.addEventListener('change', () => {
         if (cb.checked) vis.add(item); else vis.delete(item);
+        if (isDim) { syncCategoryVis(); buildFilters(); }
+        else if (syncDims && cb.checked) { syncDimVis(); buildFilters(); }
         redraw();
       });
       const dot = document.createElement('span');
@@ -976,10 +1006,10 @@ function buildFilters() {
     }
   };
 
-  if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280');
-  if (programs.length) section('Program',  programs, programVis, () => '#6b7280');
-  if (projects.length) section('Project',  projects, projVis,    () => '#6b7280');
-  section('Categories', groups, groupVis, g => groupColor[g], cntEl);
+  if (orgs.length)     section('Group',    orgs,     orgVis,     () => '#6b7280', null, true);
+  if (programs.length) section('Program',  programs, programVis, () => '#6b7280', null, true);
+  if (projects.length) section('Project',  projects, projVis,    () => '#6b7280', null, true);
+  section('Categories', groups, groupVis, g => groupColor[g], cntEl, false, true);
   filDiv.appendChild(sidebarFiles);
 }
 

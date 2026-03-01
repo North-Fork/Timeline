@@ -1,5 +1,14 @@
 # Changelog
 
+## Session 9 — 2026-02-28
+
+### Filters — two-way category/dimension sync
+- **Uncheck Group/Program/Project** → auto-unchecks any Category that has no events in the remaining visible dimensions (`syncCategoryVis`)
+- **Check a Category** → auto-checks any Group/Program/Project that has events in that category (`syncDimVis`)
+- Unchecking a Category has no cascade effect (explicit hide)
+
+---
+
 ## Session 8 — 2026-02-28
 
 ### UI
