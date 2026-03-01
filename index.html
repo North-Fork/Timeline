@@ -21,13 +21,23 @@ body {
 /* ── Sidebar ──────────────────────────────────────────────── */
 #sidebar {
   width: 220px;
-  min-width: 220px;
+  min-width: 120px;
+  max-width: 520px;
   background: #1f2937;
   border-right: 1px solid #374151;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex-shrink: 0;
 }
+#sidebar-resizer {
+  width: 5px;
+  background: #f59e0b;
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+#sidebar-resizer:hover, #sidebar-resizer.dragging { background: #d97706; }
 #sidebar-title {
   position: relative;
   padding: 10px 12px 10px 16px;
@@ -200,6 +210,8 @@ body {
 #filters::-webkit-scrollbar { width: 4px; }
 #filters::-webkit-scrollbar-track { background: transparent; }
 #filters::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+#filters::-webkit-scrollbar-thumb:hover  { background: #fcd34d; }
+#filters::-webkit-scrollbar-thumb:active { background: #d97706; }
 .filter-panel-title {
   display: flex; align-items: baseline; gap: 6px;
   font-size: 12px;
@@ -245,6 +257,16 @@ body {
 }
 /* ── Accordion filter layout ──────────────────────────────────────────── */
 .accordion-section { margin-bottom: 2px; }
+.accordion-subgroup { margin-bottom: 1px; }
+.accordion-subgroup-header {
+  display: flex; align-items: center; gap: 5px;
+  cursor: pointer; user-select: none;
+  padding: 4px 4px 2px 6px;
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #4b5563;
+}
+.accordion-subgroup-header:hover { color: #6b7280; }
+.accordion-subgroup-header .accordion-arrow { font-size: 7px; }
 .accordion-header {
   display: flex; align-items: center; gap: 6px;
   cursor: pointer; user-select: none;
@@ -549,7 +571,7 @@ body {
         <div class="dz-icon">📂</div>
         <div>Drop Excel or text file here or <span class="dz-browse">Browse file</span></div>
         <label style="display:none">
-          <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.txt">
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.txt,.js">
         </label>
       </div>
       <div id="gsheet-box">
@@ -569,6 +591,8 @@ body {
     </div>
   </div>
 </div>
+
+<div id="sidebar-resizer"></div>
 
 <!-- Main -->
 <div id="main">
@@ -669,6 +693,7 @@ let FILTER_LAYOUT  = 'accordion'; // 'accordion' | 'chips-bar' | 'doc-toggles' |
 let categoryGroups = [];          // [{ title, items }] — category accordion groups; one entry per source document
 let accordionState = new Map();   // section title → boolean (true = expanded); persists across buildFilters() calls
 let dimLabels = { orgs: 'Group', programs: 'Program', projects: 'Project' }; // renamed per format
+let programGroups = []; // [{ label, items }] — sub-groups within Funding Agency; CV only
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
 let rowHeights = {};   // group -> row height in px
@@ -781,6 +806,20 @@ function load(file) {
       try {
         const rows = parseCVText(e.target.result);
         if (!rows.length) throw new Error('No CV sections recognised — check headings match expected format.');
+        parse(rows);
+      } catch (ex) { alert('Could not read file:\n' + ex.message); }
+    };
+    r.readAsText(file, 'utf-8');
+    return;
+  }
+  if (file.name.toLowerCase().endsWith('.js')) {
+    const r = new FileReader();
+    r.onload = e => {
+      try {
+        const text  = e.target.result;
+        const match = text.match(/window\.__TIMELINE_DATA__\s*=\s*(\[[\s\S]*?\]);\s*$/m);
+        if (!match) throw new Error('File does not contain window.__TIMELINE_DATA__ — is this a timeline data JS file?');
+        const rows = JSON.parse(match[1]);
         parse(rows);
       } catch (ex) { alert('Could not read file:\n' + ex.message); }
     };
@@ -1263,6 +1302,7 @@ function normalizeRow(row, format = 'abtec') {
       group:          g('group', 'grp', 'category'),
       org:            g('org', 'institution'),
       program:        g('program', 'prog'),
+      fundingGroup:   g('fundinggroup', 'funding_group'),
       media:          g('media', 'url', 'video', 'image'),
       mediaThumbnail: g('mediathumbnail', 'thumbnail'),
       mediaCaption:   g('mediacaption', 'caption'),
@@ -1295,8 +1335,9 @@ function parse(rows) {
       description: nr.description || '',
       group:       nr.group       || 'Ungrouped',
       org:         nr.org         || '',
-      program:     nr.program     || '',
-      project:     nr.project     || '',
+      program:      nr.program      || '',
+      fundingGroup: nr.fundingGroup || '',
+      project:      nr.project      || '',
       media:          nr.media          || '',
       mediaThumbnail: nr.mediaThumbnail || '',
       mediaCaption:   nr.mediaCaption   || '',
@@ -1339,6 +1380,27 @@ function parse(rows) {
   dimLabels = format === 'cv'
     ? { orgs: 'Institution', programs: 'Funding Agency', projects: 'Role' }
     : { orgs: 'Group',       programs: 'Program',        projects: 'Project' };
+  // Build program sub-groups for CV (Tri-council, Concordia, then ungrouped)
+  if (format === 'cv') {
+    const FG_ORDER = ['Tri-council', 'Concordia'];
+    const byGroup  = new Map();
+    const ungrouped = [];
+    for (const prog of programs) {
+      const fg = events.find(e => e.program === prog)?.fundingGroup || '';
+      if (fg) {
+        if (!byGroup.has(fg)) byGroup.set(fg, []);
+        byGroup.get(fg).push(prog);
+      } else {
+        ungrouped.push(prog);
+      }
+    }
+    programGroups = FG_ORDER
+      .filter(fg => byGroup.has(fg))
+      .map(fg => ({ label: fg, items: byGroup.get(fg) }));
+    if (ungrouped.length) programGroups.push({ label: 'Other', items: ungrouped });
+  } else {
+    programGroups = [];
+  }
   groupVis   = new Set(groups);
   orgVis     = new Set(orgs);
   programVis = new Set(programs);
@@ -1449,7 +1511,7 @@ function buildFiltersAccordion() {
   filDiv.appendChild(panelTitle);
 
   // Creates one collapsible accordion section and appends it to filDiv.
-  const addSection = (title, items, vis, colorFn, isDim, syncDims) => {
+  const addSection = (title, items, vis, colorFn, isDim, syncDims, subGroups = null) => {
     if (!accordionState.has(title)) accordionState.set(title, true);
     const isOpen = accordionState.get(title);
 
@@ -1468,7 +1530,45 @@ function buildFiltersAccordion() {
 
     const body = document.createElement('div');
     body.className = 'accordion-body' + (isOpen ? '' : ' collapsed');
-    makeFilterItems(body, items, vis, colorFn, isDim, syncDims);
+    if (subGroups && subGroups.length) {
+      for (const sg of subGroups) {
+        if (sg.label) {
+          const sgKey = title + '/' + sg.label;
+          if (!accordionState.has(sgKey)) accordionState.set(sgKey, true);
+          const sgOpen = accordionState.get(sgKey);
+
+          const sgSec = document.createElement('div');
+          sgSec.className = 'accordion-subgroup';
+
+          const sgHdr = document.createElement('div');
+          sgHdr.className = 'accordion-subgroup-header';
+          const sgArrow = document.createElement('span');
+          sgArrow.className = 'accordion-arrow' + (sgOpen ? ' open' : '');
+          sgArrow.textContent = '▶';
+          const sgTitle = document.createElement('span');
+          sgTitle.textContent = sg.label;
+          sgHdr.append(sgArrow, sgTitle);
+
+          const sgBody = document.createElement('div');
+          sgBody.className = 'accordion-body' + (sgOpen ? '' : ' collapsed');
+          makeFilterItems(sgBody, sg.items, vis, colorFn, isDim, syncDims);
+
+          sgHdr.addEventListener('click', () => {
+            const open = !accordionState.get(sgKey);
+            accordionState.set(sgKey, open);
+            sgArrow.classList.toggle('open', open);
+            sgBody.classList.toggle('collapsed', !open);
+          });
+
+          sgSec.append(sgHdr, sgBody);
+          body.appendChild(sgSec);
+        } else {
+          makeFilterItems(body, sg.items, vis, colorFn, isDim, syncDims);
+        }
+      }
+    } else {
+      makeFilterItems(body, items, vis, colorFn, isDim, syncDims);
+    }
 
     hdr.addEventListener('click', e => {
       if (e.target.closest('.filter-all-none')) return;
@@ -1483,11 +1583,11 @@ function buildFiltersAccordion() {
   };
 
   if (orgs.length)     addSection(dimLabels.orgs,     orgs,     orgVis,     () => '#6b7280', true,  false);
-  if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false);
-  if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
+  if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false, programGroups.length ? programGroups : null);
   for (const grp of categoryGroups) {
     addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true);
   }
+  if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
 }
 
 function buildFiltersChipsBar()    { /* TODO option 3: horizontal pill bar above timeline */ }
@@ -1927,7 +2027,7 @@ function redraw() {
       fill: i % 2 === 0 ? '#1a2030' : '#161d2b'
     }));
     lblG.appendChild(mk('line', { x1: 0, y1: y + rh, x2: LABEL_W, y2: y + rh, stroke: '#374151', 'stroke-width': 0.5 }));
-    lblG.appendChild(svgWrappedLabel(12, y + rh / 2, g, 17, { fill: '#d1d5db', 'font-size': 12, 'font-weight': '500' }));
+    lblG.appendChild(svgWrappedLabel(12, y + rh / 2, g, 17, { fill: groupColor[g], 'font-size': 12, 'font-weight': '500' }));
   });
   tlSvg.appendChild(lblG);
 
@@ -2394,6 +2494,38 @@ wrap.addEventListener('mouseleave', hideCrosshair);
 
 window.addEventListener('resize', () => { if (events.length) redraw(); });
 window.addEventListener('focus',  () => { if (events.length) redraw(); });
+
+// ── Sidebar resize handle ──────────────────────────────────────────────────
+{
+  const resizer = document.getElementById('sidebar-resizer');
+  const sidebar = document.getElementById('sidebar');
+  let resizing = false, startX = 0, startW = 0;
+
+  resizer.addEventListener('mousedown', e => {
+    resizing = true;
+    startX = e.clientX;
+    startW = sidebar.offsetWidth;
+    resizer.classList.add('dragging');
+    document.body.style.cursor    = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!resizing) return;
+    const w = Math.max(120, Math.min(520, startW + e.clientX - startX));
+    sidebar.style.width = w + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!resizing) return;
+    resizing = false;
+    resizer.classList.remove('dragging');
+    document.body.style.cursor    = '';
+    document.body.style.userSelect = '';
+    if (events.length) redraw();
+  });
+}
 
 // ── Auto-load ─────────────────────────────────────────────────────────────
 // Priority 1: pre-generated JS data (works with file:// double-click).

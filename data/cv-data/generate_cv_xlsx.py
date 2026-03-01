@@ -7,7 +7,7 @@ wb = Workbook()
 ws = wb.active
 ws.title = "CV"
 
-headers = ["start date", "end date", "headline", "description", "project", "group", "org", "program"]
+headers = ["start date", "end date", "headline", "description", "project", "group", "org", "program", "funding_group"]
 ws.append(headers)
 
 PRESENT = "02/25/2026"
@@ -1477,7 +1477,7 @@ def derive_cv_dimensions(rows_in):
         ('New Frontiers in Research Fund',                  'New Frontiers in Research Fund'),
         ('Pierre Elliott Trudeau Foundation',               'Pierre Elliott Trudeau Foundation'),
         ('Fonds de recherche',                              'Fonds de recherche du Québec'),
-        ('Fonds québécois',                                 'Fonds québécois de la recherche'),
+        ('Fonds québécois',                                 'Fonds de recherche du Québec'),
         ('MacArthur Foundation',                            'The MacArthur Foundation'),
         ('Schmidt Family Foundation',                       'Schmidt Family Foundation'),
         ('Canada Foundation for Innovation',                'Canada Foundation for Innovation'),
@@ -1490,12 +1490,25 @@ def derive_cv_dimensions(rows_in):
         ('Arts Council of England',                         'Arts Council of England'),
         ('McConnell Family Foundation',                     'J. W. McConnell Family Foundation'),
         ('Montalvo Arts Center',                            'Montalvo Arts Center'),
-        ('Fine Arts-Engineering Seed Grants',               'Concordia Fine Arts-Engineering'),
-        ('Fine Arts Faculty',                               'Concordia Fine Arts Faculty'),
-        ('Office of Research',                              'Concordia Office of Research'),
+        ('Fine Arts-Engineering Seed Grants',               'Fine Arts-Engineering'),
+        ('Fine Arts Faculty',                               'Fine Arts'),
+        ('Office of Research',                              'Office of Research'),
         ('Jarislowsky Institute',                           'Jarislowsky Institute'),
         ('Concordia University',                            'Concordia University'),
     ]
+    # Maps agency name → subsection label for the filter panel
+    funding_group_map = {
+        'Social Sciences and Humanities Research Council':  'Tri-council',
+        'Natural Sciences and Engineering Research Council':'Tri-council',
+        'Canada First Research Excellence Fund':            'Tri-council',
+        'Canada Foundation for Innovation':                 'Tri-council',
+        'New Frontiers in Research Fund':                   'Tri-council',
+        'Fine Arts':                                        'Concordia',
+        'Fine Arts-Engineering':                            'Concordia',
+        'Office of Research':                               'Concordia',
+        'Jarislowsky Institute':                            'Concordia',
+        'Concordia University':                             'Concordia',
+    }
 
     result = []
     for row in rows_in:
@@ -1503,6 +1516,7 @@ def derive_cv_dimensions(rows_in):
         org = ''
         program = ''
         role = ''
+        funding_group = ''
 
         if group == 'Education':
             for keyword, institution in edu_orgs:
@@ -1522,6 +1536,7 @@ def derive_cv_dimensions(rows_in):
                 if keyword in desc:
                     program = agency
                     break
+            funding_group = funding_group_map.get(program, '')
             if group == 'Funding (PI)':
                 if 'Artist.' in desc:
                     role = 'Artist'
@@ -1540,7 +1555,7 @@ def derive_cv_dimensions(rows_in):
             else:  # Funding (Internal)
                 role = 'Internal'
 
-        result.append((start, end, headline, desc, role, group, org, program))
+        result.append((start, end, headline, desc, role, group, org, program, funding_group))
     return result
 
 
