@@ -931,10 +931,17 @@ function gdocExtractLink(tag) {
     const qm = href.match(/[?&]q=([^&]+)/);
     return qm ? decodeURIComponent(qm[1]) : href;
   };
-  // Prefer a {text} link — signals a full-text / publication link
+  // Look for the {text} pattern: the word "text" is hyperlinked and surrounded
+  // by literal { } in the text — i.e. {<a href="…">text</a>}
+  // Also handle the rarer case where the entire {text} string is the link text.
   for (const a of tag.querySelectorAll('a[href]')) {
-    if (/^\{text\}$/i.test((a.textContent || '').trim()))
-      return { url: unwrap(a), label: 'Text' };
+    const linkText = (a.textContent || '').trim().toLowerCase();
+    const braced =
+      linkText === '{text}' ||
+      (linkText === 'text' &&
+        (a.previousSibling?.textContent || '').trimEnd().endsWith('{') &&
+        (a.nextSibling?.textContent  || '').trimStart().startsWith('}'));
+    if (braced) return { url: unwrap(a), label: 'Text' };
   }
   // Fall back to first link
   const a = tag.querySelector('a[href]');
