@@ -67,13 +67,26 @@ Paste a published Google Sheets URL into the URL field in the sidebar and click 
 
 ---
 
-## Keeping Local Data Current
+## Using Your Own Data
 
-When `timeline-data.xlsx` is updated, regenerate the pre-built data file:
+### Research / Project data
+
+Replace `data/timeline-data/timeline-data.xlsx` with your own `.xlsx` file of the same name, then regenerate the pre-built data file:
 
 ```
 python3 data/timeline-data/make_data_js.py
 ```
+
+### CV data
+
+Replace `data/cv-data/cv.txt` with your own CV text file of the same name, then run:
+
+```
+python3 data/cv-data/generate_cv_xlsx.py
+python3 data/cv-data/make_cv_data_js.py
+```
+
+Alternatively, paste the URL of your published Google Doc CV into the URL field and click **Load** — no local files needed.
 
 Requires Python 3 and the openpyxl library:
 ```
