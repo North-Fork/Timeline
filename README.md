@@ -162,4 +162,29 @@ The workbook should have a `Group` column (the CV section name, e.g. *Employment
 
 **From a published Google Doc**
 
-Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*. Recognised section headings include Employment, Education, Honors and Awards, Books, Book Chapters, Journal Articles, Conference Presentations, Keynotes, Invited Lectures, Solo/Group Exhibitions, Film Screenings, Commissions, Poetry, and more.
+Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*.
+
+Recognised section headings include: Employment History, Education, Honors and Awards, Books, Book Chapters, Journal Articles & Conference Proceedings, Conference / Symposia Presentations, Keynote / Plenary / Special Guest Speaker, Invited Publications, Invited Lectures / Artist Talks / Panels, Artist's Books and Exhibition Publications, Symposium / Workshop / Lecture Series Organizer or Lead, Documentaries, Websites, Residencies, Residency Organizer, Academic Review & Textbook Inclusion, Op-Ed, Press Coverage / Interviews / Documentaries, Policy Papers / Governmental Presentations / Reviews & Consultations, Exhibitions - Solo, Exhibitions - Group, Film Screenings, Commissions, Poetry Publication & Performances, Curatorial, Visiting Artist & Master Classes, Producer / Executive Producer, Major Works.
+
+**Entry format in the Google Doc**
+
+Each entry should begin with a date, followed by two or more non-breaking spaces, followed by the entry text. The parser recognises a range of date formats:
+
+| Format | Example |
+|--------|---------|
+| `M.YY` | `9.19` |
+| `M.YYYY` | `9.2019` |
+| `M.YY-present` | `6.14-present` |
+| `M.YY-M.YY` | `6.08-5.14` |
+| `YYYY` | `2019` |
+| `YYYY-YY` | `2014-18` |
+| `YYYY-YYYY` | `2014-2018` |
+| `Month YYYY` | `Sept 2019` |
+| `D Month, YYYY` | `2 March, 2023` |
+| `Month. D, YYYY` | `Oct. 22, 2021` |
+
+Bibliography-style entries with no date prefix are also supported — the parser extracts the most recent four-digit year from the citation text.
+
+**Links in entries**
+
+Any hyperlink found in an entry is surfaced as a **More Info ↗** link in the Storybox. To mark a link as the full text of a publication, annotate the entry with `{`*`text`*`}` where the word *text* is hyperlinked to the document URL — the parser detects this convention and labels the link **Text ↗** in the Storybox instead.
