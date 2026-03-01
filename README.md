@@ -167,21 +167,31 @@ Recognised team roles (in display order): `RA-Undergraduate`, `RA-Masters`, `RA-
 
 ### CV Data
 
-CV data can be loaded in two ways:
+There is no auto-loaded CV file — you must load CV data manually each session using one of the three methods below.
 
-**From an Excel file (`.xlsx`)**
+**Method 1 — Drag and drop (or Browse) a `.txt` file**
 
-The workbook should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Run `data/cv-data/make_cv_data_js.py` after any changes to regenerate the local data file.
+Export or copy your CV as a plain text (`.txt`) file, then drag it onto the drop zone or use **Browse file**. The file is not stored; you need to re-load it each session. The parser looks for section headings and date-prefixed entries in the same format described under *Entry format* below.
 
-**From a published Google Doc**
+> Note: `data/cv-data/cv.txt` is included in the repo as an example but is not loaded automatically — drag it in to use it.
 
-Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*.
+**Method 2 — Load from a published Google Doc URL**
+
+Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*. The URL is remembered between sessions but is never fetched automatically — click Load each time you want to refresh.
+
+**Method 3 — From an Excel file (`.xlsx`)**
+
+The workbook should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Drag the file onto the drop zone or use **Browse file**. Run `data/cv-data/make_cv_data_js.py` to pre-generate a local data file that loads automatically on startup (advanced use).
+
+**Converting your CV to the right format**
+
+The simplest path is to keep your CV in Google Docs and publish it to the web — no conversion needed. If you want to use a `.txt` file instead, structure it as plain text with section headings on their own lines and one entry per line, with the date at the start separated from the text by a tab or two or more spaces (see *Entry format* below).
 
 Recognised section headings include: Employment History, Education, Honors and Awards, Books, Book Chapters, Journal Articles & Conference Proceedings, Conference / Symposia Presentations, Keynote / Plenary / Special Guest Speaker, Invited Publications, Invited Lectures / Artist Talks / Panels, Artist's Books and Exhibition Publications, Symposium / Workshop / Lecture Series Organizer or Lead, Documentaries, Websites, Residencies, Residency Organizer, Academic Review & Textbook Inclusion, Op-Ed, Press Coverage / Interviews / Documentaries, Policy Papers / Governmental Presentations / Reviews & Consultations, Exhibitions - Solo, Exhibitions - Group, Film Screenings, Commissions, Poetry Publication & Performances, Curatorial, Visiting Artist & Master Classes, Producer / Executive Producer, Major Works.
 
-**Entry format in the Google Doc**
+**Entry format (Google Doc and `.txt`)**
 
-Each entry should begin with a date, followed by two or more non-breaking spaces, followed by the entry text. The parser recognises a range of date formats:
+Each entry should begin with a date, followed by the entry text. In a Google Doc the separator is two or more non-breaking spaces; in a `.txt` file it is a tab or two or more regular spaces. The parser recognises a range of date formats:
 
 | Format | Example |
 |--------|---------|
