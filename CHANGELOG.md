@@ -1,5 +1,17 @@
 # Changelog
 
+## Session 8 — 2026-02-28
+
+### UI
+- Group labels in timeline left column now word-wrap intelligently up to 3 lines (centred vertically) instead of truncating; applied to both main SVG and PDF export
+- `wrapLabel()` and `svgWrappedLabel()` helpers added
+
+### Data
+- Added Abundant Intelligences group to AbTeC-Timeline-Data.xlsx (1203 rows)
+- README.txt replaced by README.md with full markdown formatting
+
+---
+
 ## Session 7 — 2026-02-28
 
 ### Google Sheets loader

@@ -6,6 +6,10 @@ Developed to capture the research work of [Aboriginal Territories in Cyberspace]
 
 ---
 
+## Data Source
+
+It loads by default the data from a local file. You can drag your own file into the file drop box, or give it a Google Sheet URL. The Google Sheet must be Published. Terrible things will happen if your file is not formatted properlly. See Data Format section below.
+
 ## Getting Started
 
 ### Recommended: Chrome or Brave
