@@ -602,6 +602,17 @@ def main():
     # Enrich with org / program / funding_group / category_group
     all_rows = derive_dimensions(all_rows)
 
+    # ── Clean up Documentaries: strip leading org prefix ("Obx Labs.") ────────
+    _obx_pfx = re.compile(r'^obx\s*labs\.\s*', re.IGNORECASE)
+    for row in all_rows:
+        if row.get('group') != 'Documentaries':
+            continue
+        desc = row.get('description', '')
+        desc_clean = _obx_pfx.sub('', desc).strip()
+        if desc_clean != desc:                      # prefix was present
+            row['headline']    = extract_title(desc_clean)
+            row['description'] = desc_clean
+
     # Sort by canonical group order
     all_rows.sort(key=lambda r: GRP_ORDER.index(r['group']) if r['group'] in GRP_ORDER else 99)
 
