@@ -50,7 +50,7 @@ GRP_ORDER = [
     "Employment", "Honors", "Education",
     "Creative Works", "Books/Chapters", "Journal Articles",
     "Keynotes", "Conference Presentations", "Invited Publications", "Invited Lectures",
-    "Policy Papers", "Artist's Books", "Poetry", "Op-Ed",
+    "Policy Papers", "Op-Ed", "Artist's Books", "Poetry",
     "Solo Exhibitions", "Group Exhibitions",
     "Film Screenings", "Commissions", "Curatorial", "Visiting Artist", "Productions",
     "Residencies", "Residency Organizer",
@@ -96,7 +96,8 @@ SECTION_MAP = {
     'documentaries':                'Documentaries',
     'websites':                     'Websites',
     'op-ed':                        'Op-Ed',
-    'press coverage / interviews / documentaries': 'Press Coverage',
+    'press coverage / interviews / documentaries':     'Press Coverage',
+    'press coverage / interviews / documentar ies':    'Press Coverage',  # line-break artifact variant
     'academic review & textbook inclusion':        'Academic Reviews',
     'symposium, workshop, and lecture series organizer or lead': 'Symposia Organized',
     'promotion review / peer reviewer / jury member / expert assessor': 'Service',
