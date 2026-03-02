@@ -1,4 +1,22 @@
-"""Generate cv.xlsx from Jason Edward Lewis CV data."""
+"""Generate cv.xlsx from Jason Edward Lewis CV data.
+
+Sections parsed automatically from cv.txt:
+  Books                                                        → Books/Chapters
+  Book Chapters                                                → Books/Chapters
+  Journal Articles & Conference Proceedings (Refereed)         → Journal Articles
+  Conference / Symposia Presentations (Refereed)               → Conference Presentations
+  Invited Publications                                         → Invited Publications
+  Invited Lectures / Artist Talks / Panels                     → Invited Lectures
+  Policy Papers, Governmental Presentations, Reviews & Consultations → Policy Papers
+  Artist's Books and Exhibition Publications                   → Artist's Books
+  Exhibitions - Solo                                           → Solo Exhibitions
+
+Everything else stays hardcoded (Employment, Education, Honors, Creative Works,
+Keynotes, Group Exhibitions, Productions, Funding PI/Co-I/Internal, Courses Taught,
+Supervision, Service).
+"""
+import re
+import calendar
 import openpyxl
 from openpyxl import Workbook
 from pathlib import Path
@@ -7,18 +25,321 @@ wb = Workbook()
 ws = wb.active
 ws.title = "CV"
 
-headers = ["start date", "end date", "headline", "description", "project", "group", "org", "program", "funding_group"]
+headers = ["start date", "end date", "headline", "description", "project", "group",
+           "org", "program", "funding_group", "category_group"]
 ws.append(headers)
 
 PRESENT = "02/25/2026"
 
 GRP_ORDER = [
     "Employment", "Honors", "Education", "Creative Works", "Books/Chapters",
-    "Journal Articles", "Keynotes", "Solo Exhibitions",
-    "Group Exhibitions", "Productions",
+    "Journal Articles", "Keynotes",
+    "Conference Presentations", "Invited Publications", "Invited Lectures",
+    "Policy Papers", "Artist's Books",
+    "Solo Exhibitions", "Group Exhibitions", "Productions",
     "Funding (PI)", "Funding (Co-I)", "Funding (Internal)",
-    "Courses Taught", "Supervision", "Service",
+    "Courses Taught",
+    "Undergraduate", "Grad Certificate", "Masters", "PhD", "Postdoc",
+    "Service",
 ]
+
+# ─── All known section headers in cv.txt (used to detect section boundaries) ───
+ALL_CV_SECTIONS = [
+    "Employment History",
+    "Education",
+    "Honors and Awards",
+    "Research / Creation",
+    "(student co-authors in bold)",
+    "Books",
+    "Book Chapters",
+    "Journal Articles & Conference Proceedings (Refereed)",
+    "Conference / Symposia Presentations (Refereed)",
+    "Keynote, Plenary, and Special Guest Speaker",
+    "Invited Publications",
+    "Invited Lectures / Artist Talks / Panels",
+    "Policy Papers, Governmental Presentations, Reviews & Consultations",
+    "Artist\u2019s Books and Exhibition Publications",
+    "Symposium, Workshop, and Lecture Series Organizer or Lead",
+    "Promotion Review / Peer Reviewer / Jury Member / Expert Assessor",
+    "Documentaries",
+    "Websites",
+    "Residencies",
+    "Residency Organizer",
+    "Academic Review & Textbook Inclusion",
+    "Op-Ed",
+    "Press Coverage / Interviews / Documentaries",
+    "Exhibitions - Solo",
+    "Exhibitions - Group",
+    "Film Screenings",
+    "Commissions",
+    "Poetry Publication & Performances",
+    "Curatorial",
+    "Visiting Artist & Master Classes",
+    "Journal Cover Image",
+    "Producer / Executive Producer",
+]
+
+# Sections we want to parse → (cv.txt section header, group name for output)
+PARSE_SECTIONS = {
+    "Books": "Books/Chapters",
+    "Book Chapters": "Books/Chapters",
+    "Journal Articles & Conference Proceedings (Refereed)": "Journal Articles",
+    "Conference / Symposia Presentations (Refereed)": "Conference Presentations",
+    "Invited Publications": "Invited Publications",
+    "Invited Lectures / Artist Talks / Panels": "Invited Lectures",
+    "Policy Papers, Governmental Presentations, Reviews & Consultations": "Policy Papers",
+    "Artist\u2019s Books and Exhibition Publications": "Artist's Books",
+    "Exhibitions - Solo": "Solo Exhibitions",
+}
+
+# Month name → number (handles full + common abbreviations)
+MONTH_MAP = {
+    "january": 1, "jan": 1,
+    "february": 2, "feb": 2,
+    "march": 3, "mar": 3,
+    "april": 4, "apr": 4,
+    "may": 5,
+    "june": 6, "jun": 6,
+    "july": 7, "jul": 7,
+    "august": 8, "aug": 8,
+    "september": 9, "sep": 9, "sept": 9,
+    "october": 10, "oct": 10,
+    "november": 11, "nov": 11,
+    "december": 12, "dec": 12,
+}
+
+# Seasons
+SEASON_MAP = {
+    "winter": (12, 1, 2),    # (start_month, mid, end_month) — spans year boundary
+    "spring": (3, 4, 5),
+    "summer": (6, 7, 8),
+    "fall": (9, 10, 11),
+    "autumn": (9, 10, 11),
+}
+
+
+def _fmt(m, d, y):
+    """Format (month, day, year) as MM/DD/YYYY."""
+    return f"{int(m):02d}/{int(d):02d}/{int(y):04d}"
+
+
+def _last_day(m, y):
+    """Last day of month m in year y."""
+    return calendar.monthrange(int(y), int(m))[1]
+
+
+def parse_date(text):
+    """Extract (start_date, end_date) strings in MM/DD/YYYY from a CV entry.
+
+    Priority order:
+    1.  Same-month day-range: "July 26 - 31, 2026" / "Jun. 26-29, 2019"
+    2.  Single month+day+year: "January 29, 2026" / "Mar. 20, 2018"
+    3.  Two-month range+year: "Nov. 4 - Dec. 2, 2017" / "May - June 2015"
+    4.  Month+year only: "November 2008" / "Nov. 2008"
+    5.  Season+year: "Winter 2016" / "Summer 2005"
+    6.  Year range: "2011-13" / "2011-2013"
+    7.  Year-prefixed line: starts with 4-digit year
+    8.  Bare year at end: "... Cambridge, MA: MIT Press, 2021."
+    9.  In press / submitted → current year
+    10. Any 4-digit year found anywhere
+    """
+    t = text.strip()
+
+    # 9. In press / submitted
+    if re.search(r'\b(in press|in Press|Revised and Submitted|Submitted)\b', t, re.I):
+        curr_yr = 2026  # PRESENT year
+        return (_fmt(1, 1, curr_yr), _fmt(12, 31, curr_yr))
+
+    month_re = r'(?:' + '|'.join(MONTH_MAP.keys()) + r')\.?'
+
+    # 1. Same-month day-range: "July 26 - 31, 2026" or "Jun. 26-29, 2019"
+    pat1 = re.compile(
+        r'(' + month_re + r')\s+(\d{1,2})\s*[-–]\s*(\d{1,2}),?\s+(\d{4})',
+        re.I)
+    m = pat1.search(t)
+    if m:
+        mo = MONTH_MAP[re.sub(r'\.', '', m.group(1)).lower()]
+        d1, d2, yr = int(m.group(2)), int(m.group(3)), int(m.group(4))
+        return (_fmt(mo, d1, yr), _fmt(mo, d2, yr))
+
+    # 2. Single month+day+year: "January 29, 2026"
+    pat2 = re.compile(r'(' + month_re + r')\s+(\d{1,2}),?\s+(\d{4})', re.I)
+    m = pat2.search(t)
+    if m:
+        mo = MONTH_MAP[re.sub(r'\.', '', m.group(1)).lower()]
+        d, yr = int(m.group(2)), int(m.group(3))
+        return (_fmt(mo, d, yr), _fmt(mo, d, yr))
+
+    # 3a. Two-month range with days: "Nov. 4 - Dec. 2, 2017"
+    pat3a = re.compile(
+        r'(' + month_re + r')\s*\.?\s*(\d{1,2})\s*[-–]\s*(' + month_re + r')\s*\.?\s*(\d{1,2}),?\s+(\d{4})',
+        re.I)
+    m = pat3a.search(t)
+    if m:
+        mo1 = MONTH_MAP[re.sub(r'\.', '', m.group(1)).lower()]
+        d1  = int(m.group(2))
+        mo2 = MONTH_MAP[re.sub(r'\.', '', m.group(3)).lower()]
+        d2  = int(m.group(4))
+        yr  = int(m.group(5))
+        return (_fmt(mo1, d1, yr), _fmt(mo2, d2, yr))
+
+    # 3b. Two-month range no days: "May - June 2015"
+    pat3b = re.compile(
+        r'(' + month_re + r')\s*[-–]\s*(' + month_re + r')\s+(\d{4})',
+        re.I)
+    m = pat3b.search(t)
+    if m:
+        mo1 = MONTH_MAP[re.sub(r'\.', '', m.group(1)).lower()]
+        mo2 = MONTH_MAP[re.sub(r'\.', '', m.group(2)).lower()]
+        yr  = int(m.group(3))
+        return (_fmt(mo1, 1, yr), _fmt(mo2, _last_day(mo2, yr), yr))
+
+    # 4. Month+year only: "November 2008" / "Nov. 2008"
+    pat4 = re.compile(r'(' + month_re + r')\.?\s+(\d{4})', re.I)
+    m = pat4.search(t)
+    if m:
+        mo = MONTH_MAP[re.sub(r'\.', '', m.group(1)).lower()]
+        yr = int(m.group(2))
+        return (_fmt(mo, 1, yr), _fmt(mo, _last_day(mo, yr), yr))
+
+    # 5. Season+year: "Winter 2016" / "Summer 2005"
+    pat5 = re.compile(r'\b(winter|spring|summer|fall|autumn)\s+(\d{4})\b', re.I)
+    m = pat5.search(t)
+    if m:
+        season = m.group(1).lower()
+        yr = int(m.group(2))
+        months = SEASON_MAP[season]
+        if season == 'winter':
+            # Winter spans Dec of prev year → Feb of stated year
+            return (_fmt(months[0], 1, yr - 1), _fmt(months[2], _last_day(months[2], yr), yr))
+        return (_fmt(months[0], 1, yr), _fmt(months[2], _last_day(months[2], yr), yr))
+
+    # 6. Year range: "2011-13" or "2011-2013"
+    pat6 = re.compile(r'\b((?:19|20)\d{2})\s*[-–]\s*((?:19|20)?\d{2})\b')
+    m = pat6.search(t)
+    if m:
+        yr1 = int(m.group(1))
+        raw2 = m.group(2)
+        if len(raw2) == 2:
+            yr2 = int(str(yr1)[:2] + raw2)
+        else:
+            yr2 = int(raw2)
+        return (_fmt(1, 1, yr1), _fmt(12, 31, yr2))
+
+    # 7. Year-prefixed line: "2017    Some entry..."
+    pat7 = re.compile(r'^((?:19|20)\d{2})\s+')
+    m = pat7.match(t)
+    if m:
+        yr = int(m.group(1))
+        # Try to refine with a month found anywhere in the line
+        pat4b = re.compile(r'\b(' + month_re + r')\.?\s+', re.I)
+        mm = pat4b.search(t)
+        if mm:
+            mo = MONTH_MAP[re.sub(r'\.', '', mm.group(1)).lower()]
+            return (_fmt(mo, 1, yr), _fmt(mo, _last_day(mo, yr), yr))
+        return (_fmt(1, 1, yr), _fmt(12, 31, yr))
+
+    # 8. Bare year at end of text (last 4-digit year-like token)
+    # e.g. "...Cambridge, MA: MIT Press, 2021."
+    all_years = re.findall(r'\b((?:19|20)\d{2})\b', t)
+    if all_years:
+        yr = int(all_years[-1])
+        return (_fmt(1, 1, yr), _fmt(12, 31, yr))
+
+    return ("", "")
+
+
+def strip_tags(text):
+    """Remove {link}, {text}, {link 1| link 2}, {description | video} etc."""
+    return re.sub(r'\{[^}]*\}', '', text).strip().rstrip(',').strip()
+
+
+def extract_headline(text):
+    """Extract a headline string from a CV entry line.
+
+    Rules:
+    - If text begins with a 4-digit year prefix (year-prefixed entries like
+      Artist's Books), strip the year tab/space prefix, then take text up to
+      the first '. ' or end (truncated to 120 chars).
+    - If there is a quoted title "like this", use that.
+    - Otherwise: first sentence (split on '. ') truncated to 120 chars.
+    """
+    t = strip_tags(text).strip()
+
+    # Year-prefixed entry: e.g. "2013    P.o.E.M.M. The Album. Obx Labs..."
+    year_prefix = re.match(r'^((?:19|20)\d{2})\s+(.+)', t)
+    if year_prefix:
+        rest = year_prefix.group(2).strip()
+        # Take up to first '. ' boundary (whole sentence)
+        first_sentence = re.split(r'\.\s', rest)[0]
+        return first_sentence[:120].strip()
+
+    # Quoted title
+    quoted = re.search(r'"([^"]+)"', t)
+    if quoted:
+        title = quoted.group(1).rstrip('.,;').strip()
+        return title[:120]
+
+    # Fallback: first sentence
+    first_sentence = re.split(r'\.\s', t)[0]
+    return first_sentence[:120].strip()
+
+
+def parse_cv_txt():
+    """Parse cv.txt and return a list of 6-tuples:
+    (start_date, end_date, headline, full_entry_text, project, group)
+
+    Parses only the sections listed in PARSE_SECTIONS.
+    """
+    cv_path = Path(__file__).parent / "cv.txt"
+    raw_text = cv_path.read_text(encoding='utf-8')
+
+    # Build a set of all known section headers (stripped) for boundary detection
+    known_headers = set(s.strip() for s in ALL_CV_SECTIONS)
+
+    # Split the file into lines; collect non-empty logical entries per section
+    lines = raw_text.splitlines()
+
+    # Walk through lines to identify section blocks
+    # A section header is a line that exactly matches (after stripping) a known header
+    sections = {}      # section_name → [entry_text, ...]
+    current_section = None
+
+    for line in lines:
+        stripped = line.strip()
+
+        if stripped in known_headers:
+            current_section = stripped
+            if current_section not in sections:
+                sections[current_section] = []
+            continue
+
+        # Skip blank lines between sections/entries
+        if not stripped:
+            continue
+
+        # If we are inside a section we want to parse, collect entries
+        if current_section in PARSE_SECTIONS:
+            sections[current_section].append(stripped)
+
+    # Now convert collected entries into row tuples
+    rows = []
+    for section_name, group_name in PARSE_SECTIONS.items():
+        entries = sections.get(section_name, [])
+        for entry_text in entries:
+            start, end = parse_date(entry_text)
+            headline = extract_headline(entry_text)
+            description = strip_tags(entry_text)
+            rows.append((start, end, headline, description, "", group_name))
+
+    return rows
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HARDCODED ROWS
+# (Employment, Education, Honors, Creative Works, Keynotes, Group Exhibitions,
+#  Productions, Funding PI/Co-I/Internal, Courses Taught, Supervision, Service)
+# ─────────────────────────────────────────────────────────────────────────────
 
 rows = [
 
@@ -296,179 +617,6 @@ rows = [
      "With B. Nadeau. Interactive touchwork with large-scale print. Mac OS, custom Java.",
      "Creative", "Creative Works"),
 
-    # ── BOOKS/CHAPTERS ─────────────────────────────────────────────────────
-    ("01/01/2021", "01/01/2021",
-     "Against Reduction: Designing a Human Future with Machines",
-     "Co-edited with Noelani Arista, Sasha Costanza-Chock, Suzanne Kite et al. Cambridge, MA: The MIT Press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2014", "01/01/2014",
-     "Educational, Psychological, and Behavioral Considerations in Niche Online Communities",
-     "Co-edited with Vivek Venkatesh, Jason Wallin, Juan Carlos Castro. Hershey: IGI Global Press.",
-     "Research", "Books/Chapters"),
-
-    # ── JOURNAL ARTICLES & PROCEEDINGS ────────────────────────────────────
-    ("01/01/2024", "01/01/2024",
-     "Abundant Intelligences: Placing AI Within Indigenous Knowledge Frameworks",
-     "With Hēmi Whaanga and Ceyda Yolgörmez. AI & Society. doi.org/10.1007/s00146-024-02099-4",
-     "Research", "Journal Articles"),
-
-    ("01/01/2018", "01/01/2018",
-     "Making Kin with the Machines",
-     "With Noelani Arista, Archer Pechawis and Suzanne Kite. Journal of Design and Science, Issue 3.5. doi.org/10.21428/bfafd97b",
-     "Research", "Journal Articles"),
-
-    ("01/01/2018", "01/01/2018",
-     "The Future is Indigenous",
-     "With Skawennati. Leonardo 51, No. 4 (pp. 422–423).",
-     "Research", "Journal Articles"),
-
-    ("01/01/2012", "01/01/2012",
-     "Art Work as Argument",
-     "With Skawennati. Canadian Journal of Communications, Vol. 37 No. 1.",
-     "Research", "Journal Articles"),
-
-    ("01/01/2011", "01/01/2011",
-     "Skins: Designing Games with First Nations Youth",
-     "With Beth Aileen Lameman. Journal of Game Design and Development Education, Vol. 1 No. 1.",
-     "AbTeC", "Journal Articles"),
-
-    ("01/01/2010", "01/01/2010",
-     "Post PostScript Please",
-     "With Bruno Nadeau. Digital Creativity vol. 21, no. 1 (pp. 18–29).",
-     "Creative", "Journal Articles"),
-
-    ("01/01/2008", "01/01/2008",
-     "Writing-Designing-Programming",
-     "Media-Space Journal: Special Issue on Futures of New Media Art, Vol 1 no. 1.",
-     "Research", "Journal Articles"),
-
-    ("01/01/2006", "01/01/2006",
-     "Taking Sides: Dynamic Text and Hip-Hop Performance",
-     "With Yannick Assogba. Proceedings of the 14th ACM International Conference on Multimedia.",
-     "Creative", "Journal Articles"),
-
-    ("01/01/1999", "01/01/1999",
-     "ActiveText: A Method for Creating Dynamic and Interactive Texts",
-     "With Alex Weyers. Proceedings of UIST 1999.",
-     "Creative", "Journal Articles"),
-
-    # ── BOOK CHAPTERS ──────────────────────────────────────────────────────
-    ("01/01/2026", "01/01/2026",
-     "Before Intelligence",
-     "With Suzanne Kite and Scott Benesiinaabandan. All Watched Over by Machines of Loving Grace catalog, PST ART: Art & Science Collide, REDCAT/CalArts, Los Angeles. In press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2026", "01/01/2026",
-     "Imagining Otherwise",
-     "With Suzanne Kite and Scott Benesiinaabandan. In Syrus Marcus Ware et al. (Eds.), The Art History Book We Wish We Had: IBPOC artmaking in Northern Turtle Island. Revised and Submitted.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2025", "01/01/2025",
-     "Reworlding AI Through Future Imaginaries",
-     "With Ceyda Yolgörmez. In Philipp Hacker (Ed.), Oxford Intersections: AI in Society. Oxford: Oxford Academic. doi.org/10.1093/9780198945215.003.0166",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2025", "01/01/2025",
-     "The Indigenous Protocol and AI Workshops as Future Imaginary",
-     "In Carolyn F. Strauss (Ed.), Slow Technology Reader. Amsterdam: Valiz.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2025", "01/01/2025",
-     "CyberPowWow and the First Wave of Indigenous Digital Media Arts",
-     "With Mikhel Proulx. In Karmen Cray and Joanna Hearne (Eds.), By Their Work: Indigenous Women's Digital Media in North America. University of Minnesota Press.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2024", "01/01/2024",
-     "The Myths of My Descendents",
-     "In Amy Scott (Ed.), Future Imaginaries: Indigenous Art, Fashion, and Technology catalog, PST ART, Autry Museum of the American West, Los Angeles.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2024", "01/01/2024",
-     "Building Aboriginal Territories in Cyberspace",
-     "With Skawennati. In Monika Kin Gagnon and Brandon Webb (Eds.), Concordia University at 50: A Collective History. Montreal: Concordia University Press.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2023", "01/01/2023",
-     "Good Technology is Messy",
-     "In Eleanor Drage and Kerry Mckereth (Eds.), The Good Robot: Why Technologies of the Future Need Feminism (pp. 21–27). London: Bloomsbury Press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2023", "01/01/2023",
-     "Making Kin with the Machines (Oxford reprint)",
-     "With Noelani Arista, Archer Pechawis, and Suzanne Kite. In S. Cave, E. Drage and K. Mckereth (Eds.), Feminist AI. Oxford: Oxford University Press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2023", "01/01/2023",
-     "The Future Imaginary",
-     "In Routledge Handbook of CoFuturisms (pp. 11–22). B. Chattopadhyay et al. (Eds.). New York: Routledge. doi.org/10.4324/9780429317828",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2023", "01/01/2023",
-     "Imagining Indigenous AI",
-     "In Stephen Cave and Kanta Dihal (Eds.), Imagining AI: How the World Sees Intelligent Machines (pp. 210–217). Oxford: Oxford University Press.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2023", "01/01/2023",
-     "Relation-Oriented AI: Why Indigenous Protocols Matter for the Digital Humanities",
-     "With Michelle Lee Smith and Hémi Whaanga. In Debates in Digital Humanities 2023 (pp. 74–83). University of Minnesota Press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2022", "01/01/2022",
-     "Overclock Our Imagination! Mapping the Indigenous Future Imaginary",
-     "In Igloliorte and Taunton (Eds.), The Routledge Companion to Indigenous Art Histories in the United States and Canada (pp. 64–75).",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2021", "01/01/2021",
-     "Making Kin with the Machines (Atlas of Anomalous AI reprint)",
-     "With Noelani Arista, Archer Pechawis, and Suzanne Kite. In Ben Vickers and K Allado-McDowell (Eds.), Atlas of Anomalous AI (pp. 40–51). London: Ignota Press.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2020", "01/01/2020",
-     "22nd-Century Proto:typing",
-     "In Dickenson, Hill and Lalonde (Eds.), Àbadakone/Continuous Fire/Feu Continuel Exhibition Catalog (pp. 125–132). Ottawa: National Gallery of Canada.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2019", "01/01/2019",
-     "Future Imaginary Dialogue with Dr. Kim TallBear",
-     "In Deanna Brown (Ed.), Other Places: Writings on Media Arts Practices in Canada (pp. 10–27). Toronto: Media Arts Network of Ontario.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2019", "01/01/2019",
-     "An Orderly Assemblage of Biases: Troubling the Monocultural Stack",
-     "In Schweitzer and Henry (Eds.), Afterlives of Indigenous Archives (pp. 219–231). Lebanon: University Press of New England.",
-     "Research", "Books/Chapters"),
-
-    ("01/01/2016", "01/01/2016",
-     "Preparations for a Haunting: Notes Towards an Indigenous Future Imaginary",
-     "In Barney et al. (Eds.), The Participatory Condition in the Digital Age (pp. 229–249). Minneapolis: University of Minnesota Press.",
-     "IIF", "Books/Chapters"),
-
-    ("01/01/2014", "01/01/2014",
-     "A Better Dance and Better Prayers: Systems, Structures, and the Future Imaginary in Aboriginal New Media",
-     "In Steve Loft and Kerry Swanson (Eds.), Coded Territories: Tracing Indigenous Pathways in New Media (pp. 48–77). Calgary: University of Alberta Press.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2014", "01/01/2014",
-     "Grand Theft Rez: Building and Maintaining a Community for the Skins Workshops",
-     "With Skawennati. In Pleasants and Salter (Eds.), Community-Based Multiliteracies and Digital Media Projects (pp. 111–136). New York: Peter Lang Publishing.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2013", "01/01/2013",
-     "TimeTraveller™: First Nations Nonverbal Communication in Second Life",
-     "With Elizabeth Aileen LaPensée. In Tanenbaum et al. (Eds.), Nonverbal Communications in Virtual Worlds (pp. 94–107). Pittsburgh: ETC Press.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2013", "01/01/2013",
-     "Call it a Vision Quest: Machinima in a First Nations Context",
-     "With Elizabeth Aileen LaPensée. In Jenna Ng (Ed.), Understanding Machinima (pp. 187–206). New York: Continuum Press.",
-     "AbTeC", "Books/Chapters"),
-
-    ("01/01/2008", "01/01/2008",
-     "(Im)mobile Nation",
-     "With Maroussia Lévesque. In Ladly and Beesley (Eds.), Mobile Nation: Creating Methodologies for Mobile Platforms (pp. 141–147). Toronto: Riverside Architectural Press.",
-     "Creative", "Books/Chapters"),
-
     # ── KEYNOTES ───────────────────────────────────────────────────────────
     ("03/02/2023", "03/02/2023",
      "Keynote: Future Imaginaries of Abundant Intelligences",
@@ -529,42 +677,6 @@ rows = [
      "Talk: The Future Imaginary",
      "TEDxMontreal 2013, Société des Arts Technologiques, Montréal, QC.",
      "IIF", "Keynotes"),
-
-    # ── SOLO EXHIBITIONS ───────────────────────────────────────────────────
-    ("11/04/2017", "12/02/2017",
-     "Owerà:ke Non Aié:nahne / Filling in the Blank Spaces / Combler les espaces vides: An AbTeC Retrospective",
-     "Leonard & Bina Ellen Gallery, Montreal, QC.",
-     "AbTeC", "Solo Exhibitions"),
-
-    ("05/01/2015", "06/30/2015",
-     "His Blood, In Search of a Face (The P.o.E.M.M. Cycle)",
-     "DHC/Art & the PHI Centre, Montreal, QC.",
-     "Creative", "Solo Exhibitions"),
-
-    ("09/01/2012", "09/30/2012",
-     "Touch: The Art of the Mobile App",
-     "Nouspace Gallery & Media Lounge, Vancouver, WA.",
-     "Creative", "Solo Exhibitions"),
-
-    ("10/01/2011", "10/31/2011",
-     "Vital to the General Public Welfare",
-     "Edward Day Gallery & imagineNATIVE Festival, Toronto, ON.",
-     "Creative", "Solo Exhibitions"),
-
-    ("03/01/2011", "04/30/2011",
-     "Words Found on an Empty Beach",
-     "ArtEngine, Ottawa, ON.",
-     "Creative", "Solo Exhibitions"),
-
-    ("06/01/2010", "06/30/2010",
-     "Things You've Said Before But We Never Heard",
-     "FOFA Gallery, Montreal, QC.",
-     "Creative", "Solo Exhibitions"),
-
-    ("02/01/2007", "03/31/2007",
-     "Everything You'd Thought We'd Forgotten",
-     "OBORO, Montreal, QC.",
-     "Creative", "Solo Exhibitions"),
 
     # ── GROUP EXHIBITIONS (selected) ───────────────────────────────────────
     ("09/17/2022", "12/11/2022",
@@ -843,6 +955,11 @@ rows = [
      "Words Found on an Empty Beach",
      "$38,000. Canada Council for the Arts. Artist.",
      "Creative", "Funding (PI)"),
+
+    ("07/01/2010", "12/31/2010",
+     "P.o.E.M.M. Cycle 1–5",
+     "$55,000. Canada Council for the Arts. Artist.",
+     "PoEMM", "Funding (PI)"),
 
     ("07/01/2009", "06/30/2010",
      "TimeTraveller™",
@@ -1203,133 +1320,160 @@ rows = [
      "Concordia", "Courses Taught"),
 
     # ── SUPERVISION ────────────────────────────────────────────────────────
+    # Undergraduate (SYNTHETIC — replace with real data)
+    ("01/01/2024", "12/31/2024",
+     "Undergraduate Honours Supervisor: [Student A]",
+     "SYNTHETIC. Honours thesis in computation arts and Indigenous futures. Concordia University.",
+     "Concordia", "Undergraduate"),
+
+    ("01/01/2022", "12/31/2023",
+     "Undergraduate Honours Supervisor: [Student B]",
+     "SYNTHETIC. Independent study in interactive media and land-based knowledge. Concordia University.",
+     "Concordia", "Undergraduate"),
+
+    ("01/01/2019", "12/31/2020",
+     "Undergraduate Independent Study: [Student C]",
+     "SYNTHETIC. Creative coding and Indigenous language revitalization. Concordia University.",
+     "AbTeC", "Undergraduate"),
+
+    # Grad Certificate (SYNTHETIC — replace with real data)
+    ("01/01/2023", "12/31/2024",
+     "Graduate Certificate Supervisor: [Student D]",
+     "SYNTHETIC. Graduate certificate in computation arts. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2021", "12/31/2022",
+     "Graduate Certificate Supervisor: [Student E]",
+     "SYNTHETIC. Graduate certificate in digital fabrication and Indigenous design. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
     # Postdoctoral Fellows
     ("01/01/2025", PRESENT,
      "Postdoctoral Fellow: Melemaikalani Moniz",
      "Postdoctoral Fellow in Abundant Soils. Concordia University.",
-     "AI", "Supervision"),
+     "AI", "Postdoc"),
 
     ("01/01/2024", "12/31/2026",
      "Postdoctoral Fellow: Ceyda Yolgörmez",
      "Horizon Postdoctoral Fellow in Abundant Intelligences. Concordia University.",
-     "AI", "Supervision"),
+     "AI", "Postdoc"),
 
     ("01/01/2019", "12/31/2021",
      "Postdoctoral Fellow: Leuli Eschraghi",
      "Horizon Postdoctoral Fellow in Indigenous Futures. Concordia University.",
-     "IIF", "Supervision"),
+     "IIF", "Postdoc"),
 
     # Doctoral Advisees
     ("01/01/2023", PRESENT,
      "PhD Supervisor: Juliet Mackie",
      "Reconstituting Indigenous Identities through Portraiture and Storytelling. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     ("01/01/2021", "12/31/2024",
      "PhD Supervisor: Mel Lefebvre",
      "Healing Through Ancestral Skin Marking: Traditional Tattooing as Healing and (Re)connection for Indigenous People. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     ("01/01/2019", "12/31/2023",
      "PhD Co-supervisor: Jessica Barudin",
      "Re-connecting Through Women's Teachings, Language and Movement. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     ("01/01/2017", "12/31/2023",
      "PhD Supervisor: Suzanne Kite",
      "Lakota Epistemology, Performance Practice, and Digital Technology. Concordia University.",
-     "AI", "Supervision"),
+     "AI", "PhD"),
 
     ("01/01/2017", PRESENT,
      "PhD Secondary Supervisor: Nafisa Sarwath",
      "Indigenous knowledge, resilience and adaptive capacity. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     ("01/01/2016", "12/31/2021",
      "PhD Secondary Supervisor: Michelle Brown",
      "(Re)Coding Resurgence: Indigenous Digital Media Kinnections. University of Hawaii Mānoa.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "PhD"),
 
     ("01/01/2007", "12/31/2014",
      "PhD Co-supervisor: Elizabeth LaPensée",
      "Experiencing Stories: Narrative and Experience in Interactive Media. Simon Fraser University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "PhD"),
 
     ("01/01/2008", "12/31/2012",
      "PhD Secondary Supervisor: Miao Song",
      "Experiencing Stories: Narrative and Experience in Interactive Media. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     ("01/01/2008", "12/31/2011",
      "PhD Secondary Supervisor: David Johnston",
      "Aesthetic Animism: Digital Poetry as Ontological Probe. Concordia University.",
-     "Research", "Supervision"),
+     "Research", "PhD"),
 
     ("01/01/2005", "12/31/2008",
      "PhD Committee Member: Rozita Naghshin",
      "Software Design as an Aesthetic Design Practice. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "PhD"),
 
     # Masters Thesis Advisees
     ("01/01/2022", PRESENT,
      "Masters Supervisor: Vanessa Racine",
      "Anishinaabe Love: Epistemologies & Videogames. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2022", "12/31/2025",
      "Masters Committee: Tarcisio Cataldi Tegani",
      "Speculative Vexillology: Exploring National Identity and Imagining Afro-Brazilian Futures through Flags. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "Masters"),
 
     ("01/01/2021", "12/31/2024",
      "Masters Supervisor: Caeleigh Lightning Long",
      "Wawêsiwîn: The Act of Dressing Up — A Research Cree-ation Project. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2018", "12/31/2023",
      "Masters Supervisor: Sébastien Aubin",
      "Designing Culturally Grounded Cree Syllabaries. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2018", "12/31/2021",
      "Masters Supervisor: Waylon Wilson",
      "Tuscarora Virtual Realities. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2017", "12/31/2019",
      "Masters Supervisor: Maize Longboat",
      "Haudenosaunee Storytelling via Video Games. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2016", "12/31/2020",
      "Masters Co-supervisor: Nicholas Gwyn Shulman",
      "Network Arts: Seeing and Making Network Organisms. Concordia University.",
-     "Research", "Supervision"),
+     "Research", "Masters"),
 
     ("01/01/2014", "12/31/2024",
      "Masters Supervisor: Morgan Kennedy",
      "Storied Indigeneity in Videogames: Post-Indian Warriors and Indie Japan. Concordia University.",
-     "AbTeC", "Supervision"),
+     "AbTeC", "Masters"),
 
     ("01/01/2012", "12/31/2015",
      "Masters Co-supervisor: Nikolaos Chandolias",
      "KinectEcho: Gesture and Vocal Recognition in New Media, Interactive Art and Live Events. Concordia University.",
-     "Research", "Supervision"),
+     "Research", "Masters"),
 
     ("01/01/2006", "12/31/2007",
      "Masters Supervisor: Leslie Plumb",
      "Transversal Entanglements: Research-Creation and the Design Process for Inflexions. Concordia University.",
-     "Research", "Supervision"),
+     "Research", "Masters"),
 
     ("01/01/2004", "12/31/2008",
      "Masters Co-supervisor: Mia Song",
      "Computer-Assisted Interactive Documentary and Performance Arts in Illimitable Space. Concordia University.",
-     "Research", "Supervision"),
+     "Research", "Masters"),
 
     ("01/01/2003", "12/31/2005",
      "Masters Committee: Rozita Naghshin",
      "CASE Tool Simplification Via Task-Sensitive Metaphor. Concordia University.",
-     "Concordia", "Supervision"),
+     "Concordia", "Masters"),
 
     # ── SERVICE ────────────────────────────────────────────────────────────
     # Administrative roles
@@ -1449,6 +1593,11 @@ rows = [
 
 ]
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# derive_cv_dimensions — unchanged
+# ─────────────────────────────────────────────────────────────────────────────
+
 def derive_cv_dimensions(rows_in):
     """Add org (institution) and program (funding agency) columns.
     - org is set only for Employment and Education rows.
@@ -1509,6 +1658,28 @@ def derive_cv_dimensions(rows_in):
         'Jarislowsky Institute':                            'Concordia',
         'Concordia University':                             'Concordia',
     }
+    category_group_map = {
+        'Undergraduate':          'Supervision',
+        'Grad Certificate':       'Supervision',
+        'Masters':                'Supervision',
+        'PhD':                    'Supervision',
+        'Postdoc':                'Supervision',
+        'Creative Works':         'Art',
+        'Solo Exhibitions':       'Art',
+        'Group Exhibitions':      'Art',
+        'Productions':            'Art',
+        "Artist's Books":         'Art',
+        'Books/Chapters':         'Dissemination',
+        'Journal Articles':       'Dissemination',
+        'Keynotes':               'Dissemination',
+        'Conference Presentations':'Dissemination',
+        'Invited Publications':   'Dissemination',
+        'Invited Lectures':       'Dissemination',
+        'Policy Papers':          'Dissemination',
+        'Funding (PI)':           'Funding',
+        'Funding (Co-I)':         'Funding',
+        'Funding (Internal)':     'Funding',
+    }
 
     result = []
     for row in rows_in:
@@ -1517,6 +1688,7 @@ def derive_cv_dimensions(rows_in):
         program = ''
         role = ''
         funding_group = ''
+        category_group = category_group_map.get(group, '')
 
         if group == 'Education':
             for keyword, institution in edu_orgs:
@@ -1555,14 +1727,19 @@ def derive_cv_dimensions(rows_in):
             else:  # Funding (Internal)
                 role = 'Internal'
 
-        result.append((start, end, headline, desc, role, group, org, program, funding_group))
+        result.append((start, end, headline, desc, role, group, org, program, funding_group, category_group))
     return result
 
 
-rows = derive_cv_dimensions(rows)
-rows.sort(key=lambda r: GRP_ORDER.index(r[5]) if r[5] in GRP_ORDER else 99)
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN EXECUTION
+# ─────────────────────────────────────────────────────────────────────────────
 
-for row in rows:
+parsed_rows = parse_cv_txt()
+all_rows = derive_cv_dimensions(rows + parsed_rows)
+all_rows.sort(key=lambda r: GRP_ORDER.index(r[5]) if r[5] in GRP_ORDER else 99)
+
+for row in all_rows:
     ws.append(list(row))
 
 # Auto-width columns
@@ -1572,4 +1749,6 @@ for col in ws.columns:
 
 path = Path(__file__).parent / "cv.xlsx"
 wb.save(path)
-print(f"Saved {len(rows)} rows to {path}")
+print(f"Saved {len(all_rows)} rows to {path}")
+print(f"  Hardcoded rows : {len(rows)}")
+print(f"  Parsed from cv.txt: {len(parsed_rows)}")

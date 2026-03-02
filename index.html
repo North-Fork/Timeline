@@ -1303,6 +1303,7 @@ function normalizeRow(row, format = 'abtec') {
       org:            g('org', 'institution'),
       program:        g('program', 'prog'),
       fundingGroup:   g('fundinggroup', 'funding_group'),
+      categoryGroup:  g('categorygroup', 'category_group'),
       media:          g('media', 'url', 'video', 'image'),
       mediaThumbnail: g('mediathumbnail', 'thumbnail'),
       mediaCaption:   g('mediacaption', 'caption'),
@@ -1336,7 +1337,8 @@ function parse(rows) {
       group:       nr.group       || 'Ungrouped',
       org:         nr.org         || '',
       program:      nr.program      || '',
-      fundingGroup: nr.fundingGroup || '',
+      fundingGroup:  nr.fundingGroup  || '',
+      categoryGroup: nr.categoryGroup || '',
       project:      nr.project      || '',
       media:          nr.media          || '',
       mediaThumbnail: nr.mediaThumbnail || '',
@@ -1353,7 +1355,14 @@ function parse(rows) {
   }
 
   events   = parsed;
-  const GROUP_ORDER = [
+  const GROUP_ORDER = format === 'cv' ? [
+    'Employment', 'Honors', 'Education', 'Creative Works', 'Books/Chapters',
+    'Journal Articles', 'Keynotes', 'Solo Exhibitions', 'Group Exhibitions', 'Productions',
+    'Funding (PI)', 'Funding (Co-I)', 'Funding (Internal)',
+    'Courses Taught',
+    'Undergraduate', 'Grad Certificate', 'Masters', 'PhD', 'Postdoc',
+    'Service',
+  ] : [
     'Workshops',
     'Symposia and Partnership Meetings',
     'Residencies/Exhibitions',
@@ -1376,7 +1385,29 @@ function parse(rows) {
   programs = [...new Set(events.map(e => e.program).filter(Boolean))].sort();
   projects = [...new Set(events.map(e => e.project).filter(Boolean))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
-  categoryGroups = [{ title: 'Categories', items: groups }]; // seam for multi-document grouping
+  // Build category sub-groups (CV only — e.g. Supervision parent)
+  let catSubGroups = null;
+  if (format === 'cv') {
+    const CG_ORDER = ['Art', 'Dissemination', 'Supervision'];
+    const byCatGroup = new Map();
+    const ungroupedCats = [];
+    for (const g of groups) {
+      const cg = events.find(e => e.group === g)?.categoryGroup || '';
+      if (cg) {
+        if (!byCatGroup.has(cg)) byCatGroup.set(cg, []);
+        byCatGroup.get(cg).push(g);
+      } else {
+        ungroupedCats.push(g);
+      }
+    }
+    if (byCatGroup.size) {
+      catSubGroups = CG_ORDER
+        .filter(cg => byCatGroup.has(cg))
+        .map(cg => ({ label: cg, items: byCatGroup.get(cg) }));
+      if (ungroupedCats.length) catSubGroups.push({ label: 'Other', items: ungroupedCats });
+    }
+  }
+  categoryGroups = [{ title: 'Categories', items: groups, subGroups: catSubGroups }]; // seam for multi-document grouping
   dimLabels = format === 'cv'
     ? { orgs: 'Institution', programs: 'Funding Agency', projects: 'Role' }
     : { orgs: 'Group',       programs: 'Program',        projects: 'Project' };
@@ -1586,7 +1617,7 @@ function buildFiltersAccordion() {
   if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false, programGroups.length ? programGroups : null);
   if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
   for (const grp of categoryGroups) {
-    addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true);
+    addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true, grp.subGroups || null);
   }
 }
 
