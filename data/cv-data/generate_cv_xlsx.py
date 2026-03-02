@@ -39,7 +39,7 @@ GRP_ORDER = [
     "Solo Exhibitions", "Group Exhibitions", "Productions",
     "Funding (PI)", "Funding (Co-I)", "Funding (Internal)",
     "Courses Taught",
-    "Undergraduate", "Grad Certificate", "Masters", "PhD", "Postdoc",
+    "Postdoc", "PhD", "Masters", "Grad Certificate", "Undergraduate",
     "Service",
 ]
 
