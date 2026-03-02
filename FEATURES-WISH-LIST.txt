@@ -24,3 +24,26 @@ Offline Data Loading
 - Make double-click file:// loading work in Firefox and Safari
   Note: currently blocked by stricter local file access policies in those browsers
 
+CV Data — Google Doc Auto-sync
+--------------------------------
+Goal: keep cv-data.js up to date automatically whenever the source Google Doc is edited,
+without requiring manual script runs.
+
+Current state:
+- fetch_cv_from_gdoc.py (data/cv-data/) fetches the published Google Doc HTML, parses it
+  into CV rows, and writes cv-data.js directly — skipping the cv.txt → cv.xlsx pipeline
+- The browser-side loadFromGDoc() / parseGDoc() in index.html mirrors this logic for
+  interactive loading (paste URL → instant display)
+- cv.txt remains a manually maintained file; generate_cv_xlsx.py parses it into cv.xlsx
+
+Remaining work:
+1. Reconcile the two pipelines — fetch_cv_from_gdoc.py bypasses derive_cv_dimensions(),
+   so Institution / Funding Agency / Role filter dimensions are absent when using the
+   Google Doc route; either port derive_cv_dimensions() into fetch_cv_from_gdoc.py or
+   route its output through generate_cv_xlsx.py
+2. Scheduled automation — a GitHub Actions workflow (triggered on schedule + manual
+   dispatch) that runs fetch_cv_from_gdoc.py and commits the updated cv-data.js;
+   related to Timeline-m48 (Google Sheets auto-sync, same pattern)
+3. Optionally: have fetch_cv_from_gdoc.py also write cv.txt so the text file stays in
+   sync with the live Google Doc
+
