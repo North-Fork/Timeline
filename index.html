@@ -1804,6 +1804,10 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
   const ppm = scale * 30.44 * 86400000;
   const monthFmt = ppm > 80 ? 'long' : ppm > 30 ? 'short' : null;
 
+  // Pixels per year — drives year label density
+  const ppy = scale * 365.25 * 86400000;
+  const yearStep = ppy >= 40 ? 1 : ppy >= 20 ? 2 : ppy >= 8 ? 5 : 10;
+
   const g = mk('g', { 'clip-path': `url(#${cpId})` });
   let d = new Date(new Date(AXIS_START).getFullYear(), 0, 1);
 
@@ -1823,7 +1827,7 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
       if (fromBottom) {
         // ticks point upward from y=0
         g.appendChild(mk('line', { x1: x, y1: 0, x2: x, y2: tickLen, stroke, 'stroke-width': sw }));
-        if (isJan) {
+        if (isJan && d.getFullYear() % yearStep === 0) {
           g.appendChild(svgTxt(x + 3, tickLen + 11, String(d.getFullYear()), {
             fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
           }));
@@ -1835,7 +1839,7 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
       } else {
         // ticks point downward from y=axisH
         g.appendChild(mk('line', { x1: x, y1: axisH - tickLen, x2: x, y2: axisH, stroke, 'stroke-width': sw }));
-        if (isJan) {
+        if (isJan && d.getFullYear() % yearStep === 0) {
           g.appendChild(svgTxt(x + 3, axisH - tickLen - 4, String(d.getFullYear()), {
             fill: '#9ca3af', 'font-size': 11, 'font-weight': '600'
           }));
