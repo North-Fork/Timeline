@@ -1322,156 +1322,156 @@ rows = [
     # ── SUPERVISION ────────────────────────────────────────────────────────
     # Undergraduate (SYNTHETIC — replace with real data)
     ("01/01/2024", "12/31/2024",
-     "Undergraduate [Student A] (Honours)",
+     "[Student A] (Honours)",
      "SYNTHETIC. Honours thesis in computation arts and Indigenous futures. Concordia University.",
      "Concordia", "Undergraduate"),
 
     ("01/01/2022", "12/31/2023",
-     "Undergraduate [Student B] (Honours)",
+     "[Student B] (Honours)",
      "SYNTHETIC. Independent study in interactive media and land-based knowledge. Concordia University.",
      "Concordia", "Undergraduate"),
 
     ("01/01/2019", "12/31/2020",
-     "Undergraduate [Student C] (Independent Study)",
+     "[Student C] (Independent Study)",
      "SYNTHETIC. Creative coding and Indigenous language revitalization. Concordia University.",
      "AbTeC", "Undergraduate"),
 
     # Grad Certificate (SYNTHETIC — replace with real data)
     ("01/01/2023", "12/31/2024",
-     "Grad Certificate [Student D]",
+     "[Student D]",
      "SYNTHETIC. Graduate certificate in computation arts. Concordia University.",
      "Concordia", "Grad Certificate"),
 
     ("01/01/2021", "12/31/2022",
-     "Grad Certificate [Student E]",
+     "[Student E]",
      "SYNTHETIC. Graduate certificate in digital fabrication and Indigenous design. Concordia University.",
      "Concordia", "Grad Certificate"),
 
     # Postdoctoral Fellows
     ("01/01/2025", PRESENT,
-     "Postdoc Melemaikalani Moniz",
+     "Melemaikalani Moniz",
      "Postdoctoral Fellow in Abundant Soils. Concordia University.",
      "AI", "Postdoc"),
 
     ("01/01/2024", "12/31/2026",
-     "Postdoc Ceyda Yolgörmez",
+     "Ceyda Yolgörmez",
      "Horizon Postdoctoral Fellow in Abundant Intelligences. Concordia University.",
      "AI", "Postdoc"),
 
     ("01/01/2019", "12/31/2021",
-     "Postdoc Leuli Eschraghi",
+     "Leuli Eschraghi",
      "Horizon Postdoctoral Fellow in Indigenous Futures. Concordia University.",
      "IIF", "Postdoc"),
 
     # Doctoral Advisees
     ("01/01/2023", PRESENT,
-     "PhD Juliet Mackie",
+     "Juliet Mackie",
      "Reconstituting Indigenous Identities through Portraiture and Storytelling. Concordia University.",
      "Concordia", "PhD"),
 
     ("01/01/2021", "12/31/2024",
-     "PhD Mel Lefebvre",
+     "Mel Lefebvre",
      "Healing Through Ancestral Skin Marking: Traditional Tattooing as Healing and (Re)connection for Indigenous People. Concordia University.",
      "Concordia", "PhD"),
 
     ("01/01/2019", "12/31/2023",
-     "PhD Jessica Barudin (Co-supervisor)",
+     "Jessica Barudin (Co-supervisor)",
      "Re-connecting Through Women's Teachings, Language and Movement. Concordia University.",
      "Concordia", "PhD"),
 
     ("01/01/2017", "12/31/2023",
-     "PhD Suzanne Kite",
+     "Suzanne Kite",
      "Lakota Epistemology, Performance Practice, and Digital Technology. Concordia University.",
      "AI", "PhD"),
 
     ("01/01/2017", PRESENT,
-     "PhD Nafisa Sarwath (Secondary)",
+     "Nafisa Sarwath (Secondary)",
      "Indigenous knowledge, resilience and adaptive capacity. Concordia University.",
      "Concordia", "PhD"),
 
     ("01/01/2016", "12/31/2021",
-     "PhD Michelle Brown (Secondary)",
+     "Michelle Brown (Secondary)",
      "(Re)Coding Resurgence: Indigenous Digital Media Kinnections. University of Hawaii Mānoa.",
      "AbTeC", "PhD"),
 
     ("01/01/2007", "12/31/2014",
-     "PhD Elizabeth LaPensée (Co-supervisor)",
+     "Elizabeth LaPensée (Co-supervisor)",
      "Experiencing Stories: Narrative and Experience in Interactive Media. Simon Fraser University.",
      "AbTeC", "PhD"),
 
     ("01/01/2008", "12/31/2012",
-     "PhD Miao Song (Secondary)",
+     "Miao Song (Secondary)",
      "Experiencing Stories: Narrative and Experience in Interactive Media. Concordia University.",
      "Concordia", "PhD"),
 
     ("01/01/2008", "12/31/2011",
-     "PhD David Johnston (Secondary)",
+     "David Johnston (Secondary)",
      "Aesthetic Animism: Digital Poetry as Ontological Probe. Concordia University.",
      "Research", "PhD"),
 
     ("01/01/2005", "12/31/2008",
-     "PhD Rozita Naghshin (Committee)",
+     "Rozita Naghshin (Committee)",
      "Software Design as an Aesthetic Design Practice. Concordia University.",
      "Concordia", "PhD"),
 
     # Masters Thesis Advisees
     ("01/01/2022", PRESENT,
-     "Masters Vanessa Racine",
+     "Vanessa Racine",
      "Anishinaabe Love: Epistemologies & Videogames. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2022", "12/31/2025",
-     "Masters Tarcisio Cataldi Tegani (Committee)",
+     "Tarcisio Cataldi Tegani (Committee)",
      "Speculative Vexillology: Exploring National Identity and Imagining Afro-Brazilian Futures through Flags. Concordia University.",
      "Concordia", "Masters"),
 
     ("01/01/2021", "12/31/2024",
-     "Masters Caeleigh Lightning Long",
+     "Caeleigh Lightning Long",
      "Wawêsiwîn: The Act of Dressing Up — A Research Cree-ation Project. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2018", "12/31/2023",
-     "Masters Sébastien Aubin",
+     "Sébastien Aubin",
      "Designing Culturally Grounded Cree Syllabaries. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2018", "12/31/2021",
-     "Masters Waylon Wilson",
+     "Waylon Wilson",
      "Tuscarora Virtual Realities. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2017", "12/31/2019",
-     "Masters Maize Longboat",
+     "Maize Longboat",
      "Haudenosaunee Storytelling via Video Games. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2016", "12/31/2020",
-     "Masters Nicholas Gwyn Shulman (Co-supervisor)",
+     "Nicholas Gwyn Shulman (Co-supervisor)",
      "Network Arts: Seeing and Making Network Organisms. Concordia University.",
      "Research", "Masters"),
 
     ("01/01/2014", "12/31/2024",
-     "Masters Morgan Kennedy",
+     "Morgan Kennedy",
      "Storied Indigeneity in Videogames: Post-Indian Warriors and Indie Japan. Concordia University.",
      "AbTeC", "Masters"),
 
     ("01/01/2012", "12/31/2015",
-     "Masters Nikolaos Chandolias (Co-supervisor)",
+     "Nikolaos Chandolias (Co-supervisor)",
      "KinectEcho: Gesture and Vocal Recognition in New Media, Interactive Art and Live Events. Concordia University.",
      "Research", "Masters"),
 
     ("01/01/2006", "12/31/2007",
-     "Masters Leslie Plumb",
+     "Leslie Plumb",
      "Transversal Entanglements: Research-Creation and the Design Process for Inflexions. Concordia University.",
      "Research", "Masters"),
 
     ("01/01/2004", "12/31/2008",
-     "Masters Mia Song (Co-supervisor)",
+     "Mia Song (Co-supervisor)",
      "Computer-Assisted Interactive Documentary and Performance Arts in Illimitable Space. Concordia University.",
      "Research", "Masters"),
 
     ("01/01/2003", "12/31/2005",
-     "Masters Rozita Naghshin (Committee)",
+     "Rozita Naghshin (Committee)",
      "CASE Tool Simplification Via Task-Sensitive Metaphor. Concordia University.",
      "Concordia", "Masters"),
 
