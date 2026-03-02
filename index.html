@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AbTeC Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script>window.__TIMELINE_DATA__ = null;</script>
 <script src="data/timeline-data/timeline-data.js"></script>
@@ -289,6 +292,31 @@ body {
   color: #6b7280; border-radius: 3px; cursor: pointer; line-height: 1.4;
 }
 .filter-all-none button:hover { background: #374151; color: #e5e7eb; }
+
+/* ── View mode toggle ─────────────────────────────────────────────────── */
+.view-mode-toggle { display:flex; gap:6px; margin-bottom:12px; }
+.view-mode-btn {
+  flex:1; padding:4px 0; font-size:11px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.05em; background:transparent; border:1px solid #374151;
+  color:#9ca3af; border-radius:4px; cursor:pointer;
+}
+.view-mode-btn.active { background:#d97706; border-color:#d97706; color:#fff; }
+.view-mode-btn:hover:not(.active) { background:#374151; color:#e5e7eb; }
+
+/* ── Enrichment tag pills (drawer) ───────────────────────────────────── */
+.d-tags { margin-top:12px; }
+.d-tags h3 {
+  font-size:10px; text-transform:uppercase; letter-spacing:.06em;
+  color:#6b7280; margin:0 0 6px 0;
+}
+.d-tag-list { display:flex; flex-wrap:wrap; gap:5px; }
+.d-tag {
+  font-size:10px; padding:2px 8px; border-radius:12px;
+  background:#1f2937; border:1px solid #374151; color:#9ca3af;
+}
+.d-tag.theme        { border-color:#d97706; color:#d97706; }
+.d-tag.concept      { border-color:#6366f1; color:#6366f1; }
+.d-tag.collaborator { border-color:#10b981; color:#10b981; }
 
 /* ── Main ─────────────────────────────────────────────────── */
 #main {
@@ -634,6 +662,9 @@ body {
     <div class="d-more"  id="d-more"></div>
     <div class="d-team"    id="d-team"></div>
     <div class="d-funders" id="d-funders"></div>
+    <div id="d-themes"></div>
+    <div id="d-concepts"></div>
+    <div id="d-collaborators"></div>
   </div>
 </div>
 
@@ -693,6 +724,15 @@ let FILTER_LAYOUT  = 'accordion'; // 'accordion' | 'chips-bar' | 'doc-toggles' |
 let categoryGroups = [];          // [{ title, items }] — category accordion groups; one entry per source document
 let accordionState = new Map();   // section title → boolean (true = expanded); persists across buildFilters() calls
 let dimLabels = { orgs: 'Group', programs: 'Program', projects: 'Project' }; // renamed per format
+let VIEW_MODE       = 'sections'; // 'sections' | 'themes'
+let hasEnrichedData = false;
+let themeRows       = [];         // all themes sorted by event-count desc
+let themeColor      = {};         // theme → hex color
+let themeVis        = new Set();  // visible themes (filter)
+let themeRowH       = {};         // theme → row height px
+let themeY          = {};         // theme → cumulative Y (built in redraw)
+let themeLaneCounts = {};         // theme → lane count
+let themeLanes      = {};         // theme → { evId → lane index }
 let programGroups = []; // [{ label, items }] — sub-groups within Funding Agency; CV only
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
@@ -703,6 +743,17 @@ let panX      = 0;
 let dragging  = false;
 let dragStartX, dragStartPan, dragStartY, dragStartScrollTop;
 let crosshairG = null, evGRef = null, crosshairSvgH = 0;
+let pastWatermarkG = null, futureWatermarkG = null, logoWatermarkG = null;
+let logoGroupBottom = 590; // refined once image loads
+(function () {
+  const img = new Image();
+  img.onload = function () {
+    const renderedH = 600 / (this.naturalWidth / this.naturalHeight);
+    logoGroupBottom = 290 + Math.min(renderedH, 600);
+    updateWatermarkY();
+  };
+  img.src = 'image/AbTeCLogo-Horizontal-Primary.png';
+}());
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 const dz       = document.getElementById('drop-zone');
@@ -1317,6 +1368,7 @@ function normalizeRow(row, format = 'abtec') {
 const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
 
 function parse(rows) {
+  VIEW_MODE = 'sections';
   const format = detectFormat(rows);
   const titleEl = document.getElementById('sidebar-title-text');
   if (titleEl) titleEl.textContent = FORMAT_TITLES[format] ?? 'Timeline';
@@ -1346,6 +1398,9 @@ function parse(rows) {
       mediaCredit:    nr.mediaCredit    || '',
       teamMembers:    nr.teamMembers    || '',
       funders:        nr.funders        || '',
+      themes:        Array.isArray(r.themes)        ? r.themes        : [],
+      concepts:      Array.isArray(r.concepts)      ? r.concepts      : [],
+      collaborators: Array.isArray(r.collaborators) ? r.collaborators : [],
     };
   }).filter(Boolean);
 
@@ -1443,6 +1498,18 @@ function parse(rows) {
   orgVis     = new Set(orgs);
   programVis = new Set(programs);
   projVis    = new Set(projects);
+
+  // ── Build theme data (enriched CV only) ──────────────────────────────
+  hasEnrichedData = events.some(e => e.themes.length > 0);
+  themeRows = []; themeColor = {}; themeVis = new Set();
+  if (hasEnrichedData) {
+    const freq = {};
+    for (const ev of events) for (const t of ev.themes) freq[t] = (freq[t] || 0) + 1;
+    themeRows = Object.keys(freq).sort((a, b) => freq[b] - freq[a]);
+    themeRows.forEach((t, i) => { themeColor[t] = PALETTE[i % PALETTE.length]; });
+    themeVis = new Set(themeRows);
+  }
+
   minTs    = Math.min(...events.map(e => e.startTs));
   maxTs    = Math.max(...events.map(e => e.endTs));
   const earliestYear = new Date(minTs).getFullYear();
@@ -1455,6 +1522,7 @@ function parse(rows) {
   const minEffMs = Math.max(86400000, 8 / fitAllScale);
 
   computeLanes(minEffMs);
+  if (hasEnrichedData) computeThemeLanes(minEffMs);
   buildFilters();
   fitAll();
 }
@@ -1632,13 +1700,49 @@ function buildFiltersChipsBar()    { /* TODO option 3: horizontal pill bar above
 function buildFiltersDocToggles()  { /* TODO option 4: document master toggles + sub-filters */ }
 function buildFiltersTabs()        { /* TODO option 5: tabbed sidebar panels */ }
 
+function buildFiltersThemes() {
+  const panelTitle = document.createElement('div');
+  panelTitle.className = 'filter-panel-title';
+  panelTitle.textContent = 'Themes';
+  panelTitle.appendChild(cntEl);
+  filDiv.appendChild(panelTitle);
+
+  const allNone = makeAllNoneButtons(themeRows, themeVis, false, false);
+  filDiv.appendChild(allNone);
+
+  const body = document.createElement('div');
+  makeFilterItems(body, themeRows, themeVis, t => themeColor[t], false, false);
+  filDiv.appendChild(body);
+}
+
 function buildFilters() {
   const sidebarFiles = document.getElementById('sidebar-files');
   filDiv.innerHTML = '';
-  if      (FILTER_LAYOUT === 'accordion')   buildFiltersAccordion();
-  else if (FILTER_LAYOUT === 'chips-bar')   buildFiltersChipsBar();
-  else if (FILTER_LAYOUT === 'doc-toggles') buildFiltersDocToggles();
-  else if (FILTER_LAYOUT === 'tabs')        buildFiltersTabs();
+
+  // View mode toggle (only when enriched data is loaded)
+  if (hasEnrichedData) {
+    const tog = document.createElement('div');
+    tog.className = 'view-mode-toggle';
+    ['sections', 'themes'].forEach(mode => {
+      const btn = document.createElement('button');
+      btn.className = 'view-mode-btn' + (VIEW_MODE === mode ? ' active' : '');
+      btn.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+      btn.addEventListener('click', () => {
+        if (VIEW_MODE === mode) return;
+        VIEW_MODE = mode;
+        buildFilters(); redraw();
+      });
+      tog.appendChild(btn);
+    });
+    filDiv.appendChild(tog);
+  }
+
+  if      (VIEW_MODE === 'themes' && hasEnrichedData) buildFiltersThemes();
+  else if (FILTER_LAYOUT === 'accordion')             buildFiltersAccordion();
+  else if (FILTER_LAYOUT === 'chips-bar')             buildFiltersChipsBar();
+  else if (FILTER_LAYOUT === 'doc-toggles')           buildFiltersDocToggles();
+  else if (FILTER_LAYOUT === 'tabs')                  buildFiltersTabs();
+
   filDiv.appendChild(sidebarFiles);
 }
 
@@ -1667,6 +1771,28 @@ function computeLanes(minEffMs = 86400000) {
     }
     laneCounts[g] = Math.max(1, laneEnds.length);
     rowHeights[g] = Math.max(ROW_H, laneCounts[g] * LANE_H + LANE_PAD * 2);
+  }
+}
+
+function computeThemeLanes(minEffMs = 86400000) {
+  themeLaneCounts = {}; themeRowH = {}; themeLanes = {};
+  for (const theme of themeRows) {
+    const tEvs = events.filter(e => e.themes.includes(theme))
+                       .sort((a, b) => a.startTs - b.startTs);
+    const laneEnds = [];
+    themeLanes[theme] = {};
+    for (const ev of tEvs) {
+      const effEnd = Math.max(ev.endTs, ev.startTs + minEffMs);
+      let placed = false;
+      for (let i = 0; i < laneEnds.length; i++) {
+        if (ev.startTs >= laneEnds[i]) {
+          themeLanes[theme][ev.id] = i; laneEnds[i] = effEnd; placed = true; break;
+        }
+      }
+      if (!placed) { themeLanes[theme][ev.id] = laneEnds.length; laneEnds.push(effEnd); }
+    }
+    themeLaneCounts[theme] = Math.max(1, laneEnds.length);
+    themeRowH[theme] = Math.max(ROW_H, themeLaneCounts[theme] * LANE_H + LANE_PAD * 2);
   }
 }
 
@@ -1862,21 +1988,94 @@ function drawMonthAxis(svgEl, W, axisH, fromBottom, cpId) {
   svgEl.appendChild(g);
 }
 
+// ── Event bar helper ─────────────────────────────────────────────────────
+function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
+  const x1    = tsToX(ev.startTs);
+  const x2    = tsToX(ev.endTs);
+  const barW  = Math.max(x2 - x1, 6);
+
+  const g    = mk('g');
+  g.style.cursor = 'pointer';
+  evG.appendChild(g);
+  const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
+  g.appendChild(rect);
+
+  if (barW > 22) {
+    const lx    = Math.max(x1 + 6, LABEL_W + 2);
+    const avail = barW - (lx - x1) - 6;
+    const maxCh = Math.max(0, Math.floor(avail / 7));
+    if (maxCh > 1) {
+      const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
+      const textY  = barTop + BAR_H / 2 + 4;
+      const textEl = svgTxt(lx, textY, label, {
+        fill: '#fff', 'font-size': 11, 'font-weight': '500'
+      });
+      g.appendChild(textEl);
+      const textW = textEl.getComputedTextLength();
+      g.appendChild(mk('line', {
+        x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
+        stroke: '#fff', 'stroke-width': 2, 'stroke-opacity': 0.7,
+        style: 'pointer-events:none'
+      }));
+    }
+  } else {
+    const lx = x1 + barW + 5;
+    if (lx < W - 10) {
+      let maxRight = W - 4;
+      for (const e2 of rowEvs) {
+        if (e2 === ev || e2.group !== ev.group || (e2.lane || 0) !== (ev.lane || 0)) continue;
+        if (e2.startTs <= ev.startTs) continue;
+        const e2x = tsToX(e2.startTs);
+        if (e2x < maxRight) maxRight = e2x - 4;
+      }
+      const avail  = maxRight - lx;
+      const maxCh  = Math.max(0, Math.floor(avail / 7));
+      if (maxCh > 2) {
+        const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
+        const textY  = barTop + BAR_H / 2 + 4;
+        const textEl = svgTxt(lx, textY, label, {
+          fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
+        });
+        g.appendChild(textEl);
+        const textW = textEl.getComputedTextLength();
+        g.appendChild(mk('line', {
+          x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
+          stroke: color, 'stroke-width': 2,
+          style: 'pointer-events:none'
+        }));
+      }
+    }
+  }
+
+  g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
+  g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); hideTooltip(); });
+  g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
+}
+
 // ── Main render ───────────────────────────────────────────────────────────
 function redraw() {
   if (!events.length) return;
 
+  const isThemes  = VIEW_MODE === 'themes' && hasEnrichedData;
   const W         = wrap.clientWidth;
-  const visGroups = groups.filter(g => groupVis.has(g));
 
-  // Compute cumulative Y offset for each visible group
-  groupY = {};
-  let curY = 0;
-  for (const g of visGroups) {
-    groupY[g] = curY;
-    curY += rowHeights[g] || ROW_H;
+  const visGroups = groups.filter(g => groupVis.has(g));
+  const visThemes = themeRows.filter(t => themeVis.has(t));
+  const visRows   = isThemes ? visThemes : visGroups;
+  const rowH      = isThemes ? (r => themeRowH[r]) : (r => rowHeights[r] || ROW_H);
+  const rowClr    = isThemes ? (r => themeColor[r]) : (r => groupColor[r]);
+
+  // Compute cumulative Y for active row set
+  if (isThemes) {
+    themeY = {}; let curY = 0;
+    for (const t of visThemes) { themeY[t] = curY; curY += themeRowH[t] || ROW_H; }
+  } else {
+    groupY = {}; let curY = 0;
+    for (const g of visGroups) { groupY[g] = curY; curY += rowHeights[g] || ROW_H; }
   }
-  const contentH = curY;
+  const contentH = isThemes
+    ? visThemes.reduce((s, t) => s + (themeRowH[t] || ROW_H), 0)
+    : visGroups.reduce((s, g) => s + (rowHeights[g] || ROW_H), 0);
   const H = contentH;
 
   tlSvg.setAttribute('width',  W);
@@ -1892,7 +2091,7 @@ function redraw() {
   hdrSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: HDR_H, fill: '#1f2937' }));
   hdrSvg.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: HDR_H, fill: '#1f2937' }));
   hdrSvg.appendChild(mk('line', { x1: LABEL_W, y1: 0, x2: LABEL_W, y2: HDR_H, stroke: '#374151', 'stroke-width': 1 }));
-  hdrSvg.appendChild(svgTxt(12, HDR_H / 2 + 4, 'CATEGORY', {
+  hdrSvg.appendChild(svgTxt(12, HDR_H / 2 + 4, isThemes ? 'THEME' : 'CATEGORY', {
     fill: '#4b5563', 'font-size': 10, 'font-weight': '700', 'letter-spacing': '0.08em'
   }));
   drawMonthAxis(hdrSvg, W, HDR_H, false, 'cpHdr');
@@ -1916,9 +2115,9 @@ function redraw() {
   const gridG = mk('g', { 'clip-path': 'url(#cpE)' });
 
   // Row backgrounds
-  visGroups.forEach((g, i) => {
-    const y  = groupY[g];
-    const rh = rowHeights[g] || ROW_H;
+  visRows.forEach((r, i) => {
+    const y  = isThemes ? themeY[r] : groupY[r];
+    const rh = rowH(r);
     gridG.appendChild(mk('rect', {
       x: LABEL_W, y, width: W - LABEL_W, height: rh,
       fill: i % 2 === 0 ? '#161d2b' : '#111827'
@@ -1943,6 +2142,47 @@ function redraw() {
   }
   tlSvg.appendChild(gridG);
 
+  // ── Past watermark ────────────────────────────────────────────────────
+  {
+    const wX = tsToX(AXIS_START) - 20;
+    pastWatermarkG = mk('g', { 'clip-path': 'url(#cpE)', opacity: 0.25 });
+    [
+      [wX, 105, 'i ka wā ma mua'],
+      [wX, 215, 'ka wā ma hope'],
+    ].forEach(([x, y, s]) => {
+      pastWatermarkG.appendChild(svgTxt(x, y, s, {
+        fill: '#d97706', 'font-size': 100, 'text-anchor': 'end',
+        'font-family': 'Nunito, system-ui, sans-serif', 'font-weight': 700,
+      }));
+    });
+    tlSvg.appendChild(pastWatermarkG);
+    logoWatermarkG = mk('g', { 'clip-path': 'url(#cpE)', opacity: 0.15 });
+    logoWatermarkG.appendChild(mk('image', {
+      href: 'image/AbTeCLogo-Horizontal-Primary.png',
+      x: wX - 600, y: 290, width: 600, height: 600,
+      preserveAspectRatio: 'xMaxYMin meet',
+    }));
+    tlSvg.appendChild(logoWatermarkG);
+  }
+
+  // ── Future watermark ──────────────────────────────────────────────────
+  {
+    const wX = tsToX(Math.max(maxTs, Date.now())) + 20;
+    futureWatermarkG = mk('g', { 'clip-path': 'url(#cpE)', opacity: 0.25 });
+    [
+      [wX, 105, 'the future is'],
+      [wX, 215, 'Indigenous'],
+    ].forEach(([x, y, s]) => {
+      futureWatermarkG.appendChild(svgTxt(x, y, s, {
+        fill: '#d97706', 'font-size': 100, 'text-anchor': 'start',
+        'font-family': 'Nunito, system-ui, sans-serif', 'font-weight': 700,
+      }));
+    });
+    tlSvg.appendChild(futureWatermarkG);
+  }
+
+  updateWatermarkY();
+
   crosshairSvgH = H;
   crosshairG    = null; // re-created on every mousemove, inserted before evG
 
@@ -1964,73 +2204,25 @@ function redraw() {
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
   evGRef = evG;
 
-  for (const ev of visEvs) {
-    if (groupY[ev.group] === undefined) continue;
-    const rY    = groupY[ev.group];
-    const x1    = tsToX(ev.startTs);
-    const x2    = tsToX(ev.endTs);
-    const barW  = Math.max(x2 - x1, 6);
-    const barTop = rY + LANE_PAD + (ev.lane || 0) * LANE_H;
-    const color = groupColor[ev.group];
-
-    const g    = mk('g');
-    g.style.cursor = 'pointer';
-    evG.appendChild(g); // must be in DOM before getComputedTextLength()
-    const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
-    g.appendChild(rect);
-
-    // Text label: inside bar if wide enough, otherwise to the right
-    if (barW > 22) {
-      const lx    = Math.max(x1 + 6, LABEL_W + 2);
-      const avail = barW - (lx - x1) - 6;
-      const maxCh = Math.max(0, Math.floor(avail / 7));
-      if (maxCh > 1) {
-        const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
-        const textY  = barTop + BAR_H / 2 + 4;
-        const textEl = svgTxt(lx, textY, label, {
-          fill: '#fff', 'font-size': 11, 'font-weight': '500'
-        });
-        g.appendChild(textEl);
-        const textW = textEl.getComputedTextLength();
-        g.appendChild(mk('line', {
-          x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
-          stroke: '#fff', 'stroke-width': 2, 'stroke-opacity': 0.7,
-          style: 'pointer-events:none'
-        }));
-      }
-    } else {
-      const lx = x1 + barW + 5;
-      if (lx < W - 10) {
-        // Bound label width by the start of the next event in the same group+lane
-        let maxRight = W - 4;
-        for (const e2 of visEvs) {
-          if (e2 === ev || e2.group !== ev.group || (e2.lane || 0) !== (ev.lane || 0)) continue;
-          if (e2.startTs <= ev.startTs) continue;
-          const e2x = tsToX(e2.startTs);
-          if (e2x < maxRight) maxRight = e2x - 4;
-        }
-        const avail  = maxRight - lx;
-        const maxCh  = Math.max(0, Math.floor(avail / 7));
-        if (maxCh > 2) {
-          const label  = ev.headline.length > maxCh ? ev.headline.slice(0, maxCh - 1) + '…' : ev.headline;
-          const textY  = barTop + BAR_H / 2 + 4;
-          const textEl = svgTxt(lx, textY, label, {
-            fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
-          });
-          g.appendChild(textEl);
-          const textW = textEl.getComputedTextLength();
-          g.appendChild(mk('line', {
-            x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
-            stroke: color, 'stroke-width': 2,
-            style: 'pointer-events:none'
-          }));
-        }
+  if (!isThemes) {
+    // ── Sections mode ────────────────────────────────────────────────────
+    for (const ev of visEvs) {
+      if (groupY[ev.group] === undefined) continue;
+      const rY     = groupY[ev.group];
+      const barTop = rY + LANE_PAD + (ev.lane || 0) * LANE_H;
+      drawEventBar(evG, ev, barTop, groupColor[ev.group], W, visEvs);
+    }
+  } else {
+    // ── Themes mode ──────────────────────────────────────────────────────
+    for (const theme of visThemes) {
+      const tRowEvs = events.filter(e => e.themes.includes(theme));
+      for (const ev of tRowEvs) {
+        const rY     = themeY[theme];
+        const lane   = themeLanes[theme]?.[ev.id] ?? 0;
+        const barTop = rY + LANE_PAD + lane * LANE_H;
+        drawEventBar(evG, ev, barTop, themeColor[theme], W, tRowEvs);
       }
     }
-
-    g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
-    g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); hideTooltip(); });
-    g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
   }
 
   // ── Today marker (clipped to event area) ─────────────────────────────
@@ -2060,20 +2252,23 @@ function redraw() {
   const lblG = mk('g');
   lblG.appendChild(mk('rect', { x: 0, y: 0, width: LABEL_W, height: H, fill: '#1f2937' }));
   lblG.appendChild(mk('line', { x1: LABEL_W, y1: 0, x2: LABEL_W, y2: H, stroke: '#374151', 'stroke-width': 1 }));
-  // category colour strip on left edge of label
-  visGroups.forEach((g, i) => {
-    const y  = groupY[g];
-    const rh = rowHeights[g] || ROW_H;
+  // row label column
+  visRows.forEach((r, i) => {
+    const y  = isThemes ? themeY[r] : groupY[r];
+    const rh = rowH(r);
     lblG.appendChild(mk('rect', {
       x: 0, y, width: LABEL_W, height: rh,
       fill: i % 2 === 0 ? '#1a2030' : '#161d2b'
     }));
     lblG.appendChild(mk('line', { x1: 0, y1: y + rh, x2: LABEL_W, y2: y + rh, stroke: '#374151', 'stroke-width': 0.5 }));
-    lblG.appendChild(svgWrappedLabel(12, y + rh / 2, g, 17, { fill: groupColor[g], 'font-size': 12, 'font-weight': '500' }));
+    lblG.appendChild(svgWrappedLabel(12, y + rh / 2, r, 17, { fill: rowClr(r), 'font-size': 12, 'font-weight': '500' }));
   });
   tlSvg.appendChild(lblG);
 
-  cntEl.textContent = `${visEvs.length} of ${events.length} event${events.length !== 1 ? 's' : ''}`;
+  const visCount = isThemes
+    ? new Set(events.filter(e => e.themes.some(t => themeVis.has(t))).map(e => e.id)).size
+    : visEvs.length;
+  cntEl.textContent = `${visCount} of ${events.length} event${events.length !== 1 ? 's' : ''}`;
 
   // ── Bottom axis ───────────────────────────────────────────────────────
   const btmSvg = document.getElementById('btm-svg');
@@ -2318,6 +2513,20 @@ async function openDrawer(ev) {
     fundersEl.innerHTML = '';
   }
 
+  // ── Enrichment tags ───────────────────────────────────────────────────
+  const renderTags = (elId, tags, cssClass, title) => {
+    const el = document.getElementById(elId);
+    if (tags && tags.length) {
+      const pills = tags.map(t => `<span class="d-tag ${cssClass}">${t}</span>`).join('');
+      el.innerHTML = `<div class="d-tags"><h3>${title}</h3><div class="d-tag-list">${pills}</div></div>`;
+    } else {
+      el.innerHTML = '';
+    }
+  };
+  renderTags('d-themes',        ev.themes,        'theme',        'Themes');
+  renderTags('d-concepts',      ev.concepts,      'concept',      'Concepts');
+  renderTags('d-collaborators', ev.collaborators, 'collaborator', 'Collaborators');
+
   activeDrawerId = ev.id;
   drawer.classList.add('open');
   updateDrawerNav();
@@ -2535,6 +2744,20 @@ wrap.addEventListener('mousemove', e => {
 wrap.addEventListener('mouseleave', hideCrosshair);
 
 window.addEventListener('resize', () => { if (events.length) redraw(); });
+
+// ── Watermark vertical centering ──────────────────────────────────────────
+function updateWatermarkY() {
+  if (!pastWatermarkG) return;
+  const mid = wrap.scrollTop + wrap.clientHeight / 2;
+  // Left group: centre text (top≈33) + logo (bottom=logoGroupBottom) together
+  const dyLeft  = mid - (33 + logoGroupBottom) / 2;
+  // Right group: centre just the phrase (baselines 105 / 215, centre≈160)
+  const dyRight = mid - 160;
+  if (pastWatermarkG)  pastWatermarkG.setAttribute('transform',  `translate(0,${dyLeft})`);
+  if (logoWatermarkG)  logoWatermarkG.setAttribute('transform',  `translate(0,${dyLeft})`);
+  if (futureWatermarkG) futureWatermarkG.setAttribute('transform', `translate(0,${dyRight})`);
+}
+wrap.addEventListener('scroll', updateWatermarkY);
 window.addEventListener('focus',  () => { if (events.length) redraw(); });
 
 // ── Sidebar resize handle ──────────────────────────────────────────────────

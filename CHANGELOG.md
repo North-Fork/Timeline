@@ -1,5 +1,33 @@
 # Changelog
 
+## Session 13 — 2026-03-01
+
+### Themes view
+- New **Themes** view mode: timeline rows keyed by research theme instead of CV section
+- `VIEW_MODE` state (`'sections'` | `'themes'`); reset to `'sections'` on each `parse()` call
+- `parse()` reads `themes`, `concepts`, `collaborators` arrays from enriched CV rows (Array.isArray guard handles non-enriched data)
+- Theme frequency map → `themeRows` (sorted desc), `themeColor`, `themeVis`
+- `computeThemeLanes()`: parallel to `computeLanes()`, builds `themeLanes[theme][evId]`, `themeLaneCounts`, `themeRowH`
+- `redraw()`: `isThemes` flag drives row source, cumulative-Y, header label (`CATEGORY` → `THEME`), row backgrounds, event bars, label column, event count
+- `drawEventBar()` helper extracted from inline loop; used by both sections and themes modes
+- Sections / Themes toggle appears in sidebar only when enriched data is loaded
+- `buildFiltersThemes()`: theme checkbox list with All / None, reuses `makeFilterItems` / `makeAllNoneButtons`
+- Drawer: `#d-themes`, `#d-concepts`, `#d-collaborators` divs render enrichment tag pills when populated
+- CSS: `.view-mode-toggle`, `.view-mode-btn`, `.d-tags`, `.d-tag` (+ `.theme`, `.concept`, `.collaborator` variants)
+
+### Canvas watermarks
+- **Past** (left of timeline start): *i ka wā ma mua / ka wā ma hope* — Nunito 700, 100px, amber, 25% opacity; right-justified flush to `AXIS_START`
+- **Future** (right of timeline end): *the future is / Indigenous* — same style, left-justified
+- AbTeC logo (`image/AbTeCLogo-Horizontal-Primary.png`) below past phrase, 15% opacity
+- All three watermark groups re-centre vertically on scroll and redraw without full SVG rebuild
+- Left group (phrase + logo) centred as a unit using measured logo height; right phrase centred independently
+- Nunito loaded via Google Fonts (`wght@300;400;600;700`)
+
+### Data
+- `data/themes-data/jason-themes.md`: research themes profile extracted from `cv-data-enriched.js` (949 entries, 112 themes, 349 collaborators)
+
+---
+
 ## Session 12 — 2026-02-28
 
 ### GDoc CV parser — link extraction
