@@ -1336,15 +1336,65 @@ rows = [
      "SYNTHETIC. Creative coding and Indigenous language revitalization. Concordia University.",
      "AbTeC", "Undergraduate"),
 
-    # Grad Certificate (SYNTHETIC — replace with real data)
-    ("01/01/2023", "12/31/2024",
-     "[Student D]",
-     "SYNTHETIC. Graduate certificate in computation arts. Concordia University.",
+    # Grad Certificate
+    ("01/01/2014", "12/31/2015",
+     "Adriana Navarro Sainz",
+     "Concordia University.",
      "Concordia", "Grad Certificate"),
 
-    ("01/01/2021", "12/31/2022",
-     "[Student E]",
-     "SYNTHETIC. Graduate certificate in digital fabrication and Indigenous design. Concordia University.",
+    ("01/01/2014", "12/31/2015",
+     "Guillaume Bourdon",
+     "Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2012", "12/31/2013",
+     "Joanna Pederson",
+     "Augmented Reality: Save the Ghost Signs. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2010", "12/31/2011",
+     "Phil Lichti",
+     "The Soundwalk as Documentary Practice. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2010", "12/31/2011",
+     "Santiago Salciado",
+     "Improving the Design Process for Textbooks. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2006", "12/31/2007",
+     "Oliver Tsuji",
+     "Narrative in Digital Media. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2005", "12/31/2006",
+     "Louis Goupille",
+     "Painterly Approaches to Virtual Environments. Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2005", "12/31/2006",
+     "Thibaut Duverneix",
+     "Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2003", "12/31/2004",
+     "Farah Jamaluddin",
+     "Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2003", "12/31/2005",
+     "Dalia Radwan",
+     "Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2002", "12/31/2003",
+     "John Stuart",
+     "Concordia University.",
+     "Concordia", "Grad Certificate"),
+
+    ("01/01/2002", "12/31/2003",
+     "Justyna Latek",
+     "Concordia University.",
      "Concordia", "Grad Certificate"),
 
     # Postdoctoral Fellows
