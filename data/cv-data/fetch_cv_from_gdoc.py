@@ -47,11 +47,15 @@ TODAY = date.today()
 
 # ── Output sort order (mirrors generate_cv_xlsx.py GRP_ORDER) ────────────────
 GRP_ORDER = [
-    "Employment", "Honors", "Education", "Creative Works", "Books/Chapters",
-    "Journal Articles", "Keynotes",
-    "Conference Presentations", "Invited Publications", "Invited Lectures",
-    "Policy Papers", "Artist's Books",
-    "Solo Exhibitions", "Group Exhibitions", "Productions",
+    "Employment", "Honors", "Education",
+    "Creative Works", "Books/Chapters", "Journal Articles",
+    "Keynotes", "Conference Presentations", "Invited Publications", "Invited Lectures",
+    "Policy Papers", "Artist's Books", "Poetry", "Op-Ed",
+    "Solo Exhibitions", "Group Exhibitions",
+    "Film Screenings", "Commissions", "Curatorial", "Visiting Artist", "Productions",
+    "Residencies", "Residency Organizer",
+    "Documentaries", "Websites",
+    "Press Coverage", "Academic Reviews", "Symposia Organized",
     "Funding (PI)", "Funding (Co-I)", "Funding (Internal)",
     "Courses Taught",
     "Postdoc", "PhD", "Masters", "Grad Certificate", "Undergraduate",
