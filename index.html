@@ -2750,7 +2750,7 @@ window.addEventListener('mouseup', () => {
   wrap.classList.remove('panning');
 });
 
-let touchStartX = null, touchStartPan = null, touchStartY = null, touchDir = null;
+let touchStartX = null, touchStartPan = null, touchStartY = null, touchDir = null, touchRaf = null;
 wrap.addEventListener('touchstart', e => {
   touchStartX   = e.touches[0].clientX;
   touchStartY   = e.touches[0].clientY;
@@ -2761,10 +2761,16 @@ wrap.addEventListener('touchmove', e => {
   if (touchStartX === null) return;
   const dx = e.touches[0].clientX - touchStartX;
   const dy = e.touches[0].clientY - touchStartY;
+  // Lock to vertical only when dy is clearly dominant (2× dx); otherwise pan horizontally.
+  // Strong horizontal bias prevents a slight upward wobble from killing the swipe.
   if (touchDir === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
-    touchDir = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
+    touchDir = Math.abs(dy) > Math.abs(dx) * 2 ? 'v' : 'h';
   }
-  if (touchDir === 'h') { panX = touchStartPan + dx; redraw(); }
+  if (touchDir === 'h') {
+    panX = touchStartPan + dx;
+    // rAF so the event loop stays free to accumulate touch positions while redraw runs
+    if (!touchRaf) touchRaf = requestAnimationFrame(() => { touchRaf = null; redraw(); });
+  }
 }, { passive: true });
 wrap.addEventListener('touchend', () => {
   touchStartX = null; touchStartPan = null; touchStartY = null; touchDir = null;
