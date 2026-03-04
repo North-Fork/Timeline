@@ -2750,10 +2750,11 @@ window.addEventListener('mouseup', () => {
   wrap.classList.remove('panning');
 });
 
-let t0 = null, ty0 = null;
+let t0 = null, ty0 = null, touchDir = null;
 wrap.addEventListener('touchstart', e => {
-  t0  = e.touches[0].clientX;
-  ty0 = e.touches[0].clientY;
+  t0       = e.touches[0].clientX;
+  ty0      = e.touches[0].clientY;
+  touchDir = null;
 }, { passive: true });
 wrap.addEventListener('touchmove', e => {
   if (t0 === null) return;
@@ -2761,13 +2762,13 @@ wrap.addEventListener('touchmove', e => {
   const dy = e.touches[0].clientY - ty0;
   t0  = e.touches[0].clientX;
   ty0 = e.touches[0].clientY;
-  // Only intercept horizontal gestures; let vertical fall through to native scroll
-  if (Math.abs(dx) > Math.abs(dy)) {
-    panX += dx;
-    redraw();
+  // Lock direction on first significant movement; never re-evaluate mid-swipe
+  if (touchDir === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+    touchDir = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v';
   }
+  if (touchDir === 'h') { panX += dx; redraw(); }
 }, { passive: true });
-wrap.addEventListener('touchend', () => { t0 = null; ty0 = null; });
+wrap.addEventListener('touchend', () => { t0 = null; ty0 = null; touchDir = null; });
 
 // ── Crosshair ─────────────────────────────────────────────────────────────
 const crosshairLabel = document.getElementById('crosshair-label');
