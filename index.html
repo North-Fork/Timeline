@@ -596,7 +596,8 @@ body {
   #sidebar.mobile-open { transform: translateX(0); }
   #sidebar-overlay.visible { display: block; }
   #sidebar-resizer { display: none; }
-  #mobile-toolbar { display: flex; }
+  #mobile-toolbar { display: flex; position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+  #main { padding-top: 44px; }
   #drawer { width: 100% !important; }
 }
 
