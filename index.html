@@ -2753,15 +2753,23 @@ window.addEventListener('mouseup', () => {
   wrap.classList.remove('panning');
 });
 
-// touch-action:pan-y is not inherited by SVG children, so iOS still absorbs
-// touchmove events via its gesture recogniser even with that CSS set.
-// Solution: non-passive touchmove listener + preventDefault() for horizontal
-// gestures so iOS cannot take ownership. Vertical gestures: no preventDefault
-// → native overflow-y scroll still works.
+// iOS fires touchcancel when redraw() destroys the SVG child the finger is on.
+// Fix: never call redraw() mid-swipe. Apply a CSS translateX to the SVGs for
+// live visual feedback, then do one full redraw() on touchend/touchcancel.
 let touchStartX = null, touchStartY = null, touchStartPan = null;
-let touchIsH = null, touchRaf = null;
+let touchIsH = null, touchLiveDx = 0, touchRaf = null;
 let _tsCount = 0, _tmCount = 0;
 const _dbg = document.getElementById('touch-debug');
+const _btmSvg = document.getElementById('btm-svg');
+
+function _setTouchTranslate(dx) {
+  tlSvg.style.transform  = `translateX(${dx}px)`;
+  hdrSvg.style.transform = `translateX(${dx}px)`;
+  _btmSvg.style.transform = `translateX(${dx}px)`;
+}
+function _clearTouchTranslate() {
+  tlSvg.style.transform = hdrSvg.style.transform = _btmSvg.style.transform = '';
+}
 
 document.addEventListener('touchstart', e => {
   _tsCount++;
@@ -2775,6 +2783,7 @@ document.addEventListener('touchstart', e => {
   touchStartY   = t.clientY;
   touchStartPan = panX;
   touchIsH      = null;
+  touchLiveDx   = 0;
 }, { passive: true });
 
 document.addEventListener('touchmove', e => {
@@ -2782,21 +2791,33 @@ document.addEventListener('touchmove', e => {
   if (touchStartX === null) return;
   const dx = e.touches[0].clientX - touchStartX;
   const dy = e.touches[0].clientY - touchStartY;
-  // Determine direction on first significant movement
   if (touchIsH === null && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) {
     touchIsH = Math.abs(dx) >= Math.abs(dy);
   }
-  _dbg.textContent = `ts:${_tsCount} tm:${_tmCount} isH:${touchIsH} panX:${Math.round(panX)}\ndx:${Math.round(dx)} dy:${Math.round(dy)}`;
+  _dbg.textContent = `ts:${_tsCount} tm:${_tmCount} isH:${touchIsH}\ndx:${Math.round(dx)}`;
   if (touchIsH) {
-    e.preventDefault(); // stops iOS absorbing the gesture
-    panX = touchStartPan + dx;
-    if (!touchRaf) touchRaf = requestAnimationFrame(() => { touchRaf = null; redraw(); });
+    e.preventDefault();
+    touchLiveDx = dx;
+    // CSS transform only — no DOM changes, no touchcancel
+    if (!touchRaf) touchRaf = requestAnimationFrame(() => {
+      touchRaf = null;
+      _setTouchTranslate(touchLiveDx);
+    });
   }
-}, { passive: false }); // must be non-passive to call preventDefault
+}, { passive: false });
 
-document.addEventListener('touchend', () => {
-  touchStartX = null; touchStartY = null; touchStartPan = null; touchIsH = null;
-});
+function _commitTouch() {
+  if (touchRaf) { cancelAnimationFrame(touchRaf); touchRaf = null; }
+  if (touchIsH && touchStartX !== null) {
+    panX = touchStartPan + touchLiveDx;
+    _clearTouchTranslate();
+    redraw();
+  }
+  touchStartX = null; touchStartY = null; touchStartPan = null;
+  touchIsH = null; touchLiveDx = 0;
+}
+document.addEventListener('touchend',    _commitTouch);
+document.addEventListener('touchcancel', _commitTouch);
 
 // ── Crosshair ─────────────────────────────────────────────────────────────
 const crosshairLabel = document.getElementById('crosshair-label');
