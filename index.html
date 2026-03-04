@@ -564,6 +564,47 @@ body {
   white-space: nowrap;
   display: none;
 }
+
+/* ── Mobile toolbar ──────────────────────────────────────────────────────── */
+#mobile-toolbar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #1f2937;
+  border-bottom: 1px solid #374151;
+  flex-shrink: 0;
+}
+#btn-sidebar-toggle {
+  font-size: 18px; background: none; border: none;
+  color: #9ca3af; cursor: pointer;
+  padding: 2px 8px; border-radius: 4px; line-height: 1;
+}
+#btn-sidebar-toggle:hover { color: #e5e7eb; background: #374151; }
+#sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 99;
+}
+
+/* ── Phone breakpoint ────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  #sidebar {
+    position: fixed; left: 0; top: 0; height: 100%;
+    transform: translateX(-100%); transition: transform 0.3s ease;
+    z-index: 100; width: 280px !important; min-width: 280px; max-width: 280px;
+  }
+  #sidebar.mobile-open { transform: translateX(0); }
+  #sidebar-overlay.visible { display: block; }
+  #sidebar-resizer { display: none; }
+  #mobile-toolbar { display: flex; }
+  #drawer { width: 100% !important; }
+}
+
+/* ── Tablet breakpoint ───────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #sidebar { width: 200px; min-width: 150px; }
+  #drawer { width: 340px; }
+}
 </style>
 </head>
 <body>
@@ -621,9 +662,17 @@ body {
 </div>
 
 <div id="sidebar-resizer"></div>
+<div id="sidebar-overlay"></div>
 
 <!-- Main -->
 <div id="main">
+  <div id="mobile-toolbar">
+    <button id="btn-sidebar-toggle" title="Filters">☰</button>
+    <button class="tb-btn" id="mob-zoomin"  title="Zoom in">＋</button>
+    <button class="tb-btn" id="mob-zoomout" title="Zoom out">－</button>
+    <button class="tb-btn" id="mob-fit"     title="Fit all">Fit</button>
+    <button class="tb-btn" id="mob-today"   title="Today">Today</button>
+  </div>
   <div id="tl-wrap">
     <div id="empty">
       <div style="font-size:40px">📅</div>
@@ -691,7 +740,12 @@ body {
 
 <script>
 // ── Layout constants ─────────────────────────────────────────────────────
-const LABEL_W    = 150;   // group label column width (px)
+let LABEL_W    = 150;   // group label column width (px) — updated dynamically
+function computeLabelW() {
+  if (window.innerWidth < 480) return 90;
+  if (window.innerWidth < 768) return 110;
+  return 150;
+}
 const HDR_H      = 48;    // time axis header height (px)
 const BTM_H      = 40;    // bottom axis height (px)
 let AXIS_START = new Date(2012, 0, 1).getTime(); // updated to earliest event's year on load
@@ -2055,6 +2109,7 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
 // ── Main render ───────────────────────────────────────────────────────────
 function redraw() {
   if (!events.length) return;
+  LABEL_W = computeLabelW();
 
   const isThemes  = VIEW_MODE === 'themes' && hasEnrichedData;
   const W         = wrap.clientWidth;
@@ -2529,6 +2584,7 @@ async function openDrawer(ev) {
 
   activeDrawerId = ev.id;
   drawer.classList.add('open');
+  closeMobileSidebar();
   updateDrawerNav();
   await renderMedia(ev, document.getElementById('d-media'));
   preloadAdjacent();
@@ -3196,6 +3252,29 @@ function drawExportMonthAxis(svgEl, eTsToX, startTs, endTs, W, LW, axisY, axisH,
   }
   svgEl.appendChild(g);
 }
+
+// ── Mobile sidebar ────────────────────────────────────────────────────────
+const sidebarEl      = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+function openMobileSidebar() {
+  sidebarEl.classList.add('mobile-open');
+  sidebarOverlay.classList.add('visible');
+}
+function closeMobileSidebar() {
+  sidebarEl.classList.remove('mobile-open');
+  sidebarOverlay.classList.remove('visible');
+}
+document.getElementById('btn-sidebar-toggle').addEventListener('click', () => {
+  sidebarEl.classList.contains('mobile-open') ? closeMobileSidebar() : openMobileSidebar();
+});
+sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+// Mobile toolbar mirrors sidebar controls
+document.getElementById('mob-zoomin') .addEventListener('click', () => document.getElementById('btn-zoomin').click());
+document.getElementById('mob-zoomout').addEventListener('click', () => document.getElementById('btn-zoomout').click());
+document.getElementById('mob-fit')    .addEventListener('click', () => document.getElementById('btn-fit').click());
+document.getElementById('mob-today')  .addEventListener('click', () => document.getElementById('btn-today').click());
 
 </script>
 </body>
