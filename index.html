@@ -2762,11 +2762,14 @@ function _dbgShow(extra) {
 }
 document.addEventListener('touchstart', e => {
   _tsCount++;
-  const inWrap = wrap.contains(e.target);
-  _dbgShow(`inWrap:${inWrap} tag:${e.target.tagName}`);
+  const t = e.touches[0];
+  const r = wrap.getBoundingClientRect();
+  const inWrap = t.clientX >= r.left && t.clientX <= r.right &&
+                 t.clientY >= r.top  && t.clientY <= r.bottom;
+  _dbgShow(`tag:${e.target.tagName} inWrap:${inWrap}\nwrap:(${Math.round(r.left)},${Math.round(r.top)})→(${Math.round(r.right)},${Math.round(r.bottom)})\ntouch:(${Math.round(t.clientX)},${Math.round(t.clientY)})`);
   if (!inWrap) return;
-  touchStartX   = e.touches[0].clientX;
-  touchStartY   = e.touches[0].clientY;
+  touchStartX   = t.clientX;
+  touchStartY   = t.clientY;
   touchStartPan = panX;
   touchDir      = null;
 }, { passive: true });
