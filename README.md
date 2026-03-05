@@ -47,6 +47,7 @@ Browsers other than Chrome/Brave block local file access, so the data cannot loa
 | Zoom buttons | ＋ / － in sidebar | ＋ / － in toolbar |
 | Pan left/right | Click and drag on the timeline | Single-finger swipe horizontally |
 | Scroll up/down | Mousewheel / trackpad | Single-finger swipe vertically |
+| Open event detail | Click event (tooltip previews on hover) | Tap event — opens Storybox directly |
 | Fit all events | Click **Fit** in the sidebar | Tap **Fit** in toolbar |
 | Jump to today | Click **Today** in the sidebar | Tap **Today** in toolbar |
 | Search | Type in the search box and press Enter; use ◀ ▶ to cycle through matches | Same |
