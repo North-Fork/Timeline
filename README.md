@@ -63,7 +63,7 @@ Three ways to load data:
 The timeline loads `timeline-data.xlsx` automatically on startup via the pre-built `data/timeline-data/timeline-data.js` file.
 
 **2. Drag and drop**
-Drag any `.xlsx` file onto the drop zone in the sidebar.
+Drag any `.xlsx` or `.csv` file onto the drop zone in the sidebar.
 
 **3. Google Sheets**
 Paste a published Google Sheets URL into the URL field in the sidebar and click **Load** (or press Enter). The sheet must be published to the web (**File → Share → Publish to web**). The URL is remembered between sessions but is never fetched automatically — click Load each time you want to refresh.
@@ -122,7 +122,7 @@ The timeline auto-detects whether a file contains research/project data or CV da
 
 ### Research Data
 
-The source file is an Excel workbook (`.xlsx`). The first row must be a header row. The following columns are recognised:
+The source file is an Excel workbook (`.xlsx`) or a comma-separated values file (`.csv`). The first row must be a header row. The following columns are recognised:
 
 #### Dates (required)
 
@@ -186,9 +186,9 @@ Export or copy your CV as a plain text (`.txt`) file, then drag it onto the drop
 
 Paste the published URL of a Google Doc CV into the URL field and click **Load**. The doc must be published to the web (**File → Share → Publish to web**). The timeline parses the document's section headings and date-prefixed entries automatically and sets the title to *CV Timeline*. The URL is remembered between sessions but is never fetched automatically — click Load each time you want to refresh.
 
-**Method 3 — From an Excel file (`.xlsx`)**
+**Method 3 — From an Excel or CSV file (`.xlsx` / `.csv`)**
 
-The workbook should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Drag the file onto the drop zone or use **Browse file**. Run `data/cv-data/make_cv_data_js.py` to pre-generate a local data file that loads automatically on startup (advanced use).
+The file should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Drag the file onto the drop zone or use **Browse file**. Run `data/cv-data/make_cv_data_js.py` to pre-generate a local data file that loads automatically on startup (advanced use).
 
 **Converting your CV to the right format**
 

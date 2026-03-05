@@ -657,7 +657,7 @@ body {
     <div id="sidebar-files">
       <div id="drop-zone">
         <div class="dz-icon">📂</div>
-        <div>Drop .xlsx (events) or .txt (CV) here or <span class="dz-browse">Browse for file</span></div>
+        <div>Drop .xlsx / .csv (events) or .txt (CV) here or <span class="dz-browse">Browse for file</span></div>
         <label style="display:none">
           <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.txt,.js">
         </label>
@@ -945,6 +945,18 @@ function load(file) {
         const match = text.match(/window\.__TIMELINE_DATA__\s*=\s*(\[[\s\S]*?\]);\s*$/m);
         if (!match) throw new Error('File does not contain window.__TIMELINE_DATA__ — is this a timeline data JS file?');
         const rows = JSON.parse(match[1]);
+        parse(rows);
+      } catch (ex) { alert('Could not read file:\n' + ex.message); }
+    };
+    r.readAsText(file, 'utf-8');
+    return;
+  }
+  if (file.name.toLowerCase().endsWith('.csv')) {
+    const r = new FileReader();
+    r.onload = e => {
+      try {
+        const wb   = XLSX.read(e.target.result, { type: 'string' });
+        const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
         parse(rows);
       } catch (ex) { alert('Could not read file:\n' + ex.message); }
     };
