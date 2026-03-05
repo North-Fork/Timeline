@@ -76,6 +76,11 @@ body {
   font-style: italic;
   text-align: center;
 }
+.hint-mobile { display: none; }
+@media (max-width: 767px) {
+  .hint-desktop { display: none; }
+  .hint-mobile  { display: inline; }
+}
 #sidebar-files {
   border-top: 1px solid #374151;
   margin-top: 8px;
@@ -630,7 +635,10 @@ body {
     <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
     <button class="tb-btn sb-btn" id="btn-fit"   title="Fit all events in view">Fit</button>
     <button class="tb-btn sb-btn" id="btn-today" title="Scroll to today">Today</button>
-    <div id="view-hint">use spacebar + mousewheel or + spacebar to zoom</div>
+    <div id="view-hint">
+      <span class="hint-desktop">use spacebar + mousewheel or + spacebar to zoom</span>
+      <span class="hint-mobile">use pinch to zoom</span>
+    </div>
   </div>
   <div id="search-box">
     <input id="search-input" type="text" placeholder="Search events…" autocomplete="off">
