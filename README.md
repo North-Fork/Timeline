@@ -41,14 +41,16 @@ Browsers other than Chrome/Brave block local file access, so the data cannot loa
 
 ## Navigation
 
-| Action | How |
-|--------|-----|
-| Zoom in/out | Spacebar + mousewheel |
-| Pan left/right | Click and drag on the timeline |
-| Fit all events | Click **Fit** in the sidebar |
-| Jump to today | Click **Today** in the sidebar |
-| Search | Type in the search box and press Enter; use ◀ ▶ to cycle through matches |
-| Search mode | **Abs** starts from the earliest match; **Rel** starts from the current view position |
+| Action | Desktop | Mobile |
+|--------|---------|--------|
+| Zoom in/out | Spacebar + mousewheel or trackpad | Pinch gesture |
+| Zoom buttons | ＋ / － in sidebar | ＋ / － in toolbar |
+| Pan left/right | Click and drag on the timeline | Single-finger swipe horizontally |
+| Scroll up/down | Mousewheel / trackpad | Single-finger swipe vertically |
+| Fit all events | Click **Fit** in the sidebar | Tap **Fit** in toolbar |
+| Jump to today | Click **Today** in the sidebar | Tap **Today** in toolbar |
+| Search | Type in the search box and press Enter; use ◀ ▶ to cycle through matches | Same |
+| Search mode | **Abs** starts from the earliest match; **Rel** starts from the current view position | Same |
 
 ---
 
