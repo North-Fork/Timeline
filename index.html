@@ -2818,7 +2818,7 @@ document.addEventListener('touchstart', e => {
   touchIsH      = null;
   touchLiveDx   = 0;
   _touchTargetEl = (e.target !== tlSvg && tlSvg.contains(e.target)) ? e.target : null;
-}, { passive: false });
+}, { passive: true });
 
 document.addEventListener('touchmove', e => {
   // Pinch zoom
