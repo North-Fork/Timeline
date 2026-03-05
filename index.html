@@ -355,7 +355,7 @@ body {
   overflow-x: hidden;
   cursor: grab;
   background: #111827;
-  touch-action: pan-y;
+  touch-action: none;
 }
 #tl-wrap.panning { cursor: grabbing; }
 #tl-header {
@@ -2770,9 +2770,30 @@ let touchStartX = null, touchStartY = null, touchStartPan = null;
 let touchIsH = null, touchLiveDx = 0, touchRaf = null, _touchTargetEl = null;
 const _touchAnchor = document.getElementById('_touch_anchor');
 
+// Pinch-to-zoom state
+let pinchActive = false, pinchStartDist = null, pinchStartScale = null, pinchMidX = null;
+
+function _pinchDist(e) {
+  const dx = e.touches[0].clientX - e.touches[1].clientX;
+  const dy = e.touches[0].clientY - e.touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 document.addEventListener('touchstart', e => {
-  const t = e.touches[0];
   const r = wrap.getBoundingClientRect();
+  if (e.touches.length === 2) {
+    // Both fingers must be over the wrap
+    const t0 = e.touches[0], t1 = e.touches[1];
+    if (t0.clientX < r.left || t0.clientX > r.right) return;
+    pinchActive     = true;
+    pinchStartDist  = _pinchDist(e);
+    pinchStartScale = scale;
+    pinchMidX       = ((t0.clientX + t1.clientX) / 2) - r.left - LABEL_W;
+    // Cancel any single-finger pan in progress
+    touchStartX = null;
+    return;
+  }
+  const t = e.touches[0];
   if (t.clientX < r.left || t.clientX > r.right || t.clientY < r.top || t.clientY > r.bottom) return;
   touchStartX   = t.clientX;
   touchStartY   = t.clientY;
@@ -2780,9 +2801,22 @@ document.addEventListener('touchstart', e => {
   touchIsH      = null;
   touchLiveDx   = 0;
   _touchTargetEl = (e.target !== tlSvg && tlSvg.contains(e.target)) ? e.target : null;
-}, { passive: true });
+}, { passive: false });
 
 document.addEventListener('touchmove', e => {
+  // Pinch zoom
+  if (pinchActive && e.touches.length === 2) {
+    e.preventDefault();
+    const dist   = _pinchDist(e);
+    const factor = dist / pinchStartDist;
+    const r      = wrap.getBoundingClientRect();
+    const midX   = ((e.touches[0].clientX + e.touches[1].clientX) / 2) - r.left;
+    const tsAt   = xToTs(midX);
+    scale  = Math.min(MAX_SCALE, Math.max(MIN_SCALE, pinchStartScale * factor));
+    panX   = midX - LABEL_W - (tsAt - minTs) * scale;
+    redraw();
+    return;
+  }
   if (touchStartX === null) return;
   const dx = e.touches[0].clientX - touchStartX;
   const dy = e.touches[0].clientY - touchStartY;
@@ -2808,6 +2842,9 @@ document.addEventListener('touchmove', e => {
 }, { passive: false });
 
 function _commitTouch() {
+  if (pinchActive) {
+    pinchActive = false; pinchStartDist = null; pinchStartScale = null; pinchMidX = null;
+  }
   if (touchRaf) { cancelAnimationFrame(touchRaf); touchRaf = null; }
   if (touchIsH && touchStartX !== null) {
     panX = touchStartPan + touchLiveDx;
