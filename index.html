@@ -2113,8 +2113,9 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
     }
   }
 
-  g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); showTooltip(ev, e.clientX, e.clientY); });
-  g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); hideTooltip(); });
+  const hasFineMouse = () => window.matchMedia('(pointer: fine)').matches;
+  g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); if (hasFineMouse()) showTooltip(ev, e.clientX, e.clientY); });
+  g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); if (hasFineMouse()) hideTooltip(); });
   g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
 }
 
