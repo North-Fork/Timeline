@@ -610,9 +610,72 @@ body {
   #sidebar.mobile-open { transform: translateX(0); }
   #sidebar-overlay.visible { display: block; }
   #sidebar-resizer { display: none; }
-  #mobile-toolbar { display: flex; position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
-  #main { padding-top: 44px; }
+
+  /* Toolbar: safe-area aware, buttons aligned below status bar */
+  #mobile-toolbar {
+    display: flex; position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    min-height: calc(52px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 8px 4px;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  #main { padding-top: calc(52px + env(safe-area-inset-top, 0px)); }
   #drawer { width: 100% !important; }
+
+  /* ── 44pt minimum tap targets (Apple HIG) ─────────────────────────────── */
+
+  /* Toolbar buttons */
+  #mobile-toolbar .tb-btn {
+    min-width: 44px; min-height: 44px;
+    padding: 0 16px;
+    font-size: 17px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #btn-sidebar-toggle {
+    min-width: 44px; min-height: 44px;
+    font-size: 22px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+  }
+  #mobile-toolbar .tb-btn:active { background: #4b5563; color: #fff; }
+  #btn-sidebar-toggle:active { background: #374151; }
+
+  /* Sidebar buttons */
+  #sidebar .tb-btn {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 0 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+  }
+  #sidebar .tb-btn:active { background: #4b5563; color: #fff; }
+
+  /* Text inputs: 16px prevents iOS auto-zoom on focus */
+  #search-input, #gsheet-input {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 0 12px;
+    border-radius: 8px;
+  }
+
+  /* Search nav (◀ ▶) and mode (Abs/Rel) buttons */
+  .search-nav-btn {
+    min-width: 44px; min-height: 44px;
+    font-size: 16px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+  }
+  .search-mode-btn {
+    min-width: 44px; min-height: 44px;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .search-nav-btn:active:not(:disabled) { background: #374151; color: #e5e7eb; }
+  .search-mode-btn:active { background: #4b5563; color: #e5e7eb; }
 }
 
 /* ── Tablet breakpoint ───────────────────────────────────────────────────── */
