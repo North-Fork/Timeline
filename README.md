@@ -145,12 +145,14 @@ The source file is an Excel workbook (`.xlsx`). The first row must be a header r
 
 #### Categorisation
 
+The filter panel builds its options dynamically from whatever unique values appear in these columns — there is no fixed list. Add a new value to the data and it will appear in the filters automatically.
+
 | Column | Notes |
 |--------|-------|
-| Category | Primary grouping — drives the row, row colour, and Categories filter (required) |
 | Group | Organisational dimension (e.g. AbTeC, IIF) |
 | Program | Program dimension (e.g. IIF) |
 | Project | Project dimension (e.g. Skins, Isuma) |
+| Category | Primary grouping — drives the row, row colour, and Category filter (required) |
 
 #### Media (all optional)
 

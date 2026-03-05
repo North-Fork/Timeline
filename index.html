@@ -1535,7 +1535,7 @@ function parse(rows) {
       if (ungroupedCats.length) catSubGroups.push({ label: 'Other', items: ungroupedCats });
     }
   }
-  categoryGroups = [{ title: 'Categories', items: groups, subGroups: catSubGroups }]; // seam for multi-document grouping
+  categoryGroups = [{ title: 'Category', items: groups, subGroups: catSubGroups }]; // seam for multi-document grouping
   dimLabels = format === 'cv'
     ? { orgs: 'Institution', programs: 'Funding Agency', projects: 'Role' }
     : { orgs: 'Group',       programs: 'Program',        projects: 'Project' };
