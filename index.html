@@ -85,26 +85,34 @@ body {
 #sidebar-file-section {
   border-top: 1px solid #374151;
   flex-shrink: 0;
-  padding: 8px 0 4px;
+  padding: 0 12px 8px;
 }
 .sf-section-label {
-  font-size: 11px;
+  display: flex; align-items: baseline;
+  font-size: 12px;
   font-weight: 700;
-  color: #f59e0b;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 0 12px 4px;
+  color: #9ca3af;
+  padding: 10px 4px 4px;
+  border-bottom: 1px solid #374151;
+  margin-bottom: 4px;
 }
 .sf-sublabel {
   font-size: 10px;
   font-weight: 700;
-  color: #4b5563;
-  letter-spacing: 0.06em;
+  color: #6b7280;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 6px 12px 2px;
+  padding: 8px 4px 4px;
 }
-.sf-subsection { padding-bottom: 6px; }
-.sf-subsection .print-btns { padding: 4px 12px 0; }
+.sf-subsection { padding-bottom: 4px; }
+#sidebar-export {
+  border-top: 1px solid #374151;
+  margin: 0 8px;
+  padding-bottom: 4px;
+}
+.sf-subsection .print-btns { padding: 2px 0 0; }
 .sf-subsection .print-btns .sb-btn { flex: 1; }
 #drop-zone {
   margin: 12px;
