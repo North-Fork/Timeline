@@ -1,6 +1,41 @@
 # REFACTOR.md — Timeline-JEL Code Review
 
 Each stage represents one refactoring cycle: an audit pass followed by a fix pass.
+Latest stage is at the top; earliest stage is at the bottom.
+
+---
+
+## Stage 2 — Trivial Fix Pass
+
+**Date:** 2026-03-10
+**Branch:** `Timeline-AbTeC-Media` @ `1f0e66d`
+**Commit:** `Apply trivial refactor fixes from REFACTOR.md`
+**Status:** Complete.
+
+Applied all 9 trivial items from Stage 1:
+
+| # | Issue | Resolution |
+|---|-------|------------|
+| 1 | Stale HTTP fallback URL | Changed to `timeline-data.xlsx` |
+| 2 | Export title reads wrong element | Changed to `#sidebar-title-text` (both call sites) |
+| 3 | Unreachable `renderMedia` Case 5 | Deleted dead block |
+| 5 | `timeline.html` stale file | Deleted from repo (`git rm`) |
+| 6 | Commented-out `loadTestData()` | Deleted the line |
+| 11 | `generateTicks()` silent guard | Added `console.warn` when limit hits |
+| 12 | Export text-width heuristic | Added inline comment documenting 6.5px/char |
+| 13 | `innerHTML` trust assumption | Added comments at both injection sites |
+| 15 | CORS proxy trust note | Added inline comment on `GSHEET_PROXY` constant |
+
+**Remaining from Stage 1 (small effort):**
+
+| # | Issue | Effort |
+|---|-------|--------|
+| 4 | Fix or remove `fh.getParent()` | Small |
+| 7 | Extract `isEventVisible()` | Small |
+| 8 | Clear `accordionState` on reload | Small |
+| 9 | Remove `FILTER_LAYOUT` stubs | Small |
+| 10 | Named action functions for toolbars | Small |
+| 14 | SRI hashes for CDN deps | Small |
 
 ---
 
@@ -195,37 +230,3 @@ the trust model.
 | 9 | Remove `FILTER_LAYOUT` stubs | Small | Reduces dead code noise |
 | 4 | Fix or remove `getParent()` | Small | Fixes silently broken feature |
 | 14 | SRI hashes for CDN deps | Small | Reduces supply-chain risk |
-
----
-
-## Stage 2 — Trivial Fix Pass
-
-**Date:** 2026-03-10
-**Branch:** `Timeline-AbTeC-Media` @ `1f0e66d`
-**Commit:** `Apply trivial refactor fixes from REFACTOR.md`
-**Status:** Complete.
-
-Applied all 9 trivial items from Stage 1:
-
-| # | Issue | Resolution |
-|---|-------|------------|
-| 1 | Stale HTTP fallback URL | Changed to `timeline-data.xlsx` |
-| 2 | Export title reads wrong element | Changed to `#sidebar-title-text` (both call sites) |
-| 3 | Unreachable `renderMedia` Case 5 | Deleted dead block |
-| 5 | `timeline.html` stale file | Deleted from repo (`git rm`) |
-| 6 | Commented-out `loadTestData()` | Deleted the line |
-| 11 | `generateTicks()` silent guard | Added `console.warn` when limit hits |
-| 12 | Export text-width heuristic | Added inline comment documenting 6.5px/char |
-| 13 | `innerHTML` trust assumption | Added comments at both injection sites |
-| 15 | CORS proxy trust note | Added inline comment on `GSHEET_PROXY` constant |
-
-**Remaining from Stage 1 (small effort):**
-
-| # | Issue | Effort |
-|---|-------|--------|
-| 4 | Fix or remove `fh.getParent()` | Small |
-| 7 | Extract `isEventVisible()` | Small |
-| 8 | Clear `accordionState` on reload | Small |
-| 9 | Remove `FILTER_LAYOUT` stubs | Small |
-| 10 | Named action functions for toolbars | Small |
-| 14 | SRI hashes for CDN deps | Small |
