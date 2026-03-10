@@ -1,5 +1,25 @@
 # Changelog
 
+## Session 15 — 2026-03-09
+
+### Search dimming
+- Non-matching events dim to 15% opacity when a search query is active, so matching events stand out clearly
+- `searchMatchSet` (a `Set` of matching event IDs) maintained alongside `searchResults`; populated in `runSearch()`, cleared in the `input` event handler
+- `drawEventBar()` sets `opacity="0.15"` on the event `<g>` when `searchQuery` is set and the event is not in `searchMatchSet`
+- Dimming is visual-only — clicking a dimmed event still opens the Storybox; hover still works on matching events
+
+### View save / load
+- New **View** section in the sidebar (above the File section) for saving and restoring named snapshots of pan/zoom position + all filter state (Category, Group, Program, Project)
+- `captureView(name)` serialises: `scale`, `centreTs` (viewport-centre timestamp — viewport-width-independent), `scrollTop`, and the four filter Sets
+- `applyView(v)` restores state: assigns `scale` + recomputes `panX` from `centreTs`, replaces filter Sets (silently discarding values no longer in the dataset), calls `buildFilters()` + `redraw()`
+- File format: `<name>.view.json` (`.view` before `.json` per naming convention)
+- **File System Access API** (`showSaveFilePicker` / `showOpenFilePicker`) used when available (Chrome/Edge/Brave): real OS save/open dialog; previously-used directory remembered in IndexedDB so the dialog re-opens in the same folder
+- Falls back to `<a download>` / `<input type="file">` on Firefox/Safari
+- Accordion toggle collapses by default on touch devices; expanded on desktop
+- README updated with Search and View sections
+
+---
+
 ## Session 14 — 2026-03-09
 
 ### Mobile / tablet layout
