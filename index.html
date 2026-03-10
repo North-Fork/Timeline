@@ -88,7 +88,7 @@ body {
   padding: 0 12px 8px;
 }
 .sf-section-label {
-  display: flex; align-items: baseline;
+  display: flex; align-items: baseline; gap: 6px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -97,7 +97,9 @@ body {
   padding: 10px 4px 4px;
   border-bottom: 1px solid #374151;
   margin-bottom: 4px;
+  user-select: none;
 }
+.sf-section-label:hover { color: #d1d5db; }
 .sf-sublabel {
   font-size: 10px;
   font-weight: 700;
@@ -735,29 +737,34 @@ body {
     <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
   </div>
   <div id="sidebar-file-section">
-    <div class="sf-section-label">Files</div>
-    <div class="sf-subsection" id="sidebar-import">
-      <div class="sf-sublabel">Import</div>
-      <div id="drop-zone">
-        <div class="dz-icon">📂</div>
-        <div>Drop .xlsx / .csv (events) or .txt (CV) here or <span class="dz-browse">Browse for file</span></div>
-        <label style="display:none">
-          <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.txt,.js">
-        </label>
-      </div>
-      <div id="gsheet-box">
-        <input id="gsheet-input" type="text" placeholder="Google Sheets URL…" autocomplete="off" spellcheck="false">
-        <div id="gsheet-row">
-          <button class="tb-btn sb-btn" id="btn-gsheet-load">Load</button>
-          <span id="gsheet-status"></span>
+    <div class="sf-section-label" id="sf-toggle" role="button" style="cursor:pointer">
+      <span class="accordion-arrow open" id="sf-arrow">▶</span>
+      Filter
+    </div>
+    <div id="sf-body" class="accordion-body">
+      <div class="sf-subsection" id="sidebar-import">
+        <div class="sf-sublabel">Import</div>
+        <div id="drop-zone">
+          <div class="dz-icon">📂</div>
+          <div>Drop .xlsx / .csv (events) or .txt (CV) here or <span class="dz-browse">Browse for file</span></div>
+          <label style="display:none">
+            <input type="file" id="file-input" accept=".xlsx,.xls,.csv,.txt,.js">
+          </label>
+        </div>
+        <div id="gsheet-box">
+          <input id="gsheet-input" type="text" placeholder="Google Sheets URL…" autocomplete="off" spellcheck="false">
+          <div id="gsheet-row">
+            <button class="tb-btn sb-btn" id="btn-gsheet-load">Load</button>
+            <span id="gsheet-status"></span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="sf-subsection" id="sidebar-export">
-      <div class="sf-sublabel">Export</div>
-      <div class="print-btns">
-        <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
-        <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
+      <div class="sf-subsection" id="sidebar-export">
+        <div class="sf-sublabel">Export</div>
+        <div class="print-btns">
+          <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
+          <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
+        </div>
       </div>
     </div>
   </div>
@@ -3494,6 +3501,20 @@ function closeMobileSidebar() {
 }
 document.getElementById('btn-sidebar-toggle').addEventListener('click', () => {
   sidebarEl.classList.contains('mobile-open') ? closeMobileSidebar() : openMobileSidebar();
+});
+
+// ── Filter section (Import/Export) collapse toggle ─────────────────────
+const sfToggle = document.getElementById('sf-toggle');
+const sfBody   = document.getElementById('sf-body');
+const sfArrow  = document.getElementById('sf-arrow');
+// Collapse by default on mobile
+if (window.matchMedia('(max-width: 767px)').matches) {
+  sfBody.classList.add('collapsed');
+  sfArrow.classList.remove('open');
+}
+sfToggle.addEventListener('click', () => {
+  const collapsed = sfBody.classList.toggle('collapsed');
+  sfArrow.classList.toggle('open', !collapsed);
 });
 sidebarOverlay.addEventListener('click', closeMobileSidebar);
 
