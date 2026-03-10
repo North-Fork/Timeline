@@ -1,5 +1,45 @@
 # Changelog
 
+## Session 14 — 2026-03-09
+
+### Mobile / tablet layout
+
+#### File section redesign
+- Replaced separate `#sidebar-files` (inside `#filters`) and `#sidebar-print` with a unified `#sidebar-file-section` containing two named subsections: **Import** and **Export**
+- Section header styled to match the **Filters** header (same `color: #9ca3af`, `font-size: 12px`, `font-weight: 700`, `border-bottom`)
+- Partial-width divider (`border-top: 1px solid #374151; margin: 0 8px`) separates Import from Export
+- Section labelled **File** (singular); collapses/expands via click on header with ▶ arrow indicator
+- Loads **collapsed by default** on touch devices; expanded on desktop
+- `buildFilters()` no longer saves/restores `#sidebar-files` — it now lives outside `#filters`
+
+#### Touch layout breakpoint — switched from width to capability
+- All touch-layout CSS was `@media (max-width: 767px)` — missed iPad entirely
+- Width-based attempts (`max-width: 1023px`, `max-width: 1024px`) still failed because iPads in landscape and iPad Pro 12.9" in portrait are ≥1024px wide
+- **Final fix**: `@media (hover: none), (max-width: 1024px)` — `hover: none` reliably identifies touch-first devices (iPhone, iPad) in any orientation, without matching laptops
+
+#### Desktop vs iPhone vs iPad differences
+
+| Feature | Desktop | iPhone | iPad |
+|---|---|---|---|
+| Sidebar | Always visible, resizable | Hidden; slides in via ☰ overlay | Hidden; slides in via ☰ overlay |
+| Sidebar width | 220px (resizable) | 280px fixed | 300px fixed |
+| Mobile toolbar | Hidden | Fixed top bar: ☰ + title + zoom buttons | Fixed top bar: ☰ + title + zoom buttons |
+| App title | In sidebar header | In mobile toolbar (amber) | In mobile toolbar (amber) |
+| Zoom controls | In sidebar (`#sidebar-controls`) | In mobile toolbar | In mobile toolbar |
+| Storybox (drawer) | 400px side panel | Full width | 480px side panel |
+| File drop zone | Visible | Hidden (`#drop-zone { display: none }`) | Hidden |
+| File section | Expanded | Collapsed by default | Collapsed by default |
+| Zoom hint text | "spacebar + mousewheel / trackpad" | "horizontal pinch" | "horizontal pinch" |
+| Touch pan/pinch | Mouse drag + scroll wheel | Custom touch handlers | Custom touch handlers |
+
+#### Other touch fixes (this session)
+- File drop zone hidden on touch devices (drag-and-drop not usable on iOS)
+- `#mobile-title` span added to `#mobile-toolbar`; `parse()` mirrors title updates to it
+- Phone-only overrides (`@media (max-width: 767px)`): sidebar 280px, drawer 100% width
+- Tablet overrides: sidebar 300px, drawer 480px
+
+---
+
 ## Session 13 — 2026-03-01
 
 ### Themes view
