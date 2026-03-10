@@ -81,10 +81,31 @@ body {
   .hint-desktop { display: none; }
   .hint-mobile  { display: inline; }
 }
-#sidebar-files {
+/* ── Files section (Import + Export) ─────────────────────────────────── */
+#sidebar-file-section {
   border-top: 1px solid #374151;
-  margin-top: 8px;
+  flex-shrink: 0;
+  padding: 8px 0 4px;
 }
+.sf-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f59e0b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 12px 4px;
+}
+.sf-sublabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #4b5563;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px 2px;
+}
+.sf-subsection { padding-bottom: 6px; }
+.sf-subsection .print-btns { padding: 4px 12px 0; }
+.sf-subsection .print-btns .sb-btn { flex: 1; }
 #drop-zone {
   margin: 12px;
   border: 2px dashed #374151;
@@ -136,26 +157,10 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-#sidebar-print {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 12px 14px;
-  border-top: 1px solid #374151;
-  flex-shrink: 0;
-}
-#sidebar-print .print-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: #4b5563;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-#sidebar-print .print-btns {
+.print-btns {
   display: flex;
   gap: 6px;
 }
-#sidebar-print .print-btns .sb-btn { flex: 1; }
 .sb-btn { flex: 1; text-align: center; padding: 5px 4px; font-size: 12px; }
 #search-box {
   padding: 10px 12px;
@@ -677,9 +682,8 @@ body {
   .search-nav-btn:active:not(:disabled) { background: #374151; color: #e5e7eb; }
   .search-mode-btn:active { background: #4b5563; color: #e5e7eb; }
 
-  /* Hide file drop — not usable on mobile; keep Google Sheets loader visible */
+  /* Hide file drop-zone on mobile — not usable on touch devices */
   #drop-zone { display: none !important; }
-  #gsheet-box { display: block !important; }
 }
 
 /* ── Tablet breakpoint ───────────────────────────────────────────────────── */
@@ -721,7 +725,11 @@ body {
   </div>
   <div id="filters">
     <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
-    <div id="sidebar-files">
+  </div>
+  <div id="sidebar-file-section">
+    <div class="sf-section-label">Files</div>
+    <div class="sf-subsection" id="sidebar-import">
+      <div class="sf-sublabel">Import</div>
       <div id="drop-zone">
         <div class="dz-icon">📂</div>
         <div>Drop .xlsx / .csv (events) or .txt (CV) here or <span class="dz-browse">Browse for file</span></div>
@@ -737,12 +745,12 @@ body {
         </div>
       </div>
     </div>
-  </div>
-  <div id="sidebar-print">
-    <div class="print-label">Export</div>
-    <div class="print-btns">
-      <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
-      <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
+    <div class="sf-subsection" id="sidebar-export">
+      <div class="sf-sublabel">Export</div>
+      <div class="print-btns">
+        <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
+        <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1869,7 +1877,6 @@ function buildFiltersThemes() {
 }
 
 function buildFilters() {
-  const sidebarFiles = document.getElementById('sidebar-files');
   filDiv.innerHTML = '';
 
   // View mode toggle (only when enriched data is loaded)
@@ -1895,8 +1902,6 @@ function buildFilters() {
   else if (FILTER_LAYOUT === 'chips-bar')             buildFiltersChipsBar();
   else if (FILTER_LAYOUT === 'doc-toggles')           buildFiltersDocToggles();
   else if (FILTER_LAYOUT === 'tabs')                  buildFiltersTabs();
-
-  filDiv.appendChild(sidebarFiles);
 }
 
 // ── Lane stacking ─────────────────────────────────────────────────────────
