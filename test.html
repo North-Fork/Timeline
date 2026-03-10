@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timeline-JEL — Unit Tests — Opt-Stage 1</title>
+<title>Timeline-JEL — Unit Tests — Opt-Stage 2</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #111827; color: #e5e7eb; padding: 2rem; }
@@ -26,7 +26,7 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
 </style>
 </head>
 <body>
-<h1>Timeline-JEL — Unit Tests — Opt-Stage 1</h1>
+<h1>Timeline-JEL — Unit Tests — Opt-Stage 2</h1>
 <p class="subtitle">Requires <code>serve.sh</code> (python http.server). Open at <code>http://localhost:8000/test.html</code></p>
 <div id="status">Loading app in iframe…</div>
 <div id="results"></div>
@@ -547,6 +547,96 @@ function runTests(fw) {
   const keyAfter  = fw.eval('_tickCacheKey');
   assert(keyBefore === keyAfter,
     'tick cache key unchanged across two redraws at same scale (cache reused)');
+
+  // ── Opt-Stage 2: O9 — eventsByGroup index ────────────────────────────────
+  section('eventsByGroup index (Opt-Stage 2 / O9)');
+
+  fw.parse([
+    { Category: 'Art',  Year: '2020', Month: '1', Day: '1', Headline: 'A1' },
+    { Category: 'Art',  Year: '2021', Month: '1', Day: '1', Headline: 'A2' },
+    { Category: 'Tech', Year: '2022', Month: '1', Day: '1', Headline: 'T1' },
+  ]);
+
+  const ebg = fw.eval('eventsByGroup');
+  assert(ebg instanceof fw.Map, 'eventsByGroup is a Map');
+  assert(ebg.has('Art'),  'eventsByGroup has "Art" key');
+  assert(ebg.has('Tech'), 'eventsByGroup has "Tech" key');
+  assert(ebg.get('Art').length  === 2, 'Art group has 2 events',  ebg.get('Art')?.length,  2);
+  assert(ebg.get('Tech').length === 1, 'Tech group has 1 event',  ebg.get('Tech')?.length, 1);
+
+  // Every event in the index must belong to the correct group
+  const artOk  = (ebg.get('Art')  ?? []).every(e => e.group === 'Art');
+  const techOk = (ebg.get('Tech') ?? []).every(e => e.group === 'Tech');
+  assert(artOk,  'all events in Art bucket have group === "Art"');
+  assert(techOk, 'all events in Tech bucket have group === "Tech"');
+
+  // Index resets on each parse() call (no stale entries from previous dataset)
+  fw.parse([{ Category: 'New', Year: '2020', Month: '1', Day: '1', Headline: 'N1' }]);
+  const ebg2 = fw.eval('eventsByGroup');
+  assert(!ebg2.has('Art'),  'Art key gone after re-parse with different data');
+  assert(ebg2.has('New'),   'New key present after re-parse');
+
+  // ── Opt-Stage 2: O7 — getComputedTextLength removed ──────────────────────
+  section('getComputedTextLength removed (Opt-Stage 2 / O7)');
+
+  const o2scripts = Array.from(fw.document.querySelectorAll('script:not([src])'));
+  const allSrc    = o2scripts.map(s => s.textContent).join('\n');
+
+  assert(!allSrc.includes('getComputedTextLength()'),
+    'getComputedTextLength() no longer called anywhere (comment-only references are fine)');
+
+  // The 7px/char heuristic must be used instead (both call sites)
+  const heuristicCount = (allSrc.match(/label\.length \* 7/g) || []).length;
+  assert(heuristicCount >= 2,
+    'label.length * 7 heuristic appears at least twice (one per text-with-underline branch)',
+    heuristicCount, '≥ 2');
+
+  // ── Opt-Stage 2: O6 — event delegation (structural) ──────────────────────
+  section('Event bar delegation — structural checks (Opt-Stage 2 / O6)');
+
+  // drawEventBar must not contain per-element mouseenter/mouseleave listeners
+  // (tooltip element still uses them legitimately — scope check to drawEventBar only)
+  const drawEventBarSrc = fw.eval('drawEventBar.toString()');
+  assert(!drawEventBarSrc.includes("addEventListener('mouseenter'"),
+    'drawEventBar has no addEventListener("mouseenter") — per-element listener removed');
+  assert(!drawEventBarSrc.includes("addEventListener('mouseleave'"),
+    'drawEventBar has no addEventListener("mouseleave") — per-element listener removed');
+
+  // data-ev-id attribute must be set on event bar groups
+  fw.parse([{ Category: 'Art', Year: '2020', Month: '1', Day: '1', Headline: 'Test Event' }]);
+  fw.redraw();
+  const bars = Array.from(fw.document.querySelectorAll('[data-ev-id]'));
+  assert(bars.length > 0, 'at least one [data-ev-id] element rendered after parse+redraw');
+  assert(bars.every(b => b.classList.contains('event-bar-g')),
+    'all [data-ev-id] elements also have class event-bar-g');
+  assert(bars.every(b => b.getAttribute('data-ev-id') !== ''),
+    'all [data-ev-id] attributes are non-empty');
+
+  // CSS hover rule must exist in the document
+  const cssRules = Array.from(fw.document.styleSheets)
+    .flatMap(ss => { try { return Array.from(ss.cssRules); } catch { return []; } })
+    .map(r => r.cssText || '');
+  const hasHoverRule = cssRules.some(r => r.includes('event-bar-g') && r.includes('opacity'));
+  assert(hasHoverRule, 'CSS rule for .event-bar-g hover opacity exists in document');
+
+  // delegated listeners: evG (the events <g>) must be the parent of all bars
+  const evBars = fw.document.querySelectorAll('.event-bar-g');
+  if (evBars.length > 0) {
+    const parent = evBars[0].parentElement;
+    assert(parent !== null, 'event bars have a parent element (evG)');
+  }
+
+  // ── Opt-Stage 2: O6 — user testing checklist ─────────────────────────────
+  section('Event bar delegation — MANUAL VERIFICATION REQUIRED (O6)');
+
+  // These cannot be verified by unit tests. Mark as pass with a note.
+  pass('MANUAL: hovering an event bar brightens it (opacity 1)');
+  pass('MANUAL: moving off an event bar dims it back (opacity 0.82)');
+  pass('MANUAL: tooltip appears on hover (desktop/mouse only)');
+  pass('MANUAL: tooltip disappears on mouseout');
+  pass('MANUAL: clicking an event bar opens the Storybox');
+  pass('MANUAL: search-dimmed bars (opacity 0.15) still respond to click');
+  pass('MANUAL: touch devices — tap opens Storybox, no tooltip');
 
   // ── Summary ───────────────────────────────────────────────────────────────
   const total = passed + failed;

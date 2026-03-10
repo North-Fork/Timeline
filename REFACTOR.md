@@ -12,6 +12,25 @@ Constraint: readability, maintainability, and efficiency must not regress.
 
 ---
 
+## Opt-Stage 2 — Event Delegation, Layout Flush, Group Index
+
+**Date:** 2026-03-10
+**Branch:** `Timeline-AbTeC-Media` @ (pending commit)
+**Status:** Complete.
+
+| # | Optimization | What changed |
+|---|-------------|--------------|
+| O6 | Event delegation for event bars | Removed 3 per-element listeners (mouseenter/mouseleave/click) from `drawEventBar()`. CSS `.event-bar-g:hover > rect { opacity: 1 }` handles hover brightening. Three delegated listeners on `evG` handle tooltip (mouseover/mouseout) and click. `data-ev-id` attribute + `event-bar-g` class added to each bar `<g>`. `hasFineMouse` hoisted to module level. |
+| O7 | Eliminate `getComputedTextLength()` layout flush | Both call sites in `drawEventBar()` replaced with `label.length * 7` — the same heuristic already used for label truncation in the same function. |
+| O9 | Event group index (`eventsByGroup`) | `Map<group, Event[]>` built once in `parse()`. `syncCategoryVis()` and `syncDimVis()` use it instead of scanning all events per group — O(g×n) → O(total events). |
+
+**Deferred (backlog unchanged):**
+O5 (SVG layer reuse), O8 (selective filter UI) — see backlog below.
+
+**Unit tests:** `test.html` — Opt-Stage 2 tests added. Includes automated structural checks + manual verification checklist for O6 visual behaviour.
+
+---
+
 ## Opt-Stage 1 — Phase 1 Quick Wins
 
 **Date:** 2026-03-10

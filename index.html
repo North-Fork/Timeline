@@ -725,6 +725,8 @@ body {
   #sidebar { width: 280px !important; min-width: 280px; max-width: 280px; }
   #drawer  { width: 100% !important; }
 }
+/* O6: hover opacity handled by CSS — replaces per-element mouseenter/mouseleave */
+.event-bar-g:hover > rect { opacity: 1; }
 </style>
 </head>
 <body>
@@ -934,7 +936,9 @@ let themeRowH       = {};         // theme → row height px
 let themeY          = {};         // theme → cumulative Y (built in redraw)
 let themeLaneCounts = {};         // theme → lane count
 let themeLanes      = {};         // theme → { evId → lane index }
-let programGroups = []; // [{ label, items }] — sub-groups within Funding Agency; CV only
+let programGroups  = []; // [{ label, items }] — sub-groups within Funding Agency; CV only
+let eventsByGroup  = new Map(); // group → Event[] index; built in parse(), used by syncCategoryVis/syncDimVis
+const hasFineMouse = () => window.matchMedia('(pointer: fine)').matches; // true on mouse/trackpad, false on touch
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
 let rowHeights = {};   // group -> row height in px
@@ -1635,7 +1639,15 @@ function parse(rows) {
     return;
   }
 
-  events   = parsed;
+  events = parsed;
+
+  // Build group → Event[] index for O(1) group lookup in syncCategoryVis/syncDimVis
+  eventsByGroup = new Map();
+  for (const ev of events) {
+    if (!eventsByGroup.has(ev.group)) eventsByGroup.set(ev.group, []);
+    eventsByGroup.get(ev.group).push(ev);
+  }
+
   const GROUP_ORDER = format === 'cv' ? [
     'Employment', 'Honors', 'Education',
     'Creative Works', 'Books/Chapters', 'Journal Articles',
@@ -1759,22 +1771,22 @@ function parse(rows) {
 // passes the current org/program/project filter.
 function syncCategoryVis() {
   const noTagDims = orgs.length === 0 && programs.length === 0 && projects.length === 0;
-  groupVis = new Set(groups.filter(g => events.some(e => {
-    if (e.group !== g) return false;
-    if (noTagDims) return true;
-    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
-    if (!hasTag) return true;
-    return (e.org     !== '' && orgVis.has(e.org))         ||
-           (e.program !== '' && programVis.has(e.program)) ||
-           (e.project !== '' && projVis.has(e.project));
-  })));
+  groupVis = new Set(groups.filter(g => {
+    return (eventsByGroup.get(g) ?? []).some(e => {
+      if (noTagDims) return true;
+      const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+      if (!hasTag) return true;
+      return (e.org     !== '' && orgVis.has(e.org))         ||
+             (e.program !== '' && programVis.has(e.program)) ||
+             (e.project !== '' && projVis.has(e.project));
+    });
+  }));
 }
 
 // Ensure any org/program/project that has events in a checked category is also checked.
 function syncDimVis() {
   for (const g of groupVis) {
-    for (const e of events) {
-      if (e.group !== g) continue;
+    for (const e of (eventsByGroup.get(g) ?? [])) {
       if (e.org)     orgVis.add(e.org);
       if (e.program) programVis.add(e.program);
       if (e.project) projVis.add(e.project);
@@ -2215,6 +2227,8 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
   const barW  = Math.max(x2 - x1, 6);
 
   const g    = mk('g');
+  g.setAttribute('data-ev-id', ev.id);
+  g.classList.add('event-bar-g');
   g.style.cursor = 'pointer';
   if (searchQuery && !searchMatchSet.has(ev.id)) {
     g.setAttribute('opacity', '0.15');
@@ -2234,7 +2248,7 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
         fill: '#fff', 'font-size': 11, 'font-weight': '500'
       });
       g.appendChild(textEl);
-      const textW = textEl.getComputedTextLength();
+      const textW = label.length * 7; // O7: heuristic matches truncation estimate (no layout flush)
       g.appendChild(mk('line', {
         x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
         stroke: '#fff', 'stroke-width': 2, 'stroke-opacity': 0.7,
@@ -2260,7 +2274,7 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
           fill: '#d1d5db', 'font-size': 11, 'font-weight': '500'
         });
         g.appendChild(textEl);
-        const textW = textEl.getComputedTextLength();
+        const textW = label.length * 7; // O7: heuristic matches truncation estimate (no layout flush)
         g.appendChild(mk('line', {
           x1: lx, y1: textY + 2, x2: lx + textW, y2: textY + 2,
           stroke: color, 'stroke-width': 2,
@@ -2270,10 +2284,7 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
     }
   }
 
-  const hasFineMouse = () => window.matchMedia('(pointer: fine)').matches;
-  g.addEventListener('mouseenter', e => { rect.setAttribute('opacity', '1'); if (hasFineMouse()) showTooltip(ev, e.clientX, e.clientY); });
-  g.addEventListener('mouseleave', () => { rect.setAttribute('opacity', '0.82'); if (hasFineMouse()) hideTooltip(); });
-  g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
+  // O6: hover opacity handled by CSS (.event-bar-g:hover > rect); interactions delegated to evG in redraw()
 }
 
 // ── Event visibility ──────────────────────────────────────────────────────
@@ -2438,8 +2449,30 @@ function redraw() {
   if (_visEvsDirty) { _visEvsCache = events.filter(isEventVisible); _visEvsDirty = false; }
   const visEvs = _visEvsCache;
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
-  tlSvg.appendChild(evG); // append early so getComputedTextLength() works
+  tlSvg.appendChild(evG);
   evGRef = evG;
+
+  // O6: delegated interaction handlers — 3 listeners total regardless of event count
+  evG.addEventListener('click', e => {
+    const g = e.target.closest('.event-bar-g');
+    if (!g) return;
+    e.stopPropagation(); hideTooltip();
+    const ev = events.find(ev => ev.id === +g.dataset.evId);
+    if (ev) openDrawer(ev);
+  });
+  evG.addEventListener('mouseover', e => {
+    if (!hasFineMouse()) return;
+    const g = e.target.closest('.event-bar-g');
+    if (!g || g.contains(e.relatedTarget)) return; // not entering g
+    const ev = events.find(ev => ev.id === +g.dataset.evId);
+    if (ev) showTooltip(ev, e.clientX, e.clientY);
+  });
+  evG.addEventListener('mouseout', e => {
+    if (!hasFineMouse()) return;
+    const g = e.target.closest('.event-bar-g');
+    if (!g || g.contains(e.relatedTarget)) return; // not leaving g
+    hideTooltip();
+  });
 
   if (!isThemes) {
     // ── Sections mode ────────────────────────────────────────────────────
