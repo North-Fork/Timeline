@@ -5,6 +5,27 @@ Latest stage is at the top; earliest stage is at the bottom.
 
 ---
 
+## Stage 3 — Small-Effort Fix Pass
+
+**Date:** 2026-03-10
+**Branch:** `Timeline-AbTeC-Media` @ (pending commit)
+**Status:** Complete.
+
+Applied all 6 remaining "small effort" items from Stage 1:
+
+| # | Issue | Resolution |
+|---|-------|------------|
+| 4 | `fh.getParent()` non-standard API | Removed both calls; added explanatory comments |
+| 7 | Event visibility logic duplicated 3× | Extracted `isEventVisible(e)`; all 3 sites replaced |
+| 8 | `accordionState` never cleared on reload | Added `accordionState.clear()` at start of `parse()` |
+| 9 | `FILTER_LAYOUT` stubs — dead code | Removed variable + 3 stub functions; added PLANNED comment; simplified dispatch |
+| 10 | Mobile toolbar delegates via `.click()` | Extracted `doZoomIn`, `doZoomOut`, `doToday`; both toolbars call directly |
+| 14 | CDN dependencies without SRI hashes | Pinned SheetJS to `0.20.3`; added `integrity` + `crossorigin` attributes |
+
+**Unit tests:** `test.html` — Stage 3 tests added. Run via `serve.sh`, open `http://localhost:8000/test.html`.
+
+---
+
 ## Stage 2 — Trivial Fix Pass
 
 **Date:** 2026-03-10

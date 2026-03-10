@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timeline-JEL Tests</title>
+<title>Timeline-JEL — Unit Tests — Stage 3</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #111827; color: #e5e7eb; padding: 2rem; }
@@ -26,7 +26,7 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
 </style>
 </head>
 <body>
-<h1>Timeline-JEL — Unit Tests</h1>
+<h1>Timeline-JEL — Unit Tests — Stage 3</h1>
 <p class="subtitle">Requires <code>serve.sh</code> (python http.server). Open at <code>http://localhost:8000/test.html</code></p>
 <div id="status">Loading app in iframe…</div>
 <div id="results"></div>
@@ -340,6 +340,119 @@ function runTests(fw) {
   assert(inlineScript === undefined,
     'stale filename "IIF-Timeline-Data" is not present in any inline script',
     inlineScript ? 'FOUND (bug still present)' : undefined, undefined);
+
+  // ── Stage 3: isEventVisible() (#7) ───────────────────────────────────────
+  section('isEventVisible — extracted filter function (Stage 3 fix)');
+
+  // isEventVisible is a function declaration → lives on fw directly
+  assert(typeof fw.isEventVisible === 'function',
+    'isEventVisible is a named global function (not inlined)');
+
+  // module-level `let` vars aren't on window; use fw.eval() to read/write them,
+  // and stash originals on fw as temp window properties so we can restore later.
+  fw.__s3gv = fw.eval('groupVis');
+  fw.__s3ov = fw.eval('orgVis');
+  fw.__s3pv = fw.eval('programVis');
+  fw.__s3jv = fw.eval('projVis');
+  fw.__s3or = fw.eval('orgs');
+  fw.__s3pr = fw.eval('programs');
+  fw.__s3pj = fw.eval('projects');
+
+  // test 1: group not in groupVis → hidden
+  fw.eval(`groupVis = new Set(['Other']); orgs = []; programs = []; projects = []`);
+  assert(fw.isEventVisible({ group: 'Art', org: '', program: '', project: '' }) === false,
+    'event hidden when group not in groupVis');
+
+  // test 2: noTags mode (no dimension arrays) → visible
+  fw.eval(`groupVis = new Set(['Art']); orgs = []; programs = []; projects = []`);
+  assert(fw.isEventVisible({ group: 'Art', org: '', program: '', project: '' }) === true,
+    'all events visible when no tag dimensions defined (noTags mode)');
+
+  // test 3: tagged event, no matching vis entry → hidden
+  fw.eval(`groupVis = new Set(['Art']); orgVis = new Set(['X']); programVis = new Set(['X']); projVis = new Set(['X']); orgs = ['AbTeC']; programs = ['SSHRC']; projects = ['PoEMM']`);
+  assert(fw.isEventVisible({ group: 'Art', org: 'AbTeC', program: 'SSHRC', project: 'PoEMM' }) === false,
+    'tagged event hidden when none of its tags match any vis set');
+
+  // test 4: org matches → visible (OR logic)
+  fw.eval(`groupVis = new Set(['Art']); orgVis = new Set(['AbTeC']); programVis = new Set(); projVis = new Set(); orgs = ['AbTeC']; programs = ['SSHRC']; projects = ['PoEMM']`);
+  assert(fw.isEventVisible({ group: 'Art', org: 'AbTeC', program: 'SSHRC', project: 'PoEMM' }) === true,
+    'visible when org matches orgVis (OR logic)');
+
+  // test 5: program matches → visible (OR logic)
+  fw.eval(`groupVis = new Set(['Art']); orgVis = new Set(); programVis = new Set(['SSHRC']); projVis = new Set(); orgs = ['AbTeC']; programs = ['SSHRC']; projects = ['PoEMM']`);
+  assert(fw.isEventVisible({ group: 'Art', org: 'AbTeC', program: 'SSHRC', project: 'PoEMM' }) === true,
+    'visible when program matches programVis (OR logic)');
+
+  // test 6: project matches → visible (OR logic)
+  fw.eval(`groupVis = new Set(['Art']); orgVis = new Set(); programVis = new Set(); projVis = new Set(['PoEMM']); orgs = ['AbTeC']; programs = ['SSHRC']; projects = ['PoEMM']`);
+  assert(fw.isEventVisible({ group: 'Art', org: 'AbTeC', program: 'SSHRC', project: 'PoEMM' }) === true,
+    'visible when project matches projVis (OR logic)');
+
+  // test 7: untagged event in tagged context → always visible
+  fw.eval(`groupVis = new Set(['Art']); orgVis = new Set(); programVis = new Set(); projVis = new Set(); orgs = ['AbTeC']; programs = []; projects = []`);
+  assert(fw.isEventVisible({ group: 'Art', org: '', program: '', project: '' }) === true,
+    'untagged event always visible when group is visible');
+
+  // restore original module state
+  fw.eval(`groupVis = window.__s3gv; orgVis = window.__s3ov; programVis = window.__s3pv; projVis = window.__s3jv; orgs = window.__s3or; programs = window.__s3pr; projects = window.__s3pj`);
+
+  // ── Stage 3: FILTER_LAYOUT stubs removed (#9) ────────────────────────────
+  section('FILTER_LAYOUT stubs removed (Stage 3 fix)');
+
+  // Stub functions were function declarations → would be on fw if present
+  assert(typeof fw.buildFiltersChipsBar   === 'undefined', 'buildFiltersChipsBar stub removed');
+  assert(typeof fw.buildFiltersDocToggles === 'undefined', 'buildFiltersDocToggles stub removed');
+  assert(typeof fw.buildFiltersTabs       === 'undefined', 'buildFiltersTabs stub removed');
+
+  // FILTER_LAYOUT was a let variable → not on fw, so verify via source inspection
+  const s3scripts = Array.from(fw.document.querySelectorAll('script:not([src])'));
+  const hasFilterLayout = s3scripts.some(s => /\bFILTER_LAYOUT\b/.test(s.textContent));
+  assert(!hasFilterLayout, 'FILTER_LAYOUT identifier no longer present in any inline script');
+
+  // ── Stage 3: accordionState cleared on reload (#8) ───────────────────────
+  section('accordionState cleared on parse() (Stage 3 fix)');
+
+  // accordionState is a `let` Map → use fw.eval() to get the live reference
+  const acc = fw.eval('accordionState');
+  acc.set('__stale_key__', true);
+  assert(acc.has('__stale_key__'), 'stale key injected into accordionState (pre-condition)');
+
+  // parse() calls accordionState.clear() — mutates the same Map in place
+  fw.parse([{ Category: 'Test', Year: '2020', Month: '1', Day: '1', Headline: 'T' }]);
+  assert(!acc.has('__stale_key__'), 'stale key gone after parse() — accordionState.clear() ran');
+
+  // ── Stage 3: named toolbar action functions (#10) ─────────────────────────
+  section('Named toolbar action functions (Stage 3 fix)');
+
+  // All three are function declarations → present on fw
+  assert(typeof fw.doZoomIn  === 'function', 'doZoomIn is a named global function');
+  assert(typeof fw.doZoomOut === 'function', 'doZoomOut is a named global function');
+  assert(typeof fw.doToday   === 'function', 'doToday is a named global function');
+
+  // Verify mobile toolbar no longer delegates via .click() — source inspection
+  const hasMobClick = s3scripts.some(s => s.textContent.includes("getElementById('btn-zoomin').click()"));
+  assert(!hasMobClick, 'mobile toolbar no longer delegates via btn-zoomin.click()');
+
+  // ── Stage 3: fh.getParent() removed (#4) — source inspection ─────────────
+  section('fh.getParent() removed (Stage 3 fix — source inspection)');
+
+  const hasGetParent = s3scripts.some(s => s.textContent.includes('getParent().catch('));
+  assert(!hasGetParent, 'fh.getParent().catch() call no longer present in any inline script');
+
+  // ── Stage 3: SheetJS pinned + SRI hash (#14) — DOM inspection ────────────
+  section('SheetJS pinned version + SRI hash (Stage 3 fix — source inspection)');
+
+  const sheetjsScript = Array.from(fw.document.querySelectorAll('script[src]'))
+    .find(s => s.src.includes('sheetjs') || s.src.includes('xlsx'));
+
+  assert(sheetjsScript != null, 'SheetJS <script> tag found');
+  assert(sheetjsScript != null && !sheetjsScript.src.includes('xlsx-latest'),
+    'SheetJS URL is pinned (no longer uses xlsx-latest)', sheetjsScript?.src, '(should not contain xlsx-latest)');
+  assert(sheetjsScript != null && sheetjsScript.integrity.startsWith('sha384-'),
+    'SheetJS integrity attribute present and starts with sha384-',
+    sheetjsScript?.integrity, '(should start with sha384-)');
+  assert(sheetjsScript != null && sheetjsScript.crossOrigin === 'anonymous',
+    'SheetJS crossorigin="anonymous" is set', sheetjsScript?.crossOrigin, 'anonymous');
 
   // ── Summary ───────────────────────────────────────────────────────────────
   const total = passed + failed;

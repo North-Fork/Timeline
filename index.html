@@ -7,7 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
+        integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT"
+        crossorigin="anonymous"></script>
 <script>window.__TIMELINE_DATA__ = null;</script>
 <script src="data/timeline-data/timeline-data.js"></script>
 <style>
@@ -920,7 +922,6 @@ let groupVis  = new Set();
 let orgVis    = new Set();
 let programVis = new Set();
 let projVis   = new Set();
-let FILTER_LAYOUT  = 'accordion'; // 'accordion' | 'chips-bar' | 'doc-toggles' | 'tabs'
 let categoryGroups = [];          // [{ title, items }] — category accordion groups; one entry per source document
 let accordionState = new Map();   // section title → boolean (true = expanded); persists across buildFilters() calls
 let dimLabels = { orgs: 'Group', programs: 'Program', projects: 'Project' }; // renamed per format
@@ -1581,6 +1582,7 @@ const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
 
 function parse(rows) {
   VIEW_MODE = 'sections';
+  accordionState.clear(); // reset on every data reload to avoid stale open/closed state from previous dataset
   const format = detectFormat(rows);
   const titleEl = document.getElementById('sidebar-title-text');
   const mobileTitleEl = document.getElementById('mobile-title');
@@ -1911,9 +1913,7 @@ function buildFiltersAccordion() {
   }
 }
 
-function buildFiltersChipsBar()    { /* TODO option 3: horizontal pill bar above timeline */ }
-function buildFiltersDocToggles()  { /* TODO option 4: document master toggles + sub-filters */ }
-function buildFiltersTabs()        { /* TODO option 5: tabbed sidebar panels */ }
+// PLANNED: alternative filter layouts (chips-bar, doc-toggles, tabs) — implement here when needed
 
 function buildFiltersThemes() {
   const panelTitle = document.createElement('div');
@@ -1951,11 +1951,8 @@ function buildFilters() {
     filDiv.appendChild(tog);
   }
 
-  if      (VIEW_MODE === 'themes' && hasEnrichedData) buildFiltersThemes();
-  else if (FILTER_LAYOUT === 'accordion')             buildFiltersAccordion();
-  else if (FILTER_LAYOUT === 'chips-bar')             buildFiltersChipsBar();
-  else if (FILTER_LAYOUT === 'doc-toggles')           buildFiltersDocToggles();
-  else if (FILTER_LAYOUT === 'tabs')                  buildFiltersTabs();
+  if (VIEW_MODE === 'themes' && hasEnrichedData) buildFiltersThemes();
+  else                                           buildFiltersAccordion();
 }
 
 // ── Lane stacking ─────────────────────────────────────────────────────────
@@ -2269,6 +2266,21 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
   g.addEventListener('click', ev2 => { ev2.stopPropagation(); hideTooltip(); openDrawer(ev); });
 }
 
+// ── Event visibility ──────────────────────────────────────────────────────
+function isEventVisible(e) {
+  if (!groupVis.has(e.group)) return false;
+  // OR logic across Group / Program / Project:
+  // events with no tags in these dimensions always show;
+  // tagged events show if any one of their tags is checked
+  const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
+  if (noTags) return true;
+  const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
+  if (!hasTag) return true;
+  return (e.org     !== '' && orgVis.has(e.org))         ||
+         (e.program !== '' && programVis.has(e.program)) ||
+         (e.project !== '' && projVis.has(e.project));
+}
+
 // ── Main render ───────────────────────────────────────────────────────────
 function redraw() {
   if (!events.length) return;
@@ -2405,19 +2417,7 @@ function redraw() {
   crosshairG    = null; // re-created on every mousemove, inserted before evG
 
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(e => {
-    if (!groupVis.has(e.group)) return false;
-    // OR logic across Group / Program / Project:
-    // events with no tags in these dimensions always show;
-    // tagged events show if any one of their tags is checked
-    const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
-    if (noTags) return true;
-    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
-    if (!hasTag) return true;
-    return (e.org     !== '' && orgVis.has(e.org))         ||
-           (e.program !== '' && programVis.has(e.program)) ||
-           (e.project !== '' && projVis.has(e.project));
-  });
+  const visEvs = events.filter(isEventVisible);
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
   evGRef = evG;
@@ -2555,16 +2555,7 @@ function preloadAdjacent() {
 }
 
 function getVisibleEvents() {
-  return events.filter(e => {
-    if (!groupVis.has(e.group)) return false;
-    const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
-    if (noTags) return true;
-    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
-    if (!hasTag) return true;
-    return (e.org     !== '' && orgVis.has(e.org))         ||
-           (e.program !== '' && programVis.has(e.program)) ||
-           (e.project !== '' && projVis.has(e.project));
-  }).sort((a, b) => a.startTs - b.startTs);
+  return events.filter(isEventVisible).sort((a, b) => a.startTs - b.startTs);
 }
 
 async function renderMedia(ev, container) {
@@ -2785,13 +2776,14 @@ function zoom(factor, pivotX) {
   redraw();
 }
 
-document.getElementById('btn-zoomin').addEventListener('click',  () => zoom(1.5,     wrap.clientWidth / 2));
-document.getElementById('btn-zoomout').addEventListener('click', () => zoom(1 / 1.5, wrap.clientWidth / 2));
-document.getElementById('btn-fit').addEventListener('click', fitAll);
-document.getElementById('btn-today').addEventListener('click', () => {
-  panX = wrap.clientWidth - LABEL_W - (Date.now() - minTs) * scale;
-  redraw();
-});
+function doZoomIn()  { zoom(1.5,     wrap.clientWidth / 2); }
+function doZoomOut() { zoom(1 / 1.5, wrap.clientWidth / 2); }
+function doToday()   { panX = wrap.clientWidth - LABEL_W - (Date.now() - minTs) * scale; redraw(); }
+
+document.getElementById('btn-zoomin') .addEventListener('click', doZoomIn);
+document.getElementById('btn-zoomout').addEventListener('click', doZoomOut);
+document.getElementById('btn-fit')    .addEventListener('click', fitAll);
+document.getElementById('btn-today')  .addEventListener('click', doToday);
 
 // ── Search ────────────────────────────────────────────────────────────────
 let searchResults = [], searchIdx = -1, searchQuery = '', searchMode = 'absolute';
@@ -3320,18 +3312,9 @@ function buildExportSVG(y1, y2) {
   const exportScale   = (EXPORT_W - EXPORT_LABEL_W) / Math.max(exportEndTs - exportStartTs, 86400000);
   const eTsToX = ts => (ts - exportStartTs) * exportScale + EXPORT_LABEL_W;
 
-  // Same filter logic as redraw()
+  // Same filter logic as redraw() — via shared isEventVisible()
   const visGroups = groups.filter(g => groupVis.has(g));
-  const visEvs = events.filter(e => {
-    if (!groupVis.has(e.group)) return false;
-    const noTags = orgs.length === 0 && programs.length === 0 && projects.length === 0;
-    if (noTags) return true;
-    const hasTag = e.org !== '' || e.program !== '' || e.project !== '';
-    if (!hasTag) return true;
-    return (e.org     !== '' && orgVis.has(e.org))         ||
-           (e.program !== '' && programVis.has(e.program)) ||
-           (e.project !== '' && projVis.has(e.project));
-  });
+  const visEvs = events.filter(isEventVisible);
 
   // Group Y positions (same logic as redraw)
   const expGroupY = {};
@@ -3638,8 +3621,7 @@ document.getElementById('btn-save-view').addEventListener('click', async () => {
         startIn:       dirHandle ?? 'documents',
         types: [{ description: 'Timeline View', accept: { 'application/json': ['.view.json'] } }],
       });
-      // Remember the directory for next time
-      await setViewDirHandle(await fh.getParent().catch(() => null) ?? dirHandle);
+      // Note: FileSystemFileHandle.getParent() is unshipped in browsers; directory stays as-is after save.
       const writable = await fh.createWritable();
       await writable.write(json);
       await writable.close();
@@ -3663,7 +3645,7 @@ document.getElementById('btn-load-view').addEventListener('click', async () => {
         types: [{ description: 'Timeline View', accept: { 'application/json': ['.view.json'] } }],
         multiple: false,
       });
-      await setViewDirHandle(await fh.getParent().catch(() => null) ?? dirHandle);
+      // Note: FileSystemFileHandle.getParent() is unshipped in browsers; directory stays as-is after load.
       const file = await fh.getFile();
       try   { applyView(JSON.parse(await file.text())); }
       catch { alert('Invalid view file.'); }
@@ -3698,11 +3680,11 @@ svsToggle.addEventListener('click', () => {
   svsArrow.classList.toggle('open', !collapsed);
 });
 
-// Mobile toolbar mirrors sidebar controls
-document.getElementById('mob-zoomin') .addEventListener('click', () => document.getElementById('btn-zoomin').click());
-document.getElementById('mob-zoomout').addEventListener('click', () => document.getElementById('btn-zoomout').click());
-document.getElementById('mob-fit')    .addEventListener('click', () => document.getElementById('btn-fit').click());
-document.getElementById('mob-today')  .addEventListener('click', () => document.getElementById('btn-today').click());
+// Mobile toolbar: call the same named functions as the sidebar controls
+document.getElementById('mob-zoomin') .addEventListener('click', doZoomIn);
+document.getElementById('mob-zoomout').addEventListener('click', doZoomOut);
+document.getElementById('mob-fit')    .addEventListener('click', fitAll);
+document.getElementById('mob-today')  .addEventListener('click', doToday);
 
 </script>
 </body>
