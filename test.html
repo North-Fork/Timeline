@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timeline-JEL — Unit Tests — Stage 3</title>
+<title>Timeline-JEL — Unit Tests — Opt-Stage 1</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #111827; color: #e5e7eb; padding: 2rem; }
@@ -26,7 +26,7 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
 </style>
 </head>
 <body>
-<h1>Timeline-JEL — Unit Tests — Stage 3</h1>
+<h1>Timeline-JEL — Unit Tests — Opt-Stage 1</h1>
 <p class="subtitle">Requires <code>serve.sh</code> (python http.server). Open at <code>http://localhost:8000/test.html</code></p>
 <div id="status">Loading app in iframe…</div>
 <div id="results"></div>
@@ -453,6 +453,100 @@ function runTests(fw) {
     sheetjsScript?.integrity, '(should start with sha384-)');
   assert(sheetjsScript != null && sheetjsScript.crossOrigin === 'anonymous',
     'SheetJS crossorigin="anonymous" is set', sheetjsScript?.crossOrigin, 'anonymous');
+
+  // ── Opt-Stage 1: RAF gate variable exists (O1) ───────────────────────────
+  section('RAF-throttle mousemove (Opt-Stage 1 / O1)');
+
+  // _rafPending is a `let` variable — access via eval
+  const rafPendingType = typeof fw.eval('_rafPending');
+  assert(rafPendingType === 'boolean',
+    '_rafPending is a boolean (RAF gate variable exists)', rafPendingType, 'boolean');
+
+  // Source inspection: mousemove handler must use requestAnimationFrame
+  const s4scripts = Array.from(fw.document.querySelectorAll('script:not([src])'));
+  const mousemoveSrc = s4scripts.map(s => s.textContent).join('\n');
+
+  const hasRafInMousemove = /mousemove[\s\S]{0,300}requestAnimationFrame/.test(mousemoveSrc);
+  assert(hasRafInMousemove,
+    'mousemove handler uses requestAnimationFrame within 300 chars');
+
+  const hasRafGate = mousemoveSrc.includes('_rafPending');
+  assert(hasRafGate, '_rafPending gate referenced in source');
+
+  // Verify redraw() is NOT called directly inside mousemove (must go through RAF)
+  const mousemoveDirectRedraw = /mousemove[^}]{0,200}(?<!requestAnimationFrame\(\(\) => \{[^}]{0,50})redraw\(\)/.test(mousemoveSrc);
+  assert(!mousemoveDirectRedraw || hasRafInMousemove,
+    'redraw() inside mousemove is wrapped in RAF (not called synchronously)');
+
+  // ── Opt-Stage 1: visEvs cache (O2) ───────────────────────────────────────
+  section('visEvs cache — _visEvsDirty flag (Opt-Stage 1 / O2)');
+
+  // _visEvsDirty and _visEvsCache are `let` variables
+  const dirtyType = typeof fw.eval('_visEvsDirty');
+  assert(dirtyType === 'boolean',
+    '_visEvsDirty is a boolean', dirtyType, 'boolean');
+
+  const cacheType  = Array.isArray(fw.eval('_visEvsCache'));
+  assert(cacheType, '_visEvsCache is an array');
+
+  // parse() calls buildFilters() (sets dirty=true) then fitAll() → redraw() (sets dirty=false).
+  // By the time parse() returns, redraw() has already run — so dirty is false and cache is filled.
+  fw.parse([{ Category: 'Test', Year: '2020', Month: '1', Day: '1', Headline: 'T' }]);
+  assert(fw.eval('_visEvsDirty') === false,
+    '_visEvsDirty is false after parse() — buildFilters() invalidated it, redraw() repopulated it');
+
+  // After redraw(), _visEvsDirty should be false (cache populated)
+  fw.redraw();
+  assert(fw.eval('_visEvsDirty') === false,
+    '_visEvsDirty is false after redraw() (cache has been populated)');
+
+  // _visEvsCache should be an array matching the filtered events
+  const cachedLen = fw.eval('_visEvsCache').length;
+  const liveLen   = fw.eval('events.filter(isEventVisible)').length;
+  assert(cachedLen === liveLen,
+    '_visEvsCache length matches live filter result', cachedLen, liveLen);
+
+  // buildFilters() must set _visEvsDirty = true
+  fw.buildFilters();
+  assert(fw.eval('_visEvsDirty') === true,
+    '_visEvsDirty is true after buildFilters() (cache invalidated on filter change)');
+
+  // ── Opt-Stage 1: tick cache (O3) ─────────────────────────────────────────
+  section('Tick array cache — _tickCacheKey / _tickCache (Opt-Stage 1 / O3)');
+
+  const tickKeyType = typeof fw.eval('_tickCacheKey');
+  assert(tickKeyType === 'string',
+    '_tickCacheKey is a string', tickKeyType, 'string');
+
+  assert(fw.eval('_tickCache') !== null,
+    '_tickCache is populated after redraw()');
+
+  const cacheObj = fw.eval('_tickCache');
+  assert(Array.isArray(cacheObj?.majDates),
+    '_tickCache.majDates is an array');
+  assert(Array.isArray(cacheObj?.minDates),
+    '_tickCache.minDates is an array');
+
+  // parse() resets _tickCacheKey = '' then immediately calls redraw() via fitAll(),
+  // so by the time parse() returns the key is already repopulated.
+  fw.parse([{ Category: 'Test', Year: '2020', Month: '1', Day: '1', Headline: 'T' }]);
+  assert(fw.eval('_tickCacheKey') !== '',
+    '_tickCacheKey populated after parse() — reset then immediately repopulated by redraw()');
+
+  // After redraw(), key is populated and cache is filled
+  fw.redraw();
+  const keyAfterDraw = fw.eval('_tickCacheKey');
+  assert(keyAfterDraw !== '',
+    '_tickCacheKey is non-empty after redraw()');
+  assert(fw.eval('_tickCache') !== null && Array.isArray(fw.eval('_tickCache').majDates),
+    '_tickCache populated with majDates after redraw()');
+
+  // Second redraw at same scale must reuse cache (key unchanged)
+  const keyBefore = fw.eval('_tickCacheKey');
+  fw.redraw();
+  const keyAfter  = fw.eval('_tickCacheKey');
+  assert(keyBefore === keyAfter,
+    'tick cache key unchanged across two redraws at same scale (cache reused)');
 
   // ── Summary ───────────────────────────────────────────────────────────────
   const total = passed + failed;

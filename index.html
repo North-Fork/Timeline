@@ -945,6 +945,13 @@ let dragging  = false;
 let dragStartX, dragStartPan, dragStartY, dragStartScrollTop;
 let crosshairG = null, evGRef = null, crosshairSvgH = 0;
 let pastWatermarkG = null, futureWatermarkG = null, logoWatermarkG = null;
+
+// ── Opt: render caches ────────────────────────────────────────────────────
+let _rafPending  = false;              // RAF gate: at most one redraw per animation frame
+let _visEvsDirty = true;               // true → recompute visEvs on next redraw
+let _visEvsCache = [];                 // cached result of events.filter(isEventVisible)
+let _tickCacheKey = '';                // last tick config key (level|minTs|maxTs)
+let _tickCache    = null;              // { majDates, minDates }
 let logoGroupBottom = 590; // refined once image loads
 (function () {
   const img = new Image();
@@ -1583,6 +1590,8 @@ const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
 function parse(rows) {
   VIEW_MODE = 'sections';
   accordionState.clear(); // reset on every data reload to avoid stale open/closed state from previous dataset
+  _visEvsDirty  = true;  // new dataset — invalidate visEvs cache
+  _tickCacheKey = '';    // new date range — invalidate tick cache
   const format = detectFormat(rows);
   const titleEl = document.getElementById('sidebar-title-text');
   const mobileTitleEl = document.getElementById('mobile-title');
@@ -1931,6 +1940,7 @@ function buildFiltersThemes() {
 }
 
 function buildFilters() {
+  _visEvsDirty = true; // filter state changed — invalidate visEvs cache
   filDiv.innerHTML = '';
 
   // View mode toggle (only when enriched data is loaded)
@@ -2337,10 +2347,17 @@ function redraw() {
   tlSvg.appendChild(mk('rect', { x: 0, y: 0, width: W, height: H, fill: '#111827' }));
 
   // ── Tick lines + row backgrounds (clipped) ───────────────────────────
-  // Use adaptive major ticks for background grid lines only
+  // Tick config changes at 6 discrete scale thresholds; cache until threshold or data changes.
   const { maj: majAdd, min: minAdd } = getTickConfig();
-  const majDates = generateTicks(majAdd, new Date(minTs), new Date(maxTs));
-  const minDates = generateTicks(minAdd, new Date(minTs), new Date(maxTs));
+  const tickKey = `${Math.round(scale * 1e9)}|${minTs}|${maxTs}`;
+  if (tickKey !== _tickCacheKey) {
+    _tickCacheKey = tickKey;
+    _tickCache = {
+      majDates: generateTicks(majAdd, new Date(minTs), new Date(maxTs)),
+      minDates: generateTicks(minAdd, new Date(minTs), new Date(maxTs)),
+    };
+  }
+  const { majDates, minDates } = _tickCache;
 
   const gridG = mk('g', { 'clip-path': 'url(#cpE)' });
 
@@ -2417,7 +2434,9 @@ function redraw() {
   crosshairG    = null; // re-created on every mousemove, inserted before evG
 
   // ── Events (clipped) ──────────────────────────────────────────────────
-  const visEvs = events.filter(isEventVisible);
+  // Recompute only when filter state changed; pure pan/zoom reuses the cached array.
+  if (_visEvsDirty) { _visEvsCache = events.filter(isEventVisible); _visEvsDirty = false; }
+  const visEvs = _visEvsCache;
   const evG    = mk('g', { 'clip-path': 'url(#cpE)' });
   tlSvg.appendChild(evG); // append early so getComputedTextLength() works
   evGRef = evG;
@@ -2899,7 +2918,7 @@ window.addEventListener('mousemove', e => {
   if (!dragging) return;
   panX = dragStartPan + (e.clientX - dragStartX);
   wrap.scrollTop = dragStartScrollTop - (e.clientY - dragStartY);
-  redraw();
+  if (!_rafPending) { _rafPending = true; requestAnimationFrame(() => { _rafPending = false; redraw(); }); }
 });
 window.addEventListener('mouseup', () => {
   dragging = false;

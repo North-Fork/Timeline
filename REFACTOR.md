@@ -5,6 +5,68 @@ Latest stage is at the top; earliest stage is at the bottom.
 
 ---
 
+# Optimization Refactor
+
+Cycle goal: improve runtime performance of pan, zoom, and filter interactions.
+Constraint: readability, maintainability, and efficiency must not regress.
+
+---
+
+## Opt-Stage 1 — Phase 1 Quick Wins
+
+**Date:** 2026-03-10
+**Branch:** `Timeline-AbTeC-Media` @ (pending commit)
+**Status:** Complete.
+
+Applied 3 of the 4 Phase 1 items identified in the performance audit:
+
+| # | Optimization | What changed |
+|---|-------------|--------------|
+| O1 | RAF-throttle mousemove redraw | `mousemove` handler wraps `redraw()` in `requestAnimationFrame` with a `_rafPending` gate — at most one redraw per frame during pan |
+| O2 | Cache `visEvs` between redraws | `_visEvsDirty` flag; invalidated at top of `buildFilters()` and in `parse()`; recomputed in `redraw()` only when dirty. Pure pan/zoom skips the O(n) filter entirely |
+| O3 | Cache tick arrays by scale level | `_tickCacheKey` = `scale|minTs|maxTs`; `generateTicks()` only runs when zoom crosses a threshold or data changes — not on every pan frame |
+
+**Deferred (noted, not implemented):**
+
+| # | Optimization | Reason deferred |
+|---|-------------|-----------------|
+| O4 | Lazy-load SheetJS | Turns synchronous dependency into async; requires auditing all XLSX call sites; maintenance cost outweighs benefit for a single-user local tool (~180KB, loads nearly instantly) |
+
+**Unit tests:** `test.html` — Opt-Stage 1 tests added. Run via `serve.sh`, open `http://localhost:8000/test.html`.
+
+---
+
+## Opt-Stage 1 — Performance Audit (input to above)
+
+**Date:** 2026-03-10
+
+Full performance analysis of `index.html`. Key findings:
+
+### Critical bottlenecks
+| Rank | Issue | Location | Impact |
+|------|-------|----------|--------|
+| 1 | No render debounce on mousemove | ~line 2898 | 60 full redraws/sec during pan |
+| 2 | Full SVG clear every frame (`innerHTML = ''`) | lines 2315, 2320, 2494 | Reflow + GC pressure at 60 Hz |
+| 3 | `getComputedTextLength()` inside render loop | lines 2227, 2253 | Forced layout flush per event bar |
+| 4 | `events.filter(isEventVisible)` every redraw | line 2420 | O(n) per frame |
+| 5 | `generateTicks()` called every redraw | lines 2342–2343 | 200–1600 Date allocations per frame |
+
+### Remaining backlog (future stages)
+| # | Issue | Effort | Impact |
+|---|-------|--------|--------|
+| O4 | Lazy-load SheetJS | Medium | ~180KB eliminated from initial parse — deferred (see above) |
+| O5 | Reuse SVG layer groups (avoid `innerHTML = ''`) | High | 2–3× redraw speed |
+| O6 | Event delegation for event bars (replace ~3000 listeners) | Medium | Memory + listener overhead |
+| O7 | Eliminate `getComputedTextLength()` layout flush | Medium | 20–30% faster `drawEventBar()` |
+| O8 | Selective filter UI updates (avoid full accordion rebuild) | High | Filter interactions feel instant |
+| O9 | Build event group index for `syncCategoryVis()` / `syncDimVis()` | Medium | O(g×n) → O(g) on filter change |
+
+---
+
+# Readability / Maintenance / Efficiency Refactor
+
+---
+
 ## Stage 3 — Small-Effort Fix Pass
 
 **Date:** 2026-03-10
