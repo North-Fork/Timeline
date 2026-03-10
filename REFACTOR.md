@@ -26,6 +26,8 @@ Applied all 9 trivial items from Stage 1:
 | 13 | `innerHTML` trust assumption | Added comments at both injection sites |
 | 15 | CORS proxy trust note | Added inline comment on `GSHEET_PROXY` constant |
 
+**Unit tests:** `test.html` — 65 tests, all passing @ `09fb974`. Run via `serve.sh`, open `http://localhost:8000/test.html`.
+
 **Remaining from Stage 1 (small effort):**
 
 | # | Issue | Effort |

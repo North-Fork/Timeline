@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline-JEL Tests</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #111827; color: #e5e7eb; padding: 2rem; }
+h1 { font-size: 1.4rem; color: #f59e0b; margin-bottom: 0.25rem; }
+.subtitle { font-size: 0.85rem; color: #6b7280; margin-bottom: 2rem; }
+#status { font-size: 1rem; color: #9ca3af; margin-bottom: 1.5rem; }
+#status.done-pass { color: #34d399; font-weight: 600; }
+#status.done-fail { color: #f87171; font-weight: 600; }
+
+h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
+     color: #6b7280; margin: 1.5rem 0 0.5rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.3rem; }
+
+.pass { color: #34d399; font-size: 0.875rem; padding: 0.15rem 0; }
+.pass::before { content: '✓  '; }
+.fail { color: #f87171; font-size: 0.875rem; padding: 0.15rem 0; font-weight: 600; }
+.fail::before { content: '✗  '; }
+.fail-detail { color: #fca5a5; font-size: 0.775rem; padding: 0.1rem 0 0.1rem 1.5rem; font-family: monospace; }
+
+#note { font-size: 0.8rem; color: #6b7280; margin-top: 2rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h1>Timeline-JEL — Unit Tests</h1>
+<p class="subtitle">Requires <code>serve.sh</code> (python http.server). Open at <code>http://localhost:8000/test.html</code></p>
+<div id="status">Loading app in iframe…</div>
+<div id="results"></div>
+<p id="note">
+  Tests run against the live globals of <code>index.html</code> loaded in a hidden iframe.<br>
+  All pure/near-pure functions are tested. DOM-dependent rendering is out of scope.
+</p>
+
+<!-- Hidden iframe: loads the full app so we can call its global functions -->
+<iframe id="app-frame" src="index.html" style="display:none" title="app under test"></iframe>
+
+<script>
+// ── Test runner ────────────────────────────────────────────────────────────
+
+let passed = 0, failed = 0;
+const results = document.getElementById('results');
+const statusEl = document.getElementById('status');
+let currentSection = null;
+
+function section(title) {
+  const el = document.createElement('h2');
+  el.textContent = title;
+  results.appendChild(el);
+  currentSection = title;
+}
+
+function pass(label) {
+  passed++;
+  const el = document.createElement('div');
+  el.className = 'pass';
+  el.textContent = label;
+  results.appendChild(el);
+}
+
+function fail(label, got, expected) {
+  failed++;
+  const el = document.createElement('div');
+  el.className = 'fail';
+  el.textContent = label;
+  results.appendChild(el);
+  if (got !== undefined || expected !== undefined) {
+    const detail = document.createElement('div');
+    detail.className = 'fail-detail';
+    detail.textContent = `got: ${JSON.stringify(got)}   expected: ${JSON.stringify(expected)}`;
+    results.appendChild(detail);
+  }
+}
+
+function assert(condition, label, got, expected) {
+  if (condition) pass(label);
+  else fail(label, got, expected);
+}
+
+function eq(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+// ── Tests ─────────────────────────────────────────────────────────────────
+
+function runTests(fw) {
+  // const-declared functions don't attach to window; retrieve via eval in iframe scope
+  const stripHtml  = fw.eval('stripHtml');
+  const extractUrl = fw.eval('extractUrl');
+
+  // ── pDate ───────────────────────────────────────────────────────────────
+  section('pDate — date string parser');
+
+  let d;
+
+  d = fw.pDate('1/15/2020');
+  assert(d instanceof fw.Date && d.getFullYear() === 2020 && d.getMonth() === 0 && d.getDate() === 15,
+    'parses MM/DD/YYYY correctly', [d?.getFullYear(), d?.getMonth(), d?.getDate()], [2020, 0, 15]);
+
+  d = fw.pDate('12/31/1995');
+  assert(d instanceof fw.Date && d.getFullYear() === 1995 && d.getMonth() === 11 && d.getDate() === 31,
+    'parses Dec 31 1995', [d?.getFullYear(), d?.getMonth(), d?.getDate()], [1995, 11, 31]);
+
+  d = fw.pDate('3/5/25');
+  assert(d instanceof fw.Date && d.getFullYear() === 2025,
+    '2-digit year < 50 → 2000+yy (25 → 2025)', d?.getFullYear(), 2025);
+
+  d = fw.pDate('3/5/99');
+  assert(d instanceof fw.Date && d.getFullYear() === 1999,
+    '2-digit year ≥ 50 → 1900+yy (99 → 1999)', d?.getFullYear(), 1999);
+
+  d = fw.pDate('not-a-date');
+  assert(d === null, 'invalid input → null', d, null);
+
+  d = fw.pDate('');
+  assert(d === null, 'empty string → null', d, null);
+
+  // ── stripHtml ────────────────────────────────────────────────────────────
+  section('stripHtml');
+
+  assert(stripHtml('<b>bold</b>') === 'bold',
+    'strips bold tags', stripHtml('<b>bold</b>'), 'bold');
+
+  assert(stripHtml('<a href="http://x.com">link</a>') === 'link',
+    'strips anchor tags', stripHtml('<a href="http://x.com">link</a>'), 'link');
+
+  assert(stripHtml('plain text') === 'plain text',
+    'passes through plain text unchanged');
+
+  assert(stripHtml('') === '',
+    'empty string → empty string');
+
+  assert(stripHtml('<p>  hello  </p>') === 'hello',
+    'trims whitespace after stripping');
+
+  // ── extractUrl ───────────────────────────────────────────────────────────
+  section('extractUrl');
+
+  assert(extractUrl('<a href="https://example.com">link</a>') === 'https://example.com',
+    'extracts double-quoted href');
+
+  assert(extractUrl("<a href='https://example.org'>link</a>") === 'https://example.org',
+    'extracts single-quoted href');
+
+  assert(extractUrl('plain text no link') === '',
+    'no href → empty string');
+
+  assert(extractUrl('') === '',
+    'empty string → empty string');
+
+  // ── wrapLabel ────────────────────────────────────────────────────────────
+  section('wrapLabel — text wrapping');
+
+  assert(eq(fw.wrapLabel('Hello World', 20, 3), ['Hello World']),
+    'short text fits on one line');
+
+  assert(eq(fw.wrapLabel('Hello', 10, 3), ['Hello']),
+    'single word fits');
+
+  let lines = fw.wrapLabel('one two three four', 7, 3);
+  assert(lines.length <= 3, 'maxLines=3 respected');
+  assert(typeof lines[0] === 'string', 'returns array of strings');
+
+  // 3-word string, tight maxChars — forces wrap at maxLines and adds ellipsis
+  lines = fw.wrapLabel('a b c d e f', 3, 2);
+  assert(lines.length === 2, 'truncates to maxLines');
+  assert(lines[lines.length - 1].endsWith('…'), 'last line ends with ellipsis when truncated',
+    lines[lines.length - 1], '(should end with …)');
+
+  assert(eq(fw.wrapLabel('', 10, 3), []),
+    'empty string → empty array (empty line is falsy, not pushed)');
+
+  // ── linkify ──────────────────────────────────────────────────────────────
+  section('linkify — URL to anchor conversion');
+
+  let linked;
+
+  linked = fw.linkify('see https://example.com here');
+  assert(linked.includes('<a href="https://example.com"'), 'wraps https URL in anchor');
+  assert(linked.includes('target="_blank"'), 'anchor has target=_blank');
+  assert(linked.includes('rel="noopener"'), 'anchor has rel=noopener');
+
+  linked = fw.linkify('visit www.example.com today');
+  assert(linked.includes('<a href="https://www.example.com"'), 'www URL gets https:// prepended');
+
+  linked = fw.linkify('no links here at all');
+  assert(linked === 'no links here at all', 'plain text passes through unchanged');
+
+  // ── detectFormat ─────────────────────────────────────────────────────────
+  section('detectFormat — data format sniffing');
+
+  assert(fw.detectFormat([{ Category: 'Research', Group: 'AbTeC' }]) === 'abtec',
+    'row with Category col → abtec');
+
+  assert(fw.detectFormat([{ category: 'Art' }]) === 'abtec',
+    'lowercase category col → abtec');
+
+  assert(fw.detectFormat([{ Title: 'Paper', Group: 'RC' }]) === 'cv',
+    'row without Category col → cv');
+
+  assert(fw.detectFormat([]) === 'abtec',
+    'empty rows → abtec (default)');
+
+  // ── normalizeRow (abtec) ─────────────────────────────────────────────────
+  section('normalizeRow — abtec format');
+
+  const abtecRow = {
+    Category:   'Art & Technology',
+    Group:      'AbTeC',
+    Program:    'SSHRC',
+    Project:    'PoEMM',
+    Headline:   '<a href="https://poemm.net">PoEMM Launch</a>',
+    Text:       'A series of poems',
+    Year:       '2012',
+    Month:      '6',
+    Day:        '15',
+    'End Year': '2014',
+    'End Month':'12',
+    'End Day':  '31',
+    Media:      'https://youtube.com/watch?v=abc',
+    'Team Members': 'PI: Jason Lewis; RA: Bruno Nadeau',
+  };
+  const aN = fw.normalizeRow(abtecRow, 'abtec');
+
+  assert(aN.group === 'Art & Technology', 'abtec: Category → group', aN.group, 'Art & Technology');
+  assert(aN.org   === 'AbTeC',            'abtec: Group → org',     aN.org,   'AbTeC');
+  assert(aN.program === 'SSHRC',          'abtec: Program → program', aN.program, 'SSHRC');
+  assert(aN.project === 'PoEMM',          'abtec: Project → project', aN.project, 'PoEMM');
+  assert(aN.headline === 'PoEMM Launch',  'abtec: Headline HTML stripped', aN.headline, 'PoEMM Launch');
+  assert(aN.headlineUrl === 'https://poemm.net', 'abtec: href extracted from Headline', aN.headlineUrl, 'https://poemm.net');
+  assert(aN.description === 'A series of poems', 'abtec: Text → description', aN.description, 'A series of poems');
+  assert(aN.startRaw === '6/15/2012',  'abtec: Year/Month/Day → startRaw', aN.startRaw, '6/15/2012');
+  assert(aN.endRaw   === '12/31/2014', 'abtec: End Year/Month/Day → endRaw', aN.endRaw, '12/31/2014');
+  assert(aN.media === 'https://youtube.com/watch?v=abc', 'abtec: Media → media', aN.media, 'https://youtube.com/watch?v=abc');
+  assert(aN.teamMembers === 'PI: Jason Lewis; RA: Bruno Nadeau', 'abtec: Team Members → teamMembers');
+
+  // ── normalizeRow (cv) ────────────────────────────────────────────────────
+  section('normalizeRow — cv format');
+
+  const cvRow = {
+    Group:  'Research-Creation',
+    Title:  'My Paper',
+    Text:   'An abstract',
+    'Start Date': '3/1/2018',
+    'End Date':   '3/15/2018',
+  };
+  const cN = fw.normalizeRow(cvRow, 'cv');
+
+  assert(cN.group === 'Research-Creation', 'cv: Group → group',    cN.group, 'Research-Creation');
+  assert(cN.headline === 'My Paper',       'cv: Title → headline', cN.headline, 'My Paper');
+  assert(cN.description === 'An abstract', 'cv: Text → description', cN.description, 'An abstract');
+  assert(cN.startRaw === '3/1/2018',  'cv: Start Date → startRaw', cN.startRaw, '3/1/2018');
+  assert(cN.endRaw   === '3/15/2018', 'cv: End Date → endRaw',     cN.endRaw, '3/15/2018');
+
+  // missing Year col: should fall through to Start Date
+  const cvRow2 = { Group: 'Teaching', Title: 'Course', 'Start Date': '9/1/2019' };
+  const cN2 = fw.normalizeRow(cvRow2, 'cv');
+  assert(cN2.startRaw === '9/1/2019', 'cv: Start Date used when no Year col');
+
+  // ── gdocParseDateRange ───────────────────────────────────────────────────
+  section('gdocParseDateRange — date range formats');
+
+  let dr;
+
+  dr = fw.gdocParseDateRange('2020');
+  assert(eq(dr, ['01/01/2020', '01/01/2020']), 'YYYY → single date', dr, ['01/01/2020', '01/01/2020']);
+
+  dr = fw.gdocParseDateRange('2019-2021');
+  assert(eq(dr, ['01/01/2019', '01/01/2021']), 'YYYY-YYYY range', dr, ['01/01/2019', '01/01/2021']);
+
+  dr = fw.gdocParseDateRange('2019-21');
+  assert(eq(dr, ['01/01/2019', '06/30/2021']), 'YYYY-YY shorthand', dr, ['01/01/2019', '06/30/2021']);
+
+  dr = fw.gdocParseDateRange('9.18');
+  assert(eq(dr, ['09/01/2018', '09/01/2018']), 'M.YY → month/year (18→2018)', dr, ['09/01/2018', '09/01/2018']);
+
+  dr = fw.gdocParseDateRange('9.2018');
+  assert(eq(dr, ['09/01/2018', '09/01/2018']), 'M.YYYY full year', dr, ['09/01/2018', '09/01/2018']);
+
+  dr = fw.gdocParseDateRange('9.18-12.20');
+  assert(eq(dr, ['09/01/2018', '12/01/2020']), 'M.YY-M.YY range', dr, ['09/01/2018', '12/01/2020']);
+
+  dr = fw.gdocParseDateRange('January 2020');
+  assert(eq(dr, ['01/01/2020', '01/01/2020']), 'Month YYYY', dr, ['01/01/2020', '01/01/2020']);
+
+  dr = fw.gdocParseDateRange('garbage-xyz-!!');
+  assert(eq(dr, [null, null]), 'unparseable → [null, null]', dr, [null, null]);
+
+  // ── generateTicks safety guard ───────────────────────────────────────────
+  section('generateTicks — safety guard (Stage 2 fix)');
+
+  const warns = [];
+  const origWarn = fw.console.warn;
+  fw.console.warn = (...args) => { warns.push(args.join(' ')); origWarn.apply(fw.console, args); };
+
+  // addFn that never advances → will hit the 800-iteration limit
+  const frozenFn = d => d;
+  const start = new Date('2020-01-01').getTime();
+  const end   = new Date('2020-12-31').getTime();
+  fw.generateTicks(frozenFn, start, end);
+
+  fw.console.warn = origWarn; // restore
+
+  assert(warns.length > 0, 'console.warn fires when safety limit is hit');
+  assert(warns[0].includes('safety'), 'warning message mentions "safety"', warns[0], '(should include "safety")');
+
+  // ── DOM — export title fix (Stage 2 fix) ─────────────────────────────────
+  section('DOM — export title element fix (Stage 2 fix)');
+
+  const titleTextEl  = fw.document.getElementById('sidebar-title-text');
+  const titleDivEl   = fw.document.getElementById('sidebar-title');
+  const bylineEl     = fw.document.getElementById('sidebar-byline');
+
+  assert(titleTextEl !== null, '#sidebar-title-text element exists');
+  assert(titleDivEl  !== null, '#sidebar-title parent div exists');
+  assert(bylineEl    !== null, '#sidebar-byline element exists');
+
+  const titleOnly  = titleTextEl?.textContent?.trim() ?? '';
+  const titleFull  = titleDivEl?.textContent?.trim() ?? '';
+  const bylineText = bylineEl?.textContent?.trim() ?? '';
+
+  assert(titleOnly.length > 0, '#sidebar-title-text has non-empty text content', titleOnly, '(non-empty)');
+  assert(!titleOnly.includes(bylineText) || bylineText === '',
+    '#sidebar-title-text does NOT include byline text (the bug we fixed)',
+    titleOnly, '(should not contain: ' + bylineText + ')');
+  assert(titleFull.includes(bylineText),
+    '#sidebar-title (parent div) DOES include byline — confirms old code was reading wrong element',
+    titleFull, '(should contain: ' + bylineText + ')');
+
+  // ── HTTP fallback URL (Stage 2 fix — checked in source) ─────────────────
+  section('HTTP fallback URL fix (Stage 2 fix — source inspection)');
+
+  // We can't trigger the fetch without a matching xlsx file, but we can verify
+  // the stale filename is gone by inspecting the page's own script source.
+  const scripts = Array.from(fw.document.querySelectorAll('script'));
+  const inlineScript = scripts.find(s => s.textContent.includes('IIF-Timeline-Data'));
+  assert(inlineScript === undefined,
+    'stale filename "IIF-Timeline-Data" is not present in any inline script',
+    inlineScript ? 'FOUND (bug still present)' : undefined, undefined);
+
+  // ── Summary ───────────────────────────────────────────────────────────────
+  const total = passed + failed;
+  statusEl.textContent = `${total} tests: ${passed} passed, ${failed} failed`;
+  statusEl.className = failed > 0 ? 'done-fail' : 'done-pass';
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+document.getElementById('app-frame').addEventListener('load', () => {
+  const fw = document.getElementById('app-frame').contentWindow;
+  try {
+    runTests(fw);
+  } catch (err) {
+    statusEl.textContent = 'Test runner error: ' + err.message;
+    statusEl.className = 'done-fail';
+    const el = document.createElement('div');
+    el.className = 'fail';
+    el.textContent = 'Unexpected error: ' + err.message;
+    results.appendChild(el);
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
