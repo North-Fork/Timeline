@@ -50,7 +50,7 @@ Browsers other than Chrome/Brave block local file access, so the data cannot loa
 | Open event detail | Click event (tooltip previews on hover) | Tap event — opens Storybox directly |
 | Fit all events | Click **Fit** in the sidebar | Tap **Fit** in toolbar |
 | Jump to today | Click **Today** in the sidebar | Tap **Today** in toolbar |
-| Search | Type in the search box and press Enter; use ◀ ▶ to cycle through matches | Same |
+| Search | Type in the search box and press Enter; use ◀ ▶ to cycle through matches. Non-matching events dim to 15% opacity so matches stand out; clearing the search restores all events to normal opacity. | Same |
 | Search mode | **Abs** starts from the earliest match; **Rel** starts from the current view position | Same |
 
 ---
@@ -95,6 +95,22 @@ Requires Python 3 and the openpyxl library:
 ```
 pip3 install openpyxl
 ```
+
+---
+
+## View
+
+The **View** section in the sidebar lets you save and restore a named snapshot of the current pan/zoom position and all active filter settings (Category, Group, Program, Project).
+
+### Save
+
+Type a name in the input field and click **Save…** (or press Enter). The browser downloads a file named `<name>.view.json` to your downloads folder. Move it to a `/views` folder alongside your data files to keep things organised.
+
+### Load
+
+Click **Load…** to open a file picker (filtered to `.view.json` files). Select a previously saved view file — the timeline immediately restores the zoom level, scroll position, and filter state captured at save time.
+
+Filter values that no longer exist in the current dataset are silently ignored; everything else is restored exactly.
 
 ---
 

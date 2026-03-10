@@ -116,6 +116,18 @@ body {
 }
 .sf-subsection .print-btns { padding: 2px 0 0; }
 .sf-subsection .print-btns .sb-btn { flex: 1; }
+/* ── View section ───────────────────────────────────────────────────────── */
+#sidebar-views-section { border-top: 1px solid #374151; flex-shrink: 0; padding: 0 12px 8px; }
+#svs-save-row { display: flex; gap: 6px; padding: 8px 4px 4px; }
+#view-name-input {
+  flex: 1; background: #111827; border: 1px solid #374151; border-radius: 4px;
+  color: #e5e7eb; font-size: 11px; padding: 5px 8px; outline: none; min-width: 0;
+}
+#view-name-input:focus { border-color: #6366f1; }
+#view-name-input::placeholder { color: #4b5563; }
+@media (hover: none), (max-width: 1024px) {
+  #view-name-input { min-height: 44px; font-size: 16px; border-radius: 8px; }
+}
 #drop-zone {
   margin: 12px;
   border: 2px dashed #374151;
@@ -745,6 +757,19 @@ body {
   </div>
   <div id="filters">
     <div style="font-size:12px;color:#4b5563;padding:8px 4px">Load a file to see filters.</div>
+  </div>
+  <div id="sidebar-views-section">
+    <div class="sf-section-label" id="svs-toggle" role="button" style="cursor:pointer">
+      <span class="accordion-arrow open" id="svs-arrow">▶</span>
+      View
+    </div>
+    <div id="svs-body" class="accordion-body">
+      <div id="svs-save-row">
+        <input id="view-name-input" type="text" placeholder="View name…" autocomplete="off">
+        <button class="tb-btn sb-btn" id="btn-save-view">Save…</button>
+        <button class="tb-btn sb-btn" id="btn-load-view">Load…</button>
+      </div>
+    </div>
   </div>
   <div id="sidebar-file-section">
     <div class="sf-section-label" id="sf-toggle" role="button" style="cursor:pointer">
@@ -2183,6 +2208,9 @@ function drawEventBar(evG, ev, barTop, color, W, rowEvs) {
 
   const g    = mk('g');
   g.style.cursor = 'pointer';
+  if (searchQuery && !searchMatchSet.has(ev.id)) {
+    g.setAttribute('opacity', '0.15');
+  }
   evG.appendChild(g);
   const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
   g.appendChild(rect);
@@ -2766,6 +2794,7 @@ document.getElementById('btn-today').addEventListener('click', () => {
 
 // ── Search ────────────────────────────────────────────────────────────────
 let searchResults = [], searchIdx = -1, searchQuery = '', searchMode = 'absolute';
+let searchMatchSet = new Set(); // IDs of events matching current search
 const searchInput   = document.getElementById('search-input');
 const searchCount   = document.getElementById('search-count');
 const searchPrev    = document.getElementById('search-prev');
@@ -2797,6 +2826,7 @@ function runSearch(q) {
       .some(f => f && f.toLowerCase().includes(q))
   ).sort((a, b) => a.startTs - b.startTs);
 
+  searchMatchSet = new Set(searchResults.map(e => e.id));
   if (!searchResults.length) { searchIdx = -1; return; }
 
   if (searchMode === 'relative') {
@@ -2849,7 +2879,7 @@ searchRelBtn.addEventListener('click', () => {
 });
 
 searchInput.addEventListener('input', () => {
-  if (!searchInput.value.trim()) { searchResults = []; searchIdx = -1; searchQuery = ''; updateSearchUI(); }
+  if (!searchInput.value.trim()) { searchResults = []; searchIdx = -1; searchQuery = ''; searchMatchSet = new Set(); updateSearchUI(); redraw(); }
 });
 
 let spaceDown = false;
@@ -3531,6 +3561,143 @@ sfToggle.addEventListener('click', () => {
   sfArrow.classList.toggle('open', !collapsed);
 });
 sidebarOverlay.addEventListener('click', closeMobileSidebar);
+
+// ── Saved View ────────────────────────────────────────────────────────────
+function captureView(name) {
+  const centreTs = xToTs(LABEL_W + (wrap.clientWidth - LABEL_W) / 2);
+  return {
+    type:       'abtec-timeline-view',
+    version:    1,
+    name:       name.trim() || 'Untitled',
+    savedAt:    Date.now(),
+    scale,
+    centreTs,
+    scrollTop:  wrap.scrollTop,
+    groupVis:   [...groupVis],
+    orgVis:     [...orgVis],
+    programVis: [...programVis],
+    projVis:    [...projVis],
+  };
+}
+
+function applyView(v) {
+  if (!events.length) { alert('Load data before applying a view.'); return; }
+  scale      = v.scale;
+  panX       = (wrap.clientWidth / 2) - LABEL_W - (v.centreTs - minTs) * scale;
+  groupVis   = new Set((v.groupVis   || []).filter(x => groups.includes(x)));
+  orgVis     = new Set((v.orgVis     || []).filter(x => orgs.includes(x)));
+  programVis = new Set((v.programVis || []).filter(x => programs.includes(x)));
+  projVis    = new Set((v.projVis    || []).filter(x => projects.includes(x)));
+  buildFilters();
+  redraw();
+  wrap.scrollTop = v.scrollTop;
+}
+
+// ── View directory handle (persisted in IndexedDB) ────────────────────────
+const VIEW_DB_NAME    = 'abtec-timeline';
+const VIEW_STORE_NAME = 'handles';
+const VIEW_DIR_KEY    = 'viewDir';
+
+function openViewDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(VIEW_DB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(VIEW_STORE_NAME);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function getViewDirHandle() {
+  try {
+    const db  = await openViewDB();
+    const tx  = db.transaction(VIEW_STORE_NAME, 'readonly');
+    const req = tx.objectStore(VIEW_STORE_NAME).get(VIEW_DIR_KEY);
+    return await new Promise(res => { req.onsuccess = () => res(req.result); req.onerror = () => res(null); });
+  } catch { return null; }
+}
+
+async function setViewDirHandle(handle) {
+  try {
+    const db = await openViewDB();
+    const tx = db.transaction(VIEW_STORE_NAME, 'readwrite');
+    tx.objectStore(VIEW_STORE_NAME).put(handle, VIEW_DIR_KEY);
+  } catch { /* non-fatal */ }
+}
+
+// ── Save / Load with File System Access API (fallback for Firefox/Safari) ─
+document.getElementById('btn-save-view').addEventListener('click', async () => {
+  const nameInput = document.getElementById('view-name-input');
+  const v         = captureView(nameInput.value);
+  const safeName  = v.name.replace(/[/\\:*?"<>|]/g, '-');
+  const json      = JSON.stringify(v, null, 2);
+
+  if (window.showSaveFilePicker) {
+    try {
+      const dirHandle = await getViewDirHandle();
+      const fh = await window.showSaveFilePicker({
+        suggestedName: `${safeName}.view.json`,
+        startIn:       dirHandle ?? 'documents',
+        types: [{ description: 'Timeline View', accept: { 'application/json': ['.view.json'] } }],
+      });
+      // Remember the directory for next time
+      await setViewDirHandle(await fh.getParent().catch(() => null) ?? dirHandle);
+      const writable = await fh.createWritable();
+      await writable.write(json);
+      await writable.close();
+    } catch (e) { if (e.name !== 'AbortError') alert('Save failed: ' + e.message); }
+  } else {
+    // Fallback: silent download
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement('a'), { href: url, download: `${safeName}.view.json` });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+});
+
+document.getElementById('btn-load-view').addEventListener('click', async () => {
+  if (window.showOpenFilePicker) {
+    try {
+      const dirHandle = await getViewDirHandle();
+      const [fh] = await window.showOpenFilePicker({
+        startIn: dirHandle ?? 'documents',
+        types: [{ description: 'Timeline View', accept: { 'application/json': ['.view.json'] } }],
+        multiple: false,
+      });
+      await setViewDirHandle(await fh.getParent().catch(() => null) ?? dirHandle);
+      const file = await fh.getFile();
+      try   { applyView(JSON.parse(await file.text())); }
+      catch { alert('Invalid view file.'); }
+    } catch (e) { if (e.name !== 'AbortError') alert('Load failed: ' + e.message); }
+  } else {
+    // Fallback: input picker
+    const picker = Object.assign(document.createElement('input'), { type: 'file', accept: '.view.json,.view' });
+    picker.addEventListener('change', () => {
+      const file = picker.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => { try { applyView(JSON.parse(e.target.result)); } catch { alert('Invalid view file.'); } };
+      reader.readAsText(file);
+    });
+    picker.click();
+  }
+});
+
+document.getElementById('view-name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-save-view').click();
+});
+
+const svsToggle = document.getElementById('svs-toggle');
+const svsBody   = document.getElementById('svs-body');
+const svsArrow  = document.getElementById('svs-arrow');
+if (window.matchMedia('(hover: none), (max-width: 1024px)').matches) {
+  svsBody.classList.add('collapsed');
+  svsArrow.classList.remove('open');
+}
+svsToggle.addEventListener('click', () => {
+  const collapsed = svsBody.classList.toggle('collapsed');
+  svsArrow.classList.toggle('open', !collapsed);
+});
 
 // Mobile toolbar mirrors sidebar controls
 document.getElementById('mob-zoomin') .addEventListener('click', () => document.getElementById('btn-zoomin').click());
