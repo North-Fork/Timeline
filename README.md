@@ -12,6 +12,18 @@ Also works for CVs. See Data Formats below.
 
 It loads by default the data from a local file. You can drag your own file into the file drop box, or give it a Google Sheet URL. The Google Sheet must be Published. Terrible things will happen if your file is not formatted properlly. See Data Format section below.
 
+## Tested Platforms
+
+This app has been tested on the following platforms only. Contributors should note any regressions on these targets and test on them before submitting changes.
+
+| Platform | Browser | Notes |
+|----------|---------|-------|
+| macOS | Brave | Primary development browser |
+| iPhone 14, iOS 26.2 | Safari | |
+| iPad Pro 11" 4th gen, iOS 26.2 | Safari | |
+
+---
+
 ## Getting Started
 
 ### Recommended: Chrome or Brave
