@@ -727,6 +727,17 @@ body {
 }
 /* O6: hover opacity handled by CSS — replaces per-element mouseenter/mouseleave */
 .event-bar-g:hover > rect { opacity: 1; }
+/* Category drag-reorder */
+.cat-drag-list { display: flex; flex-direction: column; }
+.cat-row { display: flex; align-items: center; gap: 2px; border-radius: 4px; }
+.cat-row.dragging { opacity: 0.35; }
+.cat-drag-handle {
+  cursor: grab; color: #4b5563; font-size: 13px; padding: 3px 3px 3px 2px;
+  flex-shrink: 0; touch-action: none; user-select: none; line-height: 1;
+}
+.cat-drag-handle:hover  { color: #9ca3af; }
+.cat-drag-handle:active { cursor: grabbing; }
+.cat-row .filter-label  { flex: 1; min-width: 0; }
 </style>
 </head>
 <body>
@@ -764,10 +775,10 @@ body {
   </div>
   <div id="sidebar-views-section">
     <div class="sf-section-label" id="svs-toggle" role="button" style="cursor:pointer">
-      <span class="accordion-arrow open" id="svs-arrow">▶</span>
+      <span class="accordion-arrow" id="svs-arrow">▶</span>
       View
     </div>
-    <div id="svs-body" class="accordion-body">
+    <div id="svs-body" class="accordion-body collapsed">
       <div id="svs-save-row">
         <input id="view-name-input" type="text" placeholder="View name…" autocomplete="off">
         <button class="tb-btn sb-btn" id="btn-save-view">Save…</button>
@@ -777,10 +788,10 @@ body {
   </div>
   <div id="sidebar-file-section">
     <div class="sf-section-label" id="sf-toggle" role="button" style="cursor:pointer">
-      <span class="accordion-arrow open" id="sf-arrow">▶</span>
+      <span class="accordion-arrow" id="sf-arrow">▶</span>
       File
     </div>
-    <div id="sf-body" class="accordion-body">
+    <div id="sf-body" class="accordion-body collapsed">
       <div class="sf-subsection" id="sidebar-import">
         <div class="sf-sublabel">Import</div>
         <div id="drop-zone">
@@ -938,6 +949,9 @@ let themeLaneCounts = {};         // theme → lane count
 let themeLanes      = {};         // theme → { evId → lane index }
 let programGroups  = []; // [{ label, items }] — sub-groups within Funding Agency; CV only
 let eventsByGroup  = new Map(); // group → Event[] index; built in parse(), used by syncCategoryVis/syncDimVis
+let groupOrder     = [];        // user-defined category order; persists via localStorage + View state
+let catListEl      = null;      // stable ref to category drag list DOM node (used by drag handlers)
+let _dragGroup     = null, _dragRowEl = null, _dragRafId = null; // drag state
 const hasFineMouse = () => window.matchMedia('(pointer: fine)').matches; // true on mouse/trackpad, false on touch
 let minTs, maxTs;
 let laneCounts = {};   // group -> number of lanes needed
@@ -1685,6 +1699,13 @@ function parse(rows) {
   programs = [...new Set(events.map(e => e.program).filter(Boolean))].sort();
   projects = [...new Set(events.map(e => e.project).filter(Boolean))].sort();
   groups.forEach((g, i) => groupColor[g] = PALETTE[i % PALETTE.length]);
+
+  // Load user-defined category order from localStorage; preserve valid entries, append new groups
+  const _savedOrder = JSON.parse(localStorage.getItem('tl-group-order') || 'null');
+  groupOrder = (_savedOrder && Array.isArray(_savedOrder))
+    ? [..._savedOrder.filter(g => groups.includes(g)), ...groups.filter(g => !_savedOrder.includes(g))]
+    : [...groups];
+
   // Build category sub-groups (CV only — e.g. Supervision parent)
   let catSubGroups = null;
   if (format === 'cv') {
@@ -1847,6 +1868,102 @@ function makeAllNoneButtons(items, vis, isDim, syncDims) {
 
 // ── Layout renderers ───────────────────────────────────────────────────────
 
+// Builds a single draggable category row: handle + checkbox + dot + label.
+// Pointer-event drag handlers reorder catListEl children directly during drag
+// (no buildFilters() rebuild mid-drag) and commit groupOrder on drop.
+function makeCategoryRow(g) {
+  const row = document.createElement('div');
+  row.className = 'cat-row';
+  row.dataset.group = g;
+
+  const handle = document.createElement('span');
+  handle.className = 'cat-drag-handle';
+  handle.textContent = '⠿';
+  handle.setAttribute('aria-hidden', 'true');
+
+  const lbl = document.createElement('label');
+  lbl.className = 'filter-label';
+  const cb = document.createElement('input');
+  cb.type = 'checkbox'; cb.checked = groupVis.has(g);
+  cb.addEventListener('change', () => {
+    if (cb.checked) { groupVis.add(g); syncDimVis(); buildFilters(); }
+    else            { groupVis.delete(g); }
+    redraw();
+  });
+  const dot = document.createElement('span');
+  dot.className = 'filter-dot';
+  dot.style.background = groupColor[g];
+  const txt = document.createElement('span');
+  txt.textContent = g;
+  lbl.append(cb, dot, txt);
+
+  row.append(handle, lbl);
+
+  handle.addEventListener('pointerdown', e => {
+    if (_dragRowEl) return;
+    e.preventDefault();
+    _dragGroup = g;
+    _dragRowEl = row;
+    row.classList.add('dragging');
+
+    // Ghost: a floating clone that follows the cursor
+    const rowRect    = row.getBoundingClientRect();
+    const ghostOffY  = e.clientY - rowRect.top;
+    const ghost      = row.cloneNode(true);
+    ghost.style.cssText = [
+      'position:fixed', 'pointer-events:none', 'z-index:9999',
+      'opacity:0.9', 'border-radius:4px',
+      'box-shadow:0 4px 14px rgba(0,0,0,0.55)',
+      'background:#1f2937',
+      `width:${rowRect.width}px`,
+      `left:${rowRect.left}px`,
+      `top:${e.clientY - ghostOffY}px`,
+    ].join(';');
+    document.body.appendChild(ghost);
+
+    const onMove = ev => {
+      ev.preventDefault();
+      ghost.style.top = (ev.clientY - ghostOffY) + 'px';
+      const siblings = [...catListEl.children].filter(c => c !== _dragRowEl);
+      let insertBefore = null;
+      for (const sib of siblings) {
+        const r = sib.getBoundingClientRect();
+        if (ev.clientY < r.top + r.height / 2) { insertBefore = sib; break; }
+      }
+      if (insertBefore) catListEl.insertBefore(_dragRowEl, insertBefore);
+      else              catListEl.appendChild(_dragRowEl);
+      if (_dragRafId === null) {
+        _dragRafId = requestAnimationFrame(() => {
+          _dragRafId = null;
+          groupOrder = [...catListEl.children].map(r => r.dataset.group);
+          redraw();
+        });
+      }
+    };
+
+    const onEnd = () => {
+      document.removeEventListener('pointermove',   onMove);
+      document.removeEventListener('pointerup',     onEnd);
+      document.removeEventListener('pointercancel', onEnd);
+      ghost.remove();
+      if (!_dragRowEl) return;
+      _dragRowEl.classList.remove('dragging');
+      _dragRowEl = null;
+      _dragGroup = null;
+      if (_dragRafId !== null) { cancelAnimationFrame(_dragRafId); _dragRafId = null; }
+      groupOrder = [...catListEl.children].map(r => r.dataset.group);
+      localStorage.setItem('tl-group-order', JSON.stringify(groupOrder));
+      redraw();
+    };
+
+    document.addEventListener('pointermove',   onMove);
+    document.addEventListener('pointerup',     onEnd);
+    document.addEventListener('pointercancel', onEnd);
+  });
+
+  return row;
+}
+
 function buildFiltersAccordion() {
   const panelTitle = document.createElement('div');
   panelTitle.className = 'filter-panel-title';
@@ -1929,8 +2046,45 @@ function buildFiltersAccordion() {
   if (orgs.length)     addSection(dimLabels.orgs,     orgs,     orgVis,     () => '#6b7280', true,  false);
   if (programs.length) addSection(dimLabels.programs, programs, programVis, () => '#6b7280', true,  false, programGroups.length ? programGroups : null);
   if (projects.length) addSection(dimLabels.projects, projects, projVis,    () => '#6b7280', true,  false);
+  // Category section — flat draggable list (free reorder across sub-sections)
   for (const grp of categoryGroups) {
-    addSection(grp.title, grp.items, groupVis, g => groupColor[g], false, true, grp.subGroups || null);
+    if (!accordionState.has(grp.title)) accordionState.set(grp.title, true);
+    const isOpen = accordionState.get(grp.title);
+
+    const sec = document.createElement('div');
+    sec.className = 'accordion-section';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'accordion-header';
+    const arrow = document.createElement('span');
+    arrow.className = 'accordion-arrow' + (isOpen ? ' open' : '');
+    arrow.textContent = '▶';
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = grp.title;
+    const allNone = makeAllNoneButtons(groups, groupVis, false, true);
+    hdr.append(arrow, titleSpan, allNone);
+
+    const body = document.createElement('div');
+    body.className = 'accordion-body' + (isOpen ? '' : ' collapsed');
+
+    const list = document.createElement('div');
+    list.className = 'cat-drag-list';
+    catListEl = list;
+    for (const g of groupOrder) {
+      if (groups.includes(g)) list.appendChild(makeCategoryRow(g));
+    }
+    body.appendChild(list);
+
+    hdr.addEventListener('click', e => {
+      if (e.target.closest('.filter-all-none')) return;
+      const open = !accordionState.get(grp.title);
+      accordionState.set(grp.title, open);
+      arrow.classList.toggle('open', open);
+      body.classList.toggle('collapsed', !open);
+    });
+
+    sec.append(hdr, body);
+    filDiv.appendChild(sec);
   }
 }
 
@@ -2310,7 +2464,7 @@ function redraw() {
   const isThemes  = VIEW_MODE === 'themes' && hasEnrichedData;
   const W         = wrap.clientWidth;
 
-  const visGroups = groups.filter(g => groupVis.has(g));
+  const visGroups = groupOrder.filter(g => groupVis.has(g));
   const visThemes = themeRows.filter(t => themeVis.has(t));
   const visRows   = isThemes ? visThemes : visGroups;
   const rowH      = isThemes ? (r => themeRowH[r]) : (r => rowHeights[r] || ROW_H);
@@ -3365,7 +3519,7 @@ function buildExportSVG(y1, y2) {
   const eTsToX = ts => (ts - exportStartTs) * exportScale + EXPORT_LABEL_W;
 
   // Same filter logic as redraw() — via shared isEventVisible()
-  const visGroups = groups.filter(g => groupVis.has(g));
+  const visGroups = groupOrder.filter(g => groupVis.has(g));
   const visEvs = events.filter(isEventVisible);
 
   // Group Y positions (same logic as redraw)
@@ -3585,11 +3739,8 @@ document.getElementById('btn-sidebar-toggle').addEventListener('click', () => {
 const sfToggle = document.getElementById('sf-toggle');
 const sfBody   = document.getElementById('sf-body');
 const sfArrow  = document.getElementById('sf-arrow');
-// Collapse by default on mobile
-if (window.matchMedia('(hover: none), (max-width: 1024px)').matches) {
-  sfBody.classList.add('collapsed');
-  sfArrow.classList.remove('open');
-}
+sfBody.classList.add('collapsed');
+sfArrow.classList.remove('open');
 sfToggle.addEventListener('click', () => {
   const collapsed = sfBody.classList.toggle('collapsed');
   sfArrow.classList.toggle('open', !collapsed);
@@ -3611,6 +3762,7 @@ function captureView(name) {
     orgVis:     [...orgVis],
     programVis: [...programVis],
     projVis:    [...projVis],
+    groupOrder: [...groupOrder],
   };
 }
 
@@ -3622,6 +3774,9 @@ function applyView(v) {
   orgVis     = new Set((v.orgVis     || []).filter(x => orgs.includes(x)));
   programVis = new Set((v.programVis || []).filter(x => programs.includes(x)));
   projVis    = new Set((v.projVis    || []).filter(x => projects.includes(x)));
+  if (v.groupOrder && Array.isArray(v.groupOrder)) {
+    groupOrder = [...v.groupOrder.filter(g => groups.includes(g)), ...groups.filter(g => !v.groupOrder.includes(g))];
+  }
   buildFilters();
   redraw();
   wrap.scrollTop = v.scrollTop;
@@ -3723,10 +3878,8 @@ document.getElementById('view-name-input').addEventListener('keydown', e => {
 const svsToggle = document.getElementById('svs-toggle');
 const svsBody   = document.getElementById('svs-body');
 const svsArrow  = document.getElementById('svs-arrow');
-if (window.matchMedia('(hover: none), (max-width: 1024px)').matches) {
-  svsBody.classList.add('collapsed');
-  svsArrow.classList.remove('open');
-}
+svsBody.classList.add('collapsed');
+svsArrow.classList.remove('open');
 svsToggle.addEventListener('click', () => {
   const collapsed = svsBody.classList.toggle('collapsed');
   svsArrow.classList.toggle('open', !collapsed);

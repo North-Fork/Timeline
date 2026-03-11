@@ -98,6 +98,16 @@ pip3 install openpyxl
 
 ---
 
+## Filters
+
+The **Filters** section in the sidebar controls which events are visible on the timeline.
+
+### Category reorder
+
+The Category section shows a ⠿ drag handle to the left of each row. Drag rows up or down to reorder the timeline lanes — the order updates live as you drag. Your custom order persists across page refreshes and is saved and restored with View files.
+
+---
+
 ## View
 
 The **View** section in the sidebar lets you save and restore a named snapshot of the current pan/zoom position and all active filter settings (Category, Group, Program, Project).

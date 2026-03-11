@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timeline-JEL — Unit Tests — Opt-Stage 2</title>
+<title>Timeline-JEL — Unit Tests — Category Reorder</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #111827; color: #e5e7eb; padding: 2rem; }
@@ -26,7 +26,7 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
 </style>
 </head>
 <body>
-<h1>Timeline-JEL — Unit Tests — Opt-Stage 2</h1>
+<h1>Timeline-JEL — Unit Tests — Category Reorder</h1>
 <p class="subtitle">Requires <code>serve.sh</code> (python http.server). Open at <code>http://localhost:8000/test.html</code></p>
 <div id="status">Loading app in iframe…</div>
 <div id="results"></div>
@@ -637,6 +637,96 @@ function runTests(fw) {
   pass('MANUAL: clicking an event bar opens the Storybox');
   pass('MANUAL: search-dimmed bars (opacity 0.15) still respond to click');
   pass('MANUAL: touch devices — tap opens Storybox, no tooltip');
+
+  // ── Category drag-reorder ─────────────────────────────────────────────────
+  section('Category reorder — groupOrder initialization');
+
+  // After parse(), groupOrder should contain all groups in some order
+  fw.parse([
+    { Year: 2020, Headline: 'A', Category: 'Alpha' },
+    { Year: 2021, Headline: 'B', Category: 'Beta'  },
+    { Year: 2022, Headline: 'C', Category: 'Gamma' },
+  ]);
+  const go1 = fw.eval('groupOrder');
+  assert(Array.isArray(go1), 'groupOrder is an array after parse()');
+  assert(go1.length === 3, 'groupOrder has one entry per category', go1.length, 3);
+  assert(go1.includes('Alpha'), 'groupOrder contains Alpha');
+  assert(go1.includes('Beta'),  'groupOrder contains Beta');
+  assert(go1.includes('Gamma'), 'groupOrder contains Gamma');
+
+  section('Category reorder — new groups appended to saved order');
+
+  // Simulate a saved order that's missing one group (Gamma not in saved order)
+  fw.eval('localStorage.setItem("tl-group-order", JSON.stringify(["Beta","Alpha"]))');
+  fw.parse([
+    { Year: 2020, Headline: 'A', Category: 'Alpha' },
+    { Year: 2021, Headline: 'B', Category: 'Beta'  },
+    { Year: 2022, Headline: 'C', Category: 'Gamma' },
+  ]);
+  const go2 = fw.eval('groupOrder');
+  assert(go2[0] === 'Beta',  'saved order respected: Beta first');
+  assert(go2[1] === 'Alpha', 'saved order respected: Alpha second');
+  assert(go2[2] === 'Gamma', 'new group Gamma appended at end');
+
+  // Clean up localStorage
+  fw.eval('localStorage.removeItem("tl-group-order")');
+
+  section('Category reorder — redraw() uses groupOrder');
+
+  const drawnSrc = fw.eval('redraw.toString()');
+  assert(drawnSrc.includes('groupOrder.filter'), 'redraw() uses groupOrder.filter (not groups.filter) for visGroups');
+
+  section('Category reorder — buildExportSVG() uses groupOrder');
+
+  const expSrc = fw.eval('buildExportSVG.toString()');
+  assert(expSrc.includes('groupOrder.filter'), 'buildExportSVG() uses groupOrder.filter for visGroups');
+
+  section('Category reorder — captureView() includes groupOrder');
+
+  // parse() needs real data first
+  fw.parse([
+    { Year: 2020, Headline: 'A', Category: 'Alpha' },
+    { Year: 2021, Headline: 'B', Category: 'Beta'  },
+  ]);
+  // Manually set a custom order
+  fw.eval('groupOrder = ["Beta","Alpha"]');
+  const view = fw.captureView('test');
+  assert(Array.isArray(view.groupOrder), 'captureView() includes groupOrder array');
+  assert(view.groupOrder[0] === 'Beta',  'captureView groupOrder[0] is Beta');
+  assert(view.groupOrder[1] === 'Alpha', 'captureView groupOrder[1] is Alpha');
+
+  section('Category reorder — applyView() restores groupOrder');
+
+  // Apply a view with reversed order
+  const fakeView = {
+    scale: fw.eval('scale'), centreTs: 0, scrollTop: 0,
+    groupVis: ['Alpha','Beta'], orgVis: [], programVis: [], projVis: [],
+    groupOrder: ['Alpha', 'Beta'],
+  };
+  fw.applyView(fakeView);
+  const go3 = fw.eval('groupOrder');
+  assert(go3[0] === 'Alpha', 'applyView restores groupOrder: Alpha first');
+  assert(go3[1] === 'Beta',  'applyView restores groupOrder: Beta second');
+
+  section('Category reorder — makeCategoryRow() structure');
+
+  const rowSrc = fw.eval('makeCategoryRow.toString()');
+  assert(rowSrc.includes('cat-row'),         'makeCategoryRow creates .cat-row element');
+  assert(rowSrc.includes('cat-drag-handle'), 'makeCategoryRow creates .cat-drag-handle');
+  assert(rowSrc.includes('filter-label'),    'makeCategoryRow creates .filter-label');
+  assert(rowSrc.includes('filter-dot'),      'makeCategoryRow creates .filter-dot');
+  assert(rowSrc.includes('pointerdown'),     'makeCategoryRow attaches pointerdown drag handler');
+  assert(rowSrc.includes('setPointerCapture'), 'drag handler calls setPointerCapture');
+  assert(rowSrc.includes('tl-group-order'),  'drag drop saves to localStorage tl-group-order');
+
+  section('Category reorder — MANUAL VERIFICATION REQUIRED');
+
+  pass('MANUAL: Category filter shows drag handles (⠿) on left of each row');
+  pass('MANUAL: dragging a row up/down reorders it in the list live');
+  pass('MANUAL: timeline row order updates to match drag order during drag');
+  pass('MANUAL: order survives page refresh (localStorage persistence)');
+  pass('MANUAL: Save View captures order; Load View restores it');
+  pass('MANUAL: touch drag (mobile) works to reorder categories');
 
   // ── Summary ───────────────────────────────────────────────────────────────
   const total = passed + failed;

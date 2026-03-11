@@ -1,5 +1,34 @@
 # Changelog
 
+## Session 16 — 2026-03-10
+
+### Category drag reorder
+- Each row in the Category filter section now has a ⠿ drag handle on the left
+- Drag any category up or down to reorder the timeline rows; order updates live during drag
+- A floating ghost clone follows the cursor while dragging; the original row stays dimmed in-place as a drop indicator
+- Order persists across page refresh (saved to `localStorage`) and is included in saved View files (captured in `captureView()`, restored in `applyView()`)
+- `groupOrder` module-level array drives row order in both `redraw()` and `buildExportSVG()`; initialized from localStorage on each `parse()` with new groups appended at the end
+
+### UI — View and File sections
+- Both the **View** and **File** sidebar sections now start **collapsed by default** on all platforms (previously only collapsed on touch devices)
+
+### Code refactoring — Readability / Maintainability / Efficiency (Stages 1–3)
+- **Stage 2 (trivial fixes):** stale HTTP fallback URL, export title element fix, dead `renderMedia` Case 5 removed, stale `timeline.html` deleted, debug `loadTestData()` call removed, `generateTicks()` safety guard warning, export heuristic comment, `innerHTML` trust comments, CORS proxy trust note
+- **Stage 3 (small-effort fixes):** `fh.getParent()` non-standard API removed, `isEventVisible()` extracted (deduplicating 3-way copy-paste), `accordionState.clear()` on reload, `FILTER_LAYOUT` stubs removed, named toolbar action functions (`doZoomIn`, `doZoomOut`, `doToday`), SheetJS pinned to 0.20.3 with SRI hash
+
+### Code refactoring — Optimization (Opt-Stages 1–2)
+- **O1** RAF-throttle mousemove: at most one `redraw()` per animation frame during pan
+- **O2** Cache `visEvs`: `_visEvsDirty` flag; O(n) filter skipped on pure pan/zoom frames
+- **O3** Cache tick arrays by scale level: `generateTicks()` only runs when zoom crosses a threshold
+- **O6** Event delegation for event bars: removed ~3 per-element listeners per bar; CSS hover handles opacity; three delegated listeners on `evG` handle tooltip and click
+- **O7** Eliminate `getComputedTextLength()` layout flush: replaced with `label.length * 7` heuristic
+- **O9** `eventsByGroup` index (`Map<group, Event[]>`) built once in `parse()`; used in `syncCategoryVis()` and `syncDimVis()` — O(g×n) → O(total events)
+
+### Unit tests
+- `test.html` expanded to cover all refactor stages and category reorder feature
+
+---
+
 ## Session 15 — 2026-03-09
 
 ### Search dimming
