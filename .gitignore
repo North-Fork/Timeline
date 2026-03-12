@@ -8,3 +8,22 @@
 
 # macOS
 .DS_Store
+
+# ── Private CV data ───────────────────────────────────────────────────────────
+# cv-data.js contains all three CV sections (Research, Funding, Teaching & Service).
+# Generate locally: python3 data/cv-data/fetch_cv_from_gdoc.py
+# cv-data-public.js (Research only) IS committed and publicly served.
+data/cv-data/cv-data.js
+# Local-only CV source and tooling (not needed for the public build)
+data/cv-data/cv.txt
+data/cv-data/cv.xlsx
+data/cv-data/cv-data-enriched.js
+data/cv-data/enrich-cache.json
+data/cv-data/enrich_cv.py
+data/cv-data/generate_cv_xlsx.py
+data/cv-data/make_cv_data_js.py
+data/cv-data/pdf-index.json
+
+# ── Private timeline / research data ─────────────────────────────────────────
+data/timeline-data/
+data/themes-data/

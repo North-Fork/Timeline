@@ -212,6 +212,8 @@ Recognised team roles (in display order): `RA-Undergraduate`, `RA-Masters`, `RA-
 
 ### CV Data
 
+The CV Data handling is currently optimized to read Jason Lewis' CV format. It is not a general purpose CV parser yet, though if you format your CV in a similar way, it should work.
+
 There is no auto-loaded CV file — you must load CV data manually each session using one of the three methods below.
 
 **Method 1 — Drag and drop (or Browse) a `.txt` file**
@@ -259,7 +261,7 @@ Any hyperlink found in an entry is surfaced as a **More Info ↗** link in the S
 
 **Publication cover images (Dissemination events)**
 
-For events in the Dissemination category groups — Books/Chapters, Journal Articles, Invited Publications, Op-Ed — the Storybox will automatically display a cover image if one is available. Images are sourced from the jasonlewis.org media library and stored in a pre-built lookup table at `data/cv-data/pub-images.js`.
+For events in the Dissemination category groups — Books/Chapters, Journal Articles, Invited Publications, Op-Ed — the Storybox will automatically display a cover image if one is available. Images are sourced from the [jasonlewis.org media library](https://jasonlewis.org/category/publication/) and stored in a pre-built lookup table at `data/cv-data/pub-images.js`.
 
 To refresh the lookup after new publications are added to jasonlewis.org:
 
@@ -268,4 +270,18 @@ cd data/cv-data
 python3 fetch_pub_images.py
 ```
 
-The script fetches the WP media library, matches publication titles to cv.xlsx headlines by keyword overlap, and rewrites `pub-images.js`. Requires Python 3 and openpyxl.
+The script fetches the WP media library via the WordPress REST API, matches publication titles to cv.xlsx headlines by keyword overlap, and rewrites `pub-images.js`. Requires Python 3 and openpyxl.
+
+> **Note on new publication titles:** jasonlewis.org/category/publication/ is JavaScript-rendered and cannot be scraped statically. When a new publication appears on the site, add its title to the `WEBSITE_TITLES` list in `fetch_pub_images.py`. New cover images uploaded to jasonlewis.org are discovered automatically via the WP media API without any manual changes.
+
+**Automated weekly updates (GitHub Actions)**
+
+The repo includes a GitHub Actions workflow (`.github/workflows/update-cv.yml`) that runs every Monday at 06:00 UTC on the `Timeline-AbTeC-Media` branch. It:
+
+1. Fetches the three published Google Doc CV sections and rebuilds `cv-data.js`
+2. Fetches the jasonlewis.org media library and rebuilds `pub-images.js`
+3. Commits and pushes both files if anything changed
+
+To trigger a manual run: go to **Actions → Weekly CV update → Run workflow** in the GitHub repository UI.
+
+No secrets beyond the default `GITHUB_TOKEN` are required — the CV Google Docs and the WP media API are both publicly accessible.

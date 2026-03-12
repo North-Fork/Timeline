@@ -10,8 +10,13 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
         integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT"
         crossorigin="anonymous"></script>
-<script>window.__TIMELINE_DATA__ = null;</script>
-<script src="data/timeline-data/timeline-data.js"></script>
+<script>
+  window.__TIMELINE_DATA__ = null;
+  var _src = location.search.includes('public')
+    ? 'data/cv-data/cv-data-public.js'
+    : 'data/timeline-data/timeline-data.js';
+  document.write('<script src="' + _src + '"><\/script>');
+</script>
 <script>if (!window.__PUB_IMAGES__) window.__PUB_IMAGES__ = {};</script>
 <script src="data/cv-data/pub-images.js"></script>
 <style>
