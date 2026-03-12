@@ -162,15 +162,21 @@ Can also be triggered manually: **Actions → Weekly CV update → Run workflow*
 - `MANUAL_MAP` in `fetch_pub_images.py`: curated website_title → image URL overrides; takes priority over API-matched results. Update this when a new cover image is uploaded and doesn't auto-match
 - `WEBSITE_TITLES` list in `fetch_pub_images.py`: must be updated manually when a new publication title appears on jasonlewis.org/category/publication/ (site is JS-rendered, auto-discovery not possible)
 
-### Source URLs for CV Testing
+### CV Google Doc URLs
 
-Jason's CV is split across three published Google Docs:
+Jason's CV is split across three Google Docs. Only the Research-Creation doc is published
+to the web; the others are private and not accessible without owner credentials.
 
-| Document | URL |
-|---|---|
-| Research-Creation | https://docs.google.com/document/d/e/2PACX-1vRIeY4A3fbqJj29GP2yT0FpJkoPOLiLVqaOqPuIUDuJOjXLGwM0jEuS2WGb_daBLY8dCEuooURhz-5D/pub |
-| Funding | https://docs.google.com/document/d/e/2PACX-1vTitfLMisxZ3NcqdLOIsf4Bsj_qSuMfuj6vh2N3d86ZjHyy4FlXx0cRIgGWdEhoerPLjs7rgVn75XNL/pub |
-| Teaching & Service | https://docs.google.com/document/d/e/2PACX-1vQXdHyfjF3YivP2hM8Tf81qiasZymZKN4edMZFK3Rp7cq1O__opAvx0iFqdvK-xFzH5duKBb4Eo3Xt6/pub |
+| Document | Access | URL |
+|---|---|---|
+| Research-Creation | **Public** (published to web) | https://docs.google.com/document/d/e/2PACX-1vRIeY4A3fbqJj29GP2yT0FpJkoPOLiLVqaOqPuIUDuJOjXLGwM0jEuS2WGb_daBLY8dCEuooURhz-5D/pub |
+| Funding | **Private** (unpublished) | hardcoded in `fetch_cv_from_gdoc.py` |
+| Teaching & Service | **Private** (unpublished) | hardcoded in `fetch_cv_from_gdoc.py` |
 
-Use these URLs to test `fetch_cv_from_gdoc.py`, `loadFromGDoc()` (browser), and any
-future multi-document CV pipeline.
+`fetch_cv_from_gdoc.py` marks URLs 2 and 3 as optional (`required=False`). If they are
+unpublished (the normal state), the script skips them with a warning and continues.
+The public build (`cv-data-public.js`) is unaffected — it only uses URL 1.
+
+**Collaborators** only ever work with `cv-data-public.js` (Research-Creation, auto-committed
+by GitHub Actions). Running `fetch_cv_from_gdoc.py` locally will also only produce
+Research-Creation data, since the private docs are not accessible.

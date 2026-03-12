@@ -94,19 +94,20 @@ python3 data/timeline-data/make_data_js.py
 
 ### CV data
 
-Replace `data/cv-data/cv.txt` with your own CV text file of the same name, then run:
+Paste the URL of your published Google Doc CV into the URL field and click **Load** — no local files needed.
 
-```
-python3 data/cv-data/generate_cv_xlsx.py
-python3 data/cv-data/make_cv_data_js.py
-```
+#### Public and private CV data (collaborator note)
 
-Alternatively, paste the URL of your published Google Doc CV into the URL field and click **Load** — no local files needed.
+The CV timeline has two builds:
 
-Requires Python 3 and the openpyxl library:
-```
-pip3 install openpyxl
-```
+| Build | Data | How to access |
+|-------|------|---------------|
+| **Public** | Research-Creation only | Add `?public` to the URL — e.g. `index.html?public` |
+| **Private** | All CV sections | Local only — not in this repo |
+
+`cv-data-public.js` (Research-Creation) is auto-generated weekly by GitHub Actions and committed to this repo. It is the only CV data file collaborators need to work with.
+
+The full private CV (`cv-data.js`, containing Funding and Teaching & Service sections) is gitignored and never pushed. It is generated locally by the repo owner only and is not available to collaborators.
 
 ---
 
