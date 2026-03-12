@@ -162,6 +162,13 @@ Can also be triggered manually: **Actions → Weekly CV update → Run workflow*
 - `MANUAL_MAP` in `fetch_pub_images.py`: curated website_title → image URL overrides; takes priority over API-matched results. Update this when a new cover image is uploaded and doesn't auto-match
 - `WEBSITE_TITLES` list in `fetch_pub_images.py`: must be updated manually when a new publication title appears on jasonlewis.org/category/publication/ (site is JS-rendered, auto-discovery not possible)
 
+**Public/default data loading — how it works:**
+- `<head>` always loads `timeline-data.js` as a static `<script src>` (reliable, no tricks)
+- `mode-public` CSS class is added to `<html>` in the head if `?public` is in the URL (hides File section)
+- At startup: if `?public`, dynamically inject `cv-data-public.js` via `createElement('script')` and call `parse()` in its `onload` — no AbTeC flash, no race condition
+- Default path: `window.__TIMELINE_DATA__` already set by `timeline-data.js` → `parse()` called immediately
+- **Do not use `document.write` to inject scripts** — it is unreliable on HTTPS (GitHub Pages) and can cause race conditions where the startup code runs before the injected script executes
+
 ### CV Google Doc URLs
 
 Jason's CV is split across three Google Docs. Only the Research-Creation doc is published
