@@ -53,7 +53,7 @@ No build step, no framework, no bundler.
 | `serve.sh` | Starts `python3 -m http.server 8000` (required for auto-load fetch) |
 | `README.md` | End-user usage instructions |
 | `CHANGELOG.md` | Session-by-session change log (update at end of every session) |
-| `FEATURES-WISH-LIST.txt` | Planned features and known limitations |
+| `FEATURES-WISH-LIST.md` | Planned features and known limitations |
 | `.gitattributes` | Configures `bd merge` driver for `.beads/issues.jsonl` |
 | `AGENTS.md` | Beads agent landing-the-plane instructions |
 | `.github/workflows/update-cv.yml` | GitHub Actions: weekly CV + pub-images auto-update |
