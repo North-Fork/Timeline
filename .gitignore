@@ -25,7 +25,11 @@ data/cv-data/make_cv_data_js.py
 data/cv-data/pdf-index.json
 
 # ── Private timeline / research data ─────────────────────────────────────────
-data/timeline-data/
+# Exclude raw data files but keep the generated JS (needed for default GitHub Pages view)
+data/timeline-data/*.xlsx
+data/timeline-data/*.xlsm
+data/timeline-data/*.csv
+data/timeline-data/make_data_js.py
 data/themes-data/
 
 # ── Archive ───────────────────────────────────────────────────────────────────
