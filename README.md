@@ -256,3 +256,16 @@ Bibliography-style entries with no date prefix are also supported — the parser
 **Links in entries**
 
 Any hyperlink found in an entry is surfaced as a **More Info ↗** link in the Storybox. To mark a link as the full text of a publication, annotate the entry with `{`*`text`*`}` where the word *text* is hyperlinked to the document URL — the parser detects this convention and labels the link **Text ↗** in the Storybox instead.
+
+**Publication cover images (Dissemination events)**
+
+For events in the Dissemination category groups — Books/Chapters, Journal Articles, Invited Publications, Op-Ed — the Storybox will automatically display a cover image if one is available. Images are sourced from the jasonlewis.org media library and stored in a pre-built lookup table at `data/cv-data/pub-images.js`.
+
+To refresh the lookup after new publications are added to jasonlewis.org:
+
+```
+cd data/cv-data
+python3 fetch_pub_images.py
+```
+
+The script fetches the WP media library, matches publication titles to cv.xlsx headlines by keyword overlap, and rewrites `pub-images.js`. Requires Python 3 and openpyxl.
