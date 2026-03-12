@@ -1,5 +1,17 @@
 # Changelog
 
+## Session 17 — 2026-03-12
+
+### Code refactoring — Extract CV code to `cv.js`
+- Created `cv.js`: an IIFE (~537 lines) that exports `window.CVFormat` with all CV-specific logic
+- Moved from `index.html` to `cv.js`: `GDOC_SECTION_MAP/PROJECT_MAP/MONTHS`, gdoc helpers, `parseCVText`, `parseGDoc`, `loadFromGDoc`, `GROUP_ORDER`, `DIM_LABELS`, `DISSEMINATION_GROUPS`, `catSubGroupsFor`, `programGroupsFor`, `computeThemeLanes`, `buildFiltersThemes`, `appendViewModeToggle`, `renderTags`, `lookupPubImage`
+- `index.html` reduced by ~437 lines; 17 `CVFormat.*` call sites replace inline CV blocks
+- `DISSEMINATION_GROUPS` aliased at module level in `index.html` so existing call sites are unchanged
+- Bug fix: added `handle.setPointerCapture(e.pointerId)` to the category drag handler (correct pointer capture for drag; previously relied solely on document-level listeners)
+- `test.html` updated: `fw.gdocParseDateRange(...)` → `fw.CVFormat._gdocParseDateRange(...)`; ~25 new assertions covering `CVFormat` module, `parseCVText`, `lookupPubImage`, `DISSEMINATION_GROUPS`, and AbTeC regression
+
+---
+
 ## Session 16 — 2026-03-10
 
 ### Category drag reorder

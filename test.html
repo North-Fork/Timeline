@@ -265,28 +265,28 @@ function runTests(fw) {
 
   let dr;
 
-  dr = fw.gdocParseDateRange('2020');
+  dr = fw.CVFormat._gdocParseDateRange('2020');
   assert(eq(dr, ['01/01/2020', '01/01/2020']), 'YYYY → single date', dr, ['01/01/2020', '01/01/2020']);
 
-  dr = fw.gdocParseDateRange('2019-2021');
+  dr = fw.CVFormat._gdocParseDateRange('2019-2021');
   assert(eq(dr, ['01/01/2019', '01/01/2021']), 'YYYY-YYYY range', dr, ['01/01/2019', '01/01/2021']);
 
-  dr = fw.gdocParseDateRange('2019-21');
+  dr = fw.CVFormat._gdocParseDateRange('2019-21');
   assert(eq(dr, ['01/01/2019', '06/30/2021']), 'YYYY-YY shorthand', dr, ['01/01/2019', '06/30/2021']);
 
-  dr = fw.gdocParseDateRange('9.18');
+  dr = fw.CVFormat._gdocParseDateRange('9.18');
   assert(eq(dr, ['09/01/2018', '09/01/2018']), 'M.YY → month/year (18→2018)', dr, ['09/01/2018', '09/01/2018']);
 
-  dr = fw.gdocParseDateRange('9.2018');
+  dr = fw.CVFormat._gdocParseDateRange('9.2018');
   assert(eq(dr, ['09/01/2018', '09/01/2018']), 'M.YYYY full year', dr, ['09/01/2018', '09/01/2018']);
 
-  dr = fw.gdocParseDateRange('9.18-12.20');
+  dr = fw.CVFormat._gdocParseDateRange('9.18-12.20');
   assert(eq(dr, ['09/01/2018', '12/01/2020']), 'M.YY-M.YY range', dr, ['09/01/2018', '12/01/2020']);
 
-  dr = fw.gdocParseDateRange('January 2020');
+  dr = fw.CVFormat._gdocParseDateRange('January 2020');
   assert(eq(dr, ['01/01/2020', '01/01/2020']), 'Month YYYY', dr, ['01/01/2020', '01/01/2020']);
 
-  dr = fw.gdocParseDateRange('garbage-xyz-!!');
+  dr = fw.CVFormat._gdocParseDateRange('garbage-xyz-!!');
   assert(eq(dr, [null, null]), 'unparseable → [null, null]', dr, [null, null]);
 
   // ── generateTicks safety guard ───────────────────────────────────────────
@@ -727,6 +727,38 @@ function runTests(fw) {
   pass('MANUAL: order survives page refresh (localStorage persistence)');
   pass('MANUAL: Save View captures order; Load View restores it');
   pass('MANUAL: touch drag (mobile) works to reorder categories');
+
+  // ── CVFormat module ───────────────────────────────────────────────────────
+  section('CVFormat module');
+  assert(typeof fw.CVFormat === 'object',               'CVFormat exposed on window');
+  assert(typeof fw.CVFormat.parseCVText === 'function', 'parseCVText exported');
+  assert(typeof fw.CVFormat.parseGDoc   === 'function', 'parseGDoc exported');
+  assert(fw.CVFormat.DISSEMINATION_GROUPS instanceof fw.Set, 'DISSEMINATION_GROUPS is a Set');
+  assert(Array.isArray(fw.CVFormat.GROUP_ORDER),        'GROUP_ORDER is array');
+  assert(typeof fw.CVFormat.DIM_LABELS === 'object',    'DIM_LABELS exported');
+
+  section('CVFormat.parseCVText');
+  const cvRows = fw.CVFormat.parseCVText('Employment History\n\n2020–2023  Professor, Concordia University\n');
+  assert(cvRows.length > 0,                              'returns at least one row');
+  assert(cvRows[0].group === 'Employment',               'group mapped correctly');
+  assert(typeof cvRows[0].headline === 'string',         'headline is string');
+
+  section('CVFormat.lookupPubImage');
+  const imgs = { 'My Book': 'https://example.com/cover.jpg' };
+  assert(fw.CVFormat.lookupPubImage({ headline:'My Book', group:'Books/Chapters' }, imgs) === 'https://example.com/cover.jpg', 'exact key match');
+  assert(fw.CVFormat.lookupPubImage({ headline:'Unknown', group:'Books/Chapters' }, imgs) === null, 'no match returns null');
+  assert(fw.CVFormat.lookupPubImage({ headline:'My Book', group:'Employment' }, imgs) === null, 'non-dissemination group returns null');
+
+  section('CVFormat.DISSEMINATION_GROUPS');
+  assert(fw.CVFormat.DISSEMINATION_GROUPS.has('Books/Chapters'),   'Books/Chapters member');
+  assert(fw.CVFormat.DISSEMINATION_GROUPS.has('Journal Articles'), 'Journal Articles member');
+  assert(!fw.CVFormat.DISSEMINATION_GROUPS.has('Employment'),      'Employment not member');
+
+  section('AbTeC format unaffected by cv.js');
+  const abRows = [{ category:'Workshops', year:'2022', headline:'Test' }];
+  assert(fw.detectFormat(abRows) === 'abtec', 'detectFormat still returns abtec');
+  const abEv = fw.normalizeRow(abRows[0], 'abtec');
+  assert(abEv.group === 'Workshops',          'normalizeRow abtec still works');
 
   // ── Summary ───────────────────────────────────────────────────────────────
   const total = passed + failed;

@@ -42,14 +42,17 @@ bd create --title="Issue title" --type=task|bug|feature --priority=2
 
 ### Overview
 
-Single-file browser app. All application code (HTML, CSS, JavaScript) lives in one file.
-No build step, no framework, no bundler.
+No build step, no framework, no bundler. Application code is split across two files:
+
+- `index.html` — HTML structure, inline CSS, core JS (AbTeC timeline, rendering, interaction)
+- `cv.js` — CV-specific code (parsers, GDoc loader, theme system, drawer helpers); exports `window.CVFormat`
 
 ### Root Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | The entire app — HTML structure, inline CSS, inline JS |
+| `index.html` | App shell — HTML structure, inline CSS, core JS |
+| `cv.js` | CV format module — exports `window.CVFormat` |
 | `serve.sh` | Starts `python3 -m http.server 8000` (required for auto-load fetch) |
 | `README.md` | End-user usage instructions |
 | `CHANGELOG.md` | Session-by-session change log (update at end of every session) |
@@ -135,8 +138,7 @@ timeline.html (browser)
 | `Timeline-AbTeC-Prototype` | (archived) | superseded by Timeline-AbTeC |
 | `Timeline-CV` | (archived) | CV support folded into Timeline-AbTeC-Media |
 
-**CV data:** All CV support (`detectFormat()`, `normalizeRow()`, `parseCVText()`, Google
-Doc parser) lives in `Timeline-AbTeC-Media/index.html`. No branch switch needed.
+**CV data:** All CV support (`detectFormat()`, `normalizeRow()` in `index.html`; `parseCVText()`, GDoc parser, theme system, drawer helpers in `cv.js` via `window.CVFormat`). No branch switch needed.
 To view CV data: drag `data/cv-data/cv.xlsx` onto the timeline, or swap the `<script src>`
 on line 9 to `data/cv-data/cv-data.js`. Format is auto-detected; sidebar title updates.
 
