@@ -12,7 +12,9 @@
         crossorigin="anonymous"></script>
 <script>
   window.__TIMELINE_DATA__ = null;
-  var _src = location.search.includes('public')
+  var _isPublic = location.search.includes('public');
+  if (_isPublic) document.documentElement.classList.add('mode-public');
+  var _src = _isPublic
     ? 'data/cv-data/cv-data-public.js'
     : 'data/timeline-data/timeline-data.js';
   document.write('<script src="' + _src + '"><\/script>');
@@ -90,6 +92,8 @@ body {
   .hint-desktop { display: none; }
   .hint-mobile  { display: inline; }
 }
+/* ── Public mode — hide file controls ────────────────────────────────── */
+.mode-public #sidebar-file-section { display: none; }
 /* ── Files section (Import + Export) ─────────────────────────────────── */
 #sidebar-file-section {
   border-top: 1px solid #374151;
