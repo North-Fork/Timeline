@@ -30,3 +30,6 @@ data/themes-data/
 
 # ── Archive ───────────────────────────────────────────────────────────────────
 ARCHIVE/
+
+# ── Local handoff package (generated for web person) ─────────────────────────
+handoff/
