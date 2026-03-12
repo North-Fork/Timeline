@@ -1,12 +1,18 @@
 """Build publication cover image lookup from jasonlewis.org media library.
 
 Strategy:
-  1. Fetch the full WP media library via REST API (no CORS issue — runs in Python).
-  2. Score each media item against each known website publication title using keyword
-     overlap; pick the best match above a confidence threshold.
+  1. Start with the manually curated MANUAL_MAP (website title → image URL).
+  2. Fetch the full WP media library via REST API; for any website title not yet
+     in the map, attempt keyword-based matching against new media items.
+     This auto-picks up new cover images uploaded to jasonlewis.org.
   3. Read cv.xlsx; for Dissemination entries, fuzzy-match cv headlines to website
      titles; record the image URL.
   4. Write pub-images.js (window.__PUB_IMAGES__ = { cvHeadline: imageUrl, ... }).
+
+Note: jasonlewis.org/category/publication/ is JavaScript-rendered and cannot be
+scraped via a static HTTP fetch. New titles should be added to WEBSITE_TITLES
+manually when they appear on the site; new cover images are auto-discovered via
+the WP media REST API (step 2).
 
 Usage:
     cd data/cv-data
@@ -201,6 +207,8 @@ def main():
     print(f"  {len(website_image_map)} manually curated entries.")
 
     # Step 2: Try to fill gaps by fetching WP media API
+    # New cover images uploaded to jasonlewis.org are auto-discovered here.
+    # To add a new publication title, append it to WEBSITE_TITLES above.
     missing = [t for t in WEBSITE_TITLES if t not in website_image_map]
     if missing:
         print(f"\n=== Step 2: Fetching WP media API for {len(missing)} unmatched titles ===")
