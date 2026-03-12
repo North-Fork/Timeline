@@ -27,3 +27,6 @@ data/cv-data/pdf-index.json
 # ── Private timeline / research data ─────────────────────────────────────────
 data/timeline-data/
 data/themes-data/
+
+# ── Archive ───────────────────────────────────────────────────────────────────
+ARCHIVE/
