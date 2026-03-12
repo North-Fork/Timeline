@@ -12,6 +12,8 @@
         crossorigin="anonymous"></script>
 <script>window.__TIMELINE_DATA__ = null;</script>
 <script src="data/timeline-data/timeline-data.js"></script>
+<script>if (!window.__PUB_IMAGES__) window.__PUB_IMAGES__ = {};</script>
+<script src="data/cv-data/pub-images.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -1605,6 +1607,11 @@ function normalizeRow(row, format = 'abtec') {
 
 const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
 
+const DISSEMINATION_GROUPS = new Set([
+  'Books/Chapters', 'Books', 'Book Chapters',
+  'Journal Articles', 'Invited Publications', 'Op-Ed',
+]);
+
 function parse(rows) {
   VIEW_MODE = 'sections';
   accordionState.clear(); // reset on every data reload to avoid stale open/closed state from previous dataset
@@ -2947,6 +2954,30 @@ async function openDrawer(ev) {
   closeMobileSidebar();
   updateDrawerNav();
   await renderMedia(ev, document.getElementById('d-media'));
+
+  // Publication cover image for Dissemination events
+  const mediaEl = document.getElementById('d-media');
+  if (!mediaEl.innerHTML.trim() && DISSEMINATION_GROUPS.has(ev.group)) {
+    const pubImgs = window.__PUB_IMAGES__ || {};
+    // Exact match first, then fuzzy: normalize to lowercase words and check if
+    // any key starts with the headline (or vice versa)
+    let imgUrl = pubImgs[ev.headline];
+    if (!imgUrl) {
+      const norm = s => s.toLowerCase().replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
+      const hNorm = norm(ev.headline);
+      for (const [key, url] of Object.entries(pubImgs)) {
+        const kNorm = norm(key);
+        if (kNorm.startsWith(hNorm) || hNorm.startsWith(kNorm.slice(0, Math.max(15, hNorm.length)))) {
+          imgUrl = url;
+          break;
+        }
+      }
+    }
+    if (imgUrl) {
+      mediaEl.innerHTML = `<img src="${imgUrl}" alt="${ev.headline.replace(/"/g, '&quot;')}" style="max-width:100%;border-radius:4px">`;
+    }
+  }
+
   preloadAdjacent();
 }
 
