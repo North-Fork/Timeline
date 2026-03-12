@@ -10,15 +10,9 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
         integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT"
         crossorigin="anonymous"></script>
-<script>
-  window.__TIMELINE_DATA__ = null;
-  var _isPublic = location.search.includes('public');
-  if (_isPublic) document.documentElement.classList.add('mode-public');
-  var _src = _isPublic
-    ? 'data/cv-data/cv-data-public.js'
-    : 'data/timeline-data/timeline-data.js';
-  document.write('<script src="' + _src + '"><\/script>');
-</script>
+<script>window.__TIMELINE_DATA__ = null;</script>
+<script src="data/timeline-data/timeline-data.js"></script>
+<script>if (location.search.includes('public')) document.documentElement.classList.add('mode-public');</script>
 <script>if (!window.__PUB_IMAGES__) window.__PUB_IMAGES__ = {};</script>
 <script src="data/cv-data/pub-images.js"></script>
 <style>
@@ -3369,7 +3363,13 @@ window.addEventListener('focus',  () => { if (events.length) redraw(); });
 // Priority 1: pre-generated JS data (works with file:// double-click).
 // Priority 2: fetch the xlsx directly (requires http/https server).
 // Priority 3: synthetic test data fallback.
-if (window.__TIMELINE_DATA__) {
+if (location.search.includes('public')) {
+  // Public CV mode: dynamically load cv-data-public.js (overrides __TIMELINE_DATA__)
+  const _s = document.createElement('script');
+  _s.src = 'data/cv-data/cv-data-public.js';
+  _s.onload = () => parse(window.__TIMELINE_DATA__);
+  document.head.appendChild(_s);
+} else if (window.__TIMELINE_DATA__) {
   parse(window.__TIMELINE_DATA__);
 } else if (location.protocol !== 'file:') {
   fetch('data/timeline-data/timeline-data.xlsx')
