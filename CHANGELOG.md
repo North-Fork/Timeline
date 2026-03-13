@@ -1,5 +1,26 @@
 # Changelog
 
+## Session 18 — 2026-03-12
+
+### CV Storybox — description fidelity improvements
+
+- **Italic title detection for CSS-class-based italic**: GDocs published HTML often uses CSS classes (e.g. `class="c14"`) rather than inline `font-style:italic` or `<em>` tags for italic text. `extract_italic_title()` now parses the document `<style>` block at the start of `parse_doc()` to collect italic class names, then checks span classes against that set. Fixes book titles like "Against Reduction" and "Educational, Psychological..." that were showing author lists instead.
+
+- **Book chapters: chapter title as headline**: For book chapter entries, the chapter title is in quotes and the volume title is in italics. `_strategy3_headline()` now prefers quoted text (chapter title) over italic text (volume title). Fixes image lookup for ~15 chapters whose titles match keys in `pub-images.js`. Also adds single-quote (`\x27`) support so entries like `'Reworlding AI Through Future Imaginaries'` are detected.
+
+- **Italic markup preserved in Storybox description**: New `tag_to_desc_html()` converts GDoc HTML tags to an HTML string, wrapping italic spans in `<em>` while HTML-escaping all text content. Bibliography entries (Strategy 3 path) now store HTML descriptions, so book titles, journal names, and conference names render in italic in the Storybox. Non-bibliography entries (employment, keynotes, etc.) use the plain-text path unchanged.
+
+- **More Info links from `{text}` / `{link}` annotations**: GDoc annotation syntax encodes a URL as `{` + `<a href="google.com/url?q=ACTUAL_URL">text</a>` + `}`. New `extract_annotation_url()` decodes the Google redirect wrapper and returns the target URL. Stored as `headline_url` on each row; `normalizeRow()` reads it as `headlineUrl` so the Storybox shows a More Info link. `tag_to_desc_html()` strips the `{text}` / `{link}` markers from the rendered description.
+
+- **`generate_cv_xlsx.py` updated**: Added `headline_url` column to xlsx output; HTML stripped from descriptions before writing (xlsx is plain text). `normalizeRow()` updated to read `headlineurl` first, then fall back to extracting a URL from the headline field.
+
+### Code quality
+
+- Collaborator-facing comments added to `index.html`: block comment at `detectFormat()` explains the dual-format (AbTeC / CV) architecture; `// CV only` markers on all `CVFormat.*` call sites in `parse()`, `buildFilters()`, and `openDrawer()`; head comment explains `cv.js` and `pub-images.js`.
+- `HANDOFF.md` created: lists the four files to FTP-upload for a CV build handoff, test URL, and summary of what's new.
+
+---
+
 ## Session 17 — 2026-03-12
 
 ### Code refactoring — Extract CV code to `cv.js`
