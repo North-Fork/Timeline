@@ -266,7 +266,7 @@ def split_date_prefix(text):
 
 def extract_title(text):
     """Pull out a title: prefers quoted text, falls back to first sentence."""
-    m = re.search(r'["\u201c]([^"\u201d]{4,})["\u201d]', text)
+    m = re.search(r'[\u201c\u2018"]([^\u201d\u2019"]{4,})[\u201d\u2019"]', text)
     if m:
         return m.group(1).strip().rstrip('.,;').strip()
     parts = re.split(r'(?<=[a-z\)])[.;]', text, maxsplit=1)
@@ -348,6 +348,19 @@ def normalize_supervision(text, group):
             return headline, thesis
 
     return text, thesis
+
+
+def _strategy3_headline(tag, italic_classes, clean_full):
+    """Pick the best headline for a bibliography entry (Strategy 3 path).
+
+    Chapter entries: chapter title is in quotes → use that (it matches pub-images keys).
+    Book / standalone entries: no quotes → use the italic book title (extract_italic_title).
+    Final fallback: extract_title first-sentence logic.
+    """
+    m = re.search(r'[\u201c\u2018"\x27]([^\u201d\u2019"\x27]{4,})[\u201d\u2019"\x27]', clean_full)
+    if m:
+        return m.group(1).strip().rstrip('.,;').strip()
+    return extract_italic_title(tag, italic_classes) or extract_title(clean_full)
 
 
 # ── HTML parsing ─────────────────────────────────────────────────────────────
@@ -451,8 +464,9 @@ def parse_doc(html):
             row  = {
                 'start date':  d,
                 'end date':    d,
-                # Prefer italic span (book/journal title) over quoted or first-sentence
-                'headline':    extract_italic_title(tag, italic_classes) or extract_title(clean_full),
+                # For book chapters: quoted text is the chapter title (preferred for matching).
+                # For books / standalone works: no quotes → fall back to italic title.
+                'headline':    _strategy3_headline(tag, italic_classes, clean_full),
                 'description': clean_full,
                 'project':     '',
                 'group':       group,

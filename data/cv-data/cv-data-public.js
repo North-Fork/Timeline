@@ -1144,7 +1144,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2026",
     "end date": "01/01/2026",
-    "headline": "DATA browser 10 - Curating Superintelligences: A Reader on AI and Future Curating",
+    "headline": "Collaborating and Community in Aboriginal Territories in Cyberspace",
     "description": "Proulx, Mikhel, Jason Edward Lewis, and Skawennati. “Collaborating and Community in Aboriginal Territories in Cyberspace.” Joasia Krysa and Magdalena Tyzlik-Carver  (Eds.)  DATA browser 10 - Curating Superintelligences: A Reader on AI and Future Curating . London: Open Humanities Press. 2026",
     "project": "",
     "group": "Books/Chapters",
@@ -1156,7 +1156,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2026",
     "end date": "01/01/2026",
-    "headline": "All Watched Over by Machines of Loving Grace",
+    "headline": "Before Intelligence",
     "description": "Kite, Suzanne, Scott Benesiinaabandan,  and Jason Edward Lewis. “Before Intelligence.”  All Watched Over by Machines of Loving Grace  exhibition catalog for  PST ART: Art & Science Collide . Daniela Lieja Quintanar with Talia Heiman (Eds.)  REDCAT, California Institute for the Arts, and East of Borneo, Los Angeles, CA.  2026. ISBN: 978-0-9971997-4-1",
     "project": "",
     "group": "Books/Chapters",
@@ -1168,7 +1168,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2025",
     "end date": "01/01/2025",
-    "headline": "Slow Technology Reader",
+    "headline": "The Indigenous Protocol and AI Workshops as Future Imaginary",
     "description": "“The Indigenous Protocol and AI Workshops as Future Imaginary.” Carolyn F. Strauss (Ed.)  Slow Technology Reader.  Amsterdam: Valiz. 2025.",
     "project": "",
     "group": "Books/Chapters",
@@ -1180,7 +1180,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2025",
     "end date": "01/01/2025",
-    "headline": "Oxford Intersections: AI in Society",
+    "headline": "Reworlding AI Through Future Imaginaries",
     "description": "Ceyda Yolgörmez and Jason Edward Lewis, 'Reworlding AI Through Future Imaginaries’. Joshua Gellers and Henrik Saetra (Eds.), in Philipp Hacker (Ed.),  Oxford Intersections: AI in Society . Oxford: Oxford Academic. 2025.   doi.org/10.1093/9780198945215.003.0166",
     "project": "",
     "group": "Books/Chapters",
@@ -1192,7 +1192,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2025",
     "end date": "01/01/2025",
-    "headline": "By Their Work: Indigenous Women’s Digital Media in North America",
+    "headline": "CyberPowWow and the First Wave of Indigenous Digital Media Arts",
     "description": "Lewis, Jason Edward and  Mikhel Proulx . “CyberPowWow and the First Wave of Indigenous Digital Media Arts.” Karmen Cray and Joanna Hearne (Eds.)  By Their Work: Indigenous Women’s Digital Media in North America,  Minneapolis: University of Minnesota Press. 2025",
     "project": "",
     "group": "Books/Chapters",
@@ -1204,7 +1204,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2024",
     "end date": "01/01/2024",
-    "headline": "Future Imaginaries: Indigenous Art, Fashion, and Technology",
+    "headline": "The Myths of My Descendants",
     "description": "“The Myths of My Descendants.” Amy Scott (Ed.), (pp. 125-129).  Future Imaginaries: Indigenous Art, Fashion, and Technology  exhibition catalog for  PST ART: Art & Science Collide , Autry Museum of the American West, Los Angeles, CA.  2024",
     "project": "",
     "group": "Books/Chapters",
@@ -1216,7 +1216,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2024",
     "end date": "01/01/2024",
-    "headline": "Concordia University at 50: A Collective History",
+    "headline": "Building Aboriginal Territories in Cyberspace",
     "description": "Lewis, Jason Edward and Skawennati. “Building Aboriginal Territories in Cyberspace.” Monika Kin Gagnon and Brandon Webb (Eds.), (pp. 179-187).  Concordia University at 50: A Collective History.  Montreal: Concordia University Press. 2024.",
     "project": "",
     "group": "Books/Chapters",
@@ -1228,7 +1228,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "The Good Robot: Why Technologies of the Future Need Feminism",
+    "headline": "Good Technology is Messy",
     "description": "“Good Technology is Messy.” Eleanor Drage and Kerry Mckereth (Eds.), (pp. 21-27).  The Good Robot: Why Technologies of the Future Need Feminism . London: Bloomsbury Press. 2023.",
     "project": "",
     "group": "Books/Chapters",
@@ -1240,7 +1240,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Feminist AI: Critical Perspectives on Data, Algorithms and Intelligent Machines",
+    "headline": "Making Kin with the Machines",
     "description": "Lewis, Jason Edward, Noelani Arista, Archer Pechawis, and  Suzanne Kite .  “Making Kin with the Machines.” Stephen Cave, Eleanor Drage and Kerry Mckereth (Eds.)  Feminist AI: Critical Perspectives on Data, Algorithms and Intelligent Machines,  (pp. 19-31).  Oxford: Oxford University Press. 2023 Reprint.  doi.org/10.1093/oso/9780192889898.002.0007",
     "project": "",
     "group": "Books/Chapters",
@@ -1252,7 +1252,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Routledge Handbook of CoFuturisums",
+    "headline": "The Future Imaginary",
     "description": "“The Future Imaginary.”  Routledge Handbook of CoFuturisums,  Bodhisattva Chattopadhyay, Grace Dillon, Isiah Lavender and Taryne Jade Taylor (Eds.), (pp. 11-22). New York:Routledge. 2023.  doi.org/10.4324/9780429317828 .",
     "project": "",
     "group": "Books/Chapters",
@@ -1264,7 +1264,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Imagining AI: How the World Sees Intelligent Machines",
+    "headline": "Imagining Indigenous AI",
     "description": "“Imagining Indigenous AI.” Stephen Cave and Kanta Dihal (Eds.)  Imagining AI: How the World Sees Intelligent Machines ,  (pp. 210-217). Oxford: Oxford University Press. 2023.  doi.org/10.1093/oso/9780192865366.001.0001 .",
     "project": "",
     "group": "Books/Chapters",
@@ -1276,7 +1276,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Debates in Digital Humanities 2023",
+    "headline": "Relation-Oriented AI: Why Indigenous Protocols Matter for the Digital Humanities",
     "description": "Smith, Michelle Lee , Hémi Whaanga and Jason Edward Lewis. “Relation-Oriented AI: Why Indigenous Protocols Matter for the Digital Humanities.”  Debates in Digital Humanities 2023 , Matthew Gold and Lauren Klein (Eds.), (pp. 74-83). Minneapolis, MN: University of Minnesota Press. 2023.  doi.org/10.5749/9781452969565 .",
     "project": "",
     "group": "Books/Chapters",
@@ -1288,7 +1288,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2022",
     "end date": "01/01/2022",
-    "headline": "The Routledge Companion to Indigenous Art Histories in the United States and Canada",
+    "headline": "Overclock Our Imagination! Mapping the Indigenous Future Imaginary",
     "description": "“Overclock Our Imagination! Mapping the Indigenous Future Imaginary.” Heather Igloliorte and Carla Taunton (Eds),  The Routledge Companion to Indigenous Art Histories in the United States and Canada , (pp.  64-75). Montreal, QC: McGill-Queen's University Press.  2022.  doi.org/10.4324/9781003014256 .",
     "project": "",
     "group": "Books/Chapters",
@@ -1300,7 +1300,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "Atlas of Anomalous AI",
+    "headline": "Making Kin with the Machines",
     "description": "Lewis, Jason Edward, Noelani Arista, Archer Pechawis, and  Suzanne Kite . “Making Kin with the Machines.” Ben Vickers and K Allado-McDowell (Eds.),  Atlas of Anomalous AI , (pp. 40 - 51). London: Ignota Press. 2021. ISBN: 9781999675950. Reprint.",
     "project": "",
     "group": "Books/Chapters",
@@ -1312,7 +1312,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2020",
     "end date": "01/01/2020",
-    "headline": "Àbadakone/Continuous Fire/Feu Continuel",
+    "headline": "22nd-Century Proto:typing",
     "description": "“22nd-Century Proto:typing.” Rachelle Dickenson, Greg A. Hill and Christine Lalonde (Eds.),   Àbadakone/Continuous Fire/Feu Continuel   Exhibition   Catalog , (pp. 125-132) Ottawa, ON: National Gallery of Canada. 2020.  ISBN 978-0-88884-997-7",
     "project": "",
     "group": "Books/Chapters",
@@ -1324,7 +1324,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "Other Places: Writings on Media Arts Practices in Canada",
+    "headline": "Future Imaginary Dialogue with Dr. Kim TallBear",
     "description": "“Future Imaginary Dialogue with Dr. Kim TallBear.” Deanna Brown (Ed.),  Other Places: Writings on Media Arts Practices in Canada ,  (pp.10 - 27) Toronto: Media Arts Network of Ontario. 2019.",
     "project": "",
     "group": "Books/Chapters",
@@ -1336,7 +1336,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "Afterlives of Indigenous Archives",
+    "headline": "An  Orderly Assemblage of Biases: Troubling the Monocultural Stack",
     "description": "“An  Orderly Assemblage of Biases: Troubling the Monocultural Stack .”  Ivey Schweitzer and Gordon Henry, (Eds.)   Afterlives of Indigenous Archives ,  (pp.  219 - 231) L ebanon:  University Press of New England . 2019.",
     "project": "",
     "group": "Books/Chapters",
@@ -1348,7 +1348,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "The Participatory Condition in the Digital Age",
+    "headline": "Preparations for a Haunting: Notes Towards an Indigenous Future Imaginary",
     "description": "“Preparations for a Haunting: Notes Towards an Indigenous Future Imaginary.”   Darin  Barney, Gabriella Coleman, Christine Ross, Jonathan Sterne and Tamar  Tembeck , (Eds.)  The Participatory Condition in the Digital Age , (pp.  229 – 249)  Minneapolis: University of Minnesota Press .  2016. ISBN 978-0-8166-9771-7.",
     "project": "",
     "group": "Books/Chapters",
@@ -1360,7 +1360,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2014",
     "end date": "01/01/2014",
-    "headline": "Coded Territories: Tracing Indigenous Pathways in New Media",
+    "headline": "A Better Dance and Better Prayers: Systems, Structures, and the Future Imaginary in Aboriginal New Media",
     "description": "“A Better Dance and Better Prayers: Systems, Structures, and the Future Imaginary in Aboriginal New Media.”  Steve Loft and Kerry Swanson (Eds.),  Coded Territories: Tracing Indigenous Pathways in New Media , ( pp.  48 - 77).  Calgary: University of Alberta Press ,  2014.  doi.org/10.2307/j.ctv6gqr1n .",
     "project": "",
     "group": "Books/Chapters",
@@ -1372,7 +1372,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2014",
     "end date": "01/01/2014",
-    "headline": "Community-Based Multiliteracies and Digital Media Projects: Questioning Assumptions and Exploring Realities",
+    "headline": "Grand Theft Rez: Building and Maintaining a Community for the Skins Workshops on Aboriginal Storytelling in New Media",
     "description": "Lewis, Jason Edward and Skawennati. “Grand Theft Rez: Building and Maintaining a Community for the Skins Workshops on Aboriginal Storytelling in New Media.”  Heather Pleasants and Dana E. Salter (Eds.),  Community-Based Multiliteracies and Digital Media Projects: Questioning Assumptions and Exploring Realities ,  (pp. 111 – 136).  New York: Peter Lang Publishing .  2014.  doi.org/ 10.3726/978-1-4539-1278-2 .",
     "project": "",
     "group": "Books/Chapters",
@@ -1384,7 +1384,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Second Life",
+    "headline": "TimeTraveller™: First Nations Nonverbal Communication in  Second Life",
     "description": "LaPensée,  Elizabeth  Aileen  and Jason Edward Lewis. “TimeTraveller™: First Nations Nonverbal Communication in  Second Life .”  Joshua Tanenbaum, Magy Seif el-Nasr, and Michael Nixon (Eds.),  Nonverbal Communications in Virtual Worlds: Understanding and Designing Expressive Characters ,  (pp.  94 – 1 07 ).  Pittsburgh: ETC Press .  2013.  doi.org/10.1184/R1/6686861",
     "project": "",
     "group": "Books/Chapters",
@@ -1396,7 +1396,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Understanding Machinima: Essays in Film-making in Virtual Worlds",
+    "headline": "Call it a Vision Quest: Machinima in a First Nations Context",
     "description": "LaPensée, Elizabeth Aileen  and Jason Edward Lewis. “Call it a Vision Quest: Machinima in a First Nations Context.” Jenna Ng (Ed.),   Understanding Machinima: Essays in Film-making in Virtual Worlds ,   (pp.  187 – 206)  New York: Continuum Press .  2013.",
     "project": "",
     "group": "Books/Chapters",
@@ -1408,7 +1408,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "Mobile Nation: Creating Methodologies for Mobile Platforms",
+    "headline": "(Im)mobile Nation",
     "description": "Lewis, Jason and  Maroussia Lévesque.  “(Im)mobile Nation.”  Martha Ladly and Philip Beesley (Eds.),  Mobile Nation: Creating Methodologies for Mobile Platforms ,  (pp. 141 – 147)  Toronto: Riverside Architectural Press .  2008.",
     "project": "",
     "group": "Books/Chapters",
@@ -1420,7 +1420,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2024",
     "end date": "01/01/2024",
-    "headline": "AI & Society",
+    "headline": "Abundant Intelligences: Placing AI Within Indigenous Knowledge Frameworks",
     "description": "Lewis, Jason Edward, Hēmi Whaanga and  Ceyda Yolgörmez . “Abundant Intelligences: Placing AI Within Indigenous Knowledge Frameworks.”  AI & Society  Special Issue: “Where’s the Intelligence in AI? Mattering, Placing,and De-individuating AI.” 2024.  doi.org/10.1007/s00146-024-02099-4",
     "project": "",
     "group": "Journal Articles",
@@ -1432,7 +1432,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Journal of Design and Science",
+    "headline": "Making Kin with the Machines",
     "description": "Lewis, Jason Edward, Noelani Arista, Archer Pechawis and  Suzanne Kite . “Making Kin with the Machines.”  Journal of Design and Science.  Issue 3.5,  Summer 2018.  doi.org/10.21428/bfafd97b",
     "project": "",
     "group": "Journal Articles",
@@ -1444,7 +1444,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Leonardo",
+    "headline": "The Future is Indigenous",
     "description": "Lewis, Jason Edward and Skawennati. “The Future is Indigenous.”  Leonardo  51, No. 4, (pp.  422 – 423) August 2018.  doi.org/10.1162/leon_a_01654 .",
     "project": "",
     "group": "Journal Articles",
@@ -1456,7 +1456,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Canadian Journal of Communications",
+    "headline": "Art Work as Argument",
     "description": "Lewis, Jason Edward and Skawennati. “Art Work as Argument.”   Canadian Journal of Communications,  Vol.  37 No. 1 , (Pp. 205 – 212 ) Winter 2012.  doi.org/10.22230/cjc.2012v37n1a2524 .",
     "project": "",
     "group": "Journal Articles",
@@ -1468,7 +1468,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2011",
     "end date": "01/01/2011",
-    "headline": "Journal of Game Design and Development Education, Vol",
+    "headline": "Skins: Designing Games with First Nations Youth",
     "description": "Lameman, Beth Aileen  and Jason Edward Lewis. “Skins: Designing Games with First Nations Youth.”  Journal of Game Design and Development Education, Vol. 1  N o.  1, (pp. 63 – 75)  Winter 2011 .",
     "project": "",
     "group": "Journal Articles",
@@ -1480,7 +1480,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2010",
     "end date": "01/01/2010",
-    "headline": "eedings",
+    "headline": "Skins 1.0: A Curriculum for Design Games with First Nations Youth",
     "description": "Lameman, Beth Aileen , Jason E. Lewis, and Skawennati .  “Skins 1.0: A Curriculum for Design Games with First Nations Youth.”  Proc eedings  of the International Academic Conference on the Future of Game Design and Technology ,  (pp.  282 – 290),  Association of Computing Machinery ,  N ew York.  2010 .  doi.org/10.1145/1920778.1920793 .",
     "project": "",
     "group": "Journal Articles",
@@ -1492,7 +1492,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2010",
     "end date": "01/01/2010",
-    "headline": "Digital Creativity",
+    "headline": "Post PostScript Please",
     "description": "Lewis, Jason E. and Bruno Nadeau. “Post PostScript Please.”   Digital Creativity  vol. 21, no. 1,  (pp. 18– 29)  2010.  https://doi.org/10.1080/14626261003654632 .",
     "project": "",
     "group": "Journal Articles",
@@ -1504,7 +1504,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Proceedings of the Digital Arts and Culture 2009 Conference",
+    "headline": "Writing with Complex Type",
     "description": "Lewis, Jason E. and Bruno Nadeau. “Writing with Complex Type.”  Simon Penny (Ed.),  Proceedings of the Digital Arts and Culture 2009 Conference ,  December 12 - 15 ,  Irvine: UC Irvine.  2009.  https://escholarship.org/uc/item/37n6g0ww .",
     "project": "",
     "group": "Journal Articles",
@@ -1516,7 +1516,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "Media-Space Journal: Special Issue on Futures of New Media Art",
+    "headline": "Writing-Designing-Programming",
     "description": "“Writing-Designing-Programming.”  Media-Space Journal: Special Issue on Futures of New Media Art . Vol  1 no. 1 . 2008.",
     "project": "",
     "group": "Journal Articles",
@@ -1528,7 +1528,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "Proceedings of the Digital Arts and Culture Conference 2007",
+    "headline": "The Next Text Project",
     "description": "“The Next Text Project.”  Proceedings of the Digital Arts and Culture Conference 2007 ,  September 15 – 18 .  Andrew Hutchinson  (Ed.),  (p p. 204 – 213)  Perth :  Curtin University of Technology .   2007 .",
     "project": "",
     "group": "Journal Articles",
@@ -1540,7 +1540,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2006",
     "end date": "01/01/2006",
-    "headline": "Proceedings of the 14th ACM International Conference on Multimedia",
+    "headline": "Taking Sides: Dynamic Text and Hip-Hop Performance",
     "description": "Lewis, Jason and  Yannick Assogba . “Taking Sides: Dynamic Text and Hip-Hop Performance.”  Proceedings of the 14th ACM International Conference on Multimedia .  Oct .  23-27. A CM  Press. 2006.",
     "project": "",
     "group": "Journal Articles",
@@ -1552,7 +1552,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2005",
     "end date": "01/01/2005",
-    "headline": "Proceedings of the Digital Arts and Culture Conference",
+    "headline": "Inter-inactivity",
     "description": "Lewis, Jason and  Bruno Nadeau . “Inter-inactivity.”  Proceedings of the Digital Arts and Culture Conference . Copenhagen: IT University of Copenhagen . Dec. 1 – 6,  2005.",
     "project": "",
     "group": "Journal Articles",
@@ -1564,7 +1564,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2005",
     "end date": "01/01/2005",
-    "headline": "Proceedings of the 6th International Workshop on Gesture in Human-Computer Interaction and Simulation",
+    "headline": "SenseText: Gesture-based Text Visualization",
     "description": "Lewis, Jason and  Frank Tsonis . “SenseText: Gesture-based Text Visualization.”  Proceedings of the 6th International Workshop on Gesture in Human-Computer Interaction and Simulation .   Sylvie Gibet, et al. (Eds.),  Berder Island, France , Frankfurt: Spring Verlag .    May 18-20,  2005.",
     "project": "",
     "group": "Journal Articles",
@@ -1576,7 +1576,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2004",
     "end date": "01/01/2004",
-    "headline": "Proceedings of COSIGN Conference on Computational Semiotics",
+    "headline": "Alien Letter Forms: An Ecosystem for Evolutionary Letterforms",
     "description": "Lewis, Jason and  David Bouchard . “Alien Letter Forms: An Ecosystem for Evolutionary Letterforms.”  Proceedings of COSIGN Conference on Computational Semiotics,   Andy Clarke (Ed.) , (p p.  82 – 86),  Split: University of Split,  Sept. 4 – 16.  2004.",
     "project": "",
     "group": "Journal Articles",
@@ -1588,7 +1588,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/1999",
     "end date": "01/01/1999",
-    "headline": "Proceedings of the",
+    "headline": "ActiveText: A Method for Creating Dynamic and  Interactive  Texts",
     "description": "Lewis, Jason and Alex Weyers. \" ActiveText: A Method for Creating Dynamic and  Interactive  Texts . \" In  Proceedings of the  User Interface Software and Technology Conference  (UIST) ,  Asheville, North Carolina . 1999.",
     "project": "",
     "group": "Journal Articles",
@@ -1600,7 +1600,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Interaction 23",
+    "headline": "Future Imaginaries of Abundant Intelligences",
     "description": "“Future Imaginaries of Abundant Intelligences.”  Interaction 23 . Zürich, Switzerland. Keynote. 2 March, 2023.",
     "project": "",
     "group": "Keynotes",
@@ -1636,7 +1636,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "PIVOT 2021 Dismantling/Reassembling Tools for Alternative Futures",
+    "headline": "22nd-Century Proto-typing",
     "description": "“22nd-Century Proto-typing.” in the  PIVOT 2021 Dismantling/Reassembling Tools for Alternative Futures . Pluriversal Design Special Interest Group of the Design Research Society and the Public Visualization Lab of OCAD University.  Toronto, ON. Keynote. Sept. 24, 2021.",
     "project": "",
     "group": "Keynotes",
@@ -1660,7 +1660,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "Transmediale Festival",
+    "headline": "Expansive, Embracing, Evolving - Looking Beyond Impoverished Intelligences",
     "description": "“Expansive, Embracing, Evolving - Looking Beyond Impoverished Intelligences.” Marshall McLuhan Lecture.  Transmediale Festival . Berlin, Germany. Jan. 23, 2021.",
     "project": "",
     "group": "Keynotes",
@@ -1684,7 +1684,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2020",
     "end date": "01/01/2020",
-    "headline": "Technodigenous Virtual Gathering",
+    "headline": "The Future Imaginary: Strategies for Building Indigenous Technologies",
     "description": "“The Future Imaginary: Strategies for Building Indigenous Technologies.”  Technodigenous Virtual Gathering.  Vancouver, B.C .    Opening speaker.  Oct. 6, 2020.",
     "project": "",
     "group": "Keynotes",
@@ -1708,7 +1708,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "MUTEK - Music, Sound and New Technologies",
+    "headline": "Making Kin with the Machines",
     "description": "Suzanne Kite.  “Making Kin with the Machines”.  MUTEK - Music, Sound and New Technologies,  Keynote speaker .  Montreal, QC.  Aug. 21, 2019.",
     "project": "",
     "group": "Keynotes",
@@ -1720,7 +1720,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Transnational Materialities",
+    "headline": "White Supremacy It",
     "description": "“White Supremacy It's Not Just for People Anymore!”  Transnational Materialities.  Association of Internet Researchers (AoIR) UQAM, Montreal, QC.  Keynote. Oct. 10, 2018.",
     "project": "",
     "group": "Keynotes",
@@ -1936,7 +1936,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "Video games, AI, Oh My!",
+    "headline": "Aina Paikai.  “Video games, AI, Oh My!",
     "description": "Lewis, Jason Edward, Chris Kahunaha, Eril Lau and ‘Aina Paikai.  “Video games, AI, Oh My!”, Panel in the Science Fiction Research Association Annual Conference, Chaminade University, Honolulu, HI. June 21-24, 2019.",
     "project": "",
     "group": "Conference Presentations",
@@ -2188,7 +2188,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Art Culture Ideas",
+    "headline": "A Brief (Media) History of the Indigenous Future",
     "description": "“A Brief (Media) History of the Indigenous Future.”  Art Culture Ideas  54 (pp. 36 – 49),  PUBLIC Journal.  Winter 2016.",
     "project": "",
     "group": "Invited Publications",
@@ -2200,7 +2200,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Interactions, Journal of the Computer Human Interaction SIG of the Association for Computing Machinery",
+    "headline": "Time Travelers, Flying Heads, and Second Lives: Designing Communal Stories",
     "description": "“Time Travelers, Flying Heads, and Second Lives: Designing Communal Stories.”  Interactions, Journal of the Computer Human Interaction SIG of the Association for Computing Machinery   19,  no.  2 , (pp. 20-23).  2012.",
     "project": "",
     "group": "Invited Publications",
@@ -2212,7 +2212,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "No More Potlucks",
+    "headline": "Trespassing | Transgression",
     "description": "Lévesque, Maroussia , and Jason Lewis. “Trespassing | Transgression.”  No More Potlucks  1, no. 2 .  Winter 2009.",
     "project": "",
     "group": "Invited Publications",
@@ -2224,7 +2224,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "Wi: Journal of Mobile Media",
+    "headline": "What Do We Lose When We Make People Disappear? The Passage Oublié Project",
     "description": "Lévesque, Maroussia,  and Jason Lewis . “What Do We Lose When We Make People Disappear? The Passage Oublié Project.”  Wi: Journal of Mobile Media  1, no. 1.  Spring 2008.",
     "project": "",
     "group": "Invited Publications",
@@ -2236,7 +2236,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2006",
     "end date": "01/01/2006",
-    "headline": "Wi: Journal of the Mobile Digital Commons Network",
+    "headline": "p2P: Cityspeak",
     "description": "Lévesque, Maroussia ,  Lucie Bélanger, and  Jason Lewis . “p2P: Cityspeak’s Reconfiguration of Public Media Space.”  Wi: Journal of the Mobile Digital Commons Network   1,  no.  1 .  Fall 2006.",
     "project": "",
     "group": "Invited Publications",
@@ -2248,7 +2248,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2005",
     "end date": "01/01/2005",
-    "headline": "Cultural Survival Quarterly",
+    "headline": "Aboriginal Territories in Cyberspace",
     "description": "Lewis, Jason and Skawennati Tricia Fragnito . “Aboriginal Territories in Cyberspace.”  Cultural Survival Quarterly   29 , no . 2 (pp. 29- 3 1).   Summer 2005 .",
     "project": "",
     "group": "Invited Publications",
@@ -2260,7 +2260,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2004",
     "end date": "01/01/2004",
-    "headline": "BlackFlash",
+    "headline": "Terra Nullius, Terra Incognit a  : Aboriginal Reservations About Cyberspace",
     "description": "“Terra Nullius, Terra Incognit a  : Aboriginal Reservations About Cyberspace.”  BlackFlash   22 ,  no. 1 .  Spring 2004.",
     "project": "",
     "group": "Invited Publications",
@@ -2272,7 +2272,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2026",
     "end date": "01/01/2026",
-    "headline": "AI and Pacific Knowledges",
+    "headline": "ili, Katerina Teaiwa. “AI and Pacific Knowledges",
     "description": "Kruse, Line-Noue Memea, Jason Edward Lewis, Gillian Duenas, Tevita O. Ka‘ili, Katerina Teaiwa. “AI and Pacific Knowledges”. Panel. Oceania Pacific Studies Association Conference. Honolulu, HI. January 29, 2026.",
     "project": "",
     "group": "Invited Lectures",
@@ -2428,7 +2428,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "As for Protocols—To Hold Things Together",
+    "headline": "Hél čhaŋkú kiŋ ȟpáye (There lies the road). A Dialogue About Making Art in a Good Way",
     "description": "\"Hél čhaŋkú kiŋ ȟpáye (There lies the road). A Dialogue About Making Art in a Good Way,\"  As for Protocols—To Hold Things Together  Symposium. B asis voor actuele kunst, Utrecht, and the Vera List Center for Art and Politics, The New School, New York, NY. Symposium. May 20, 2021.",
     "project": "",
     "group": "Invited Lectures",
@@ -2788,7 +2788,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Converge 2017",
+    "headline": "The Initiative for Indigenous Futures",
     "description": "“The Initiative for Indigenous Futures.”  Converge 2017 , Universities Canada,   Ottawa, ON. Feb .  5, 2017 .",
     "project": "",
     "group": "Invited Lectures",
@@ -3016,7 +3016,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Société",
+    "headline": "The Future Imaginary",
     "description": "“The Future Imaginary.” TEDxMontreal 2013.  Société   des   Arts   Technologiques ,   Montréal,  QC.  Sept. 14,  2013.",
     "project": "",
     "group": "Invited Lectures",
@@ -3760,7 +3760,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Montreal Gazette",
+    "headline": "Building a future in which indigenous people are present and thriving",
     "description": "“Building a future in which indigenous people are present and thriving.” With Skawennati.   Montreal Gazette , Montreal, QC. April 28, 2016.",
     "project": "",
     "group": "Op-Ed",
@@ -5716,7 +5716,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "The Technically Human Podcast",
+    "headline": "Indigeneity in the Digital Age",
     "description": "Bal, Ravtosh (host). “Indigeneity in the Digital Age.”  The Technically Human Podcast  (podcast),  Ethical Technology Initiative at California Polytechnic State University . May 12, 2023",
     "project": "",
     "group": "Press Coverage",
@@ -5728,7 +5728,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2023",
     "end date": "01/01/2023",
-    "headline": "Native America Calling",
+    "headline": "Indigenous interactions with artificial intelligence",
     "description": "Spruce, Shawn (host). “Indigenous interactions with artificial intelligence.”  Native America Calling.  Jan. 23, 2023",
     "project": "",
     "group": "Press Coverage",
@@ -5740,7 +5740,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "Digital Earth",
+    "headline": "Break the Digital Monoculture: Interview with Jason Edward Lewis",
     "description": "Sejbaek, Anna (host). “Break the Digital Monoculture: Interview with Jason Edward Lewis.”  Digital Earth.  Oct. 14, 2021  Drage, Eleanor and Kerry Mackereth (hosts). “Indigenous Protocols.” The Good Robot (podcast). tbd",
     "project": "",
     "group": "Press Coverage",
@@ -5764,7 +5764,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "Radical AI",
+    "headline": "Indigenous AI 101",
     "description": "Doyle-Burke, Dylan and Jessie Smith (hosts). “Indigenous AI 101.”  Radical AI  (podcast). Sept. 8, 2021.",
     "project": "",
     "group": "Press Coverage",
@@ -5788,7 +5788,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2021",
     "end date": "01/01/2021",
-    "headline": "Spark",
+    "headline": "Indigenous Futurisms",
     "description": "Young, Norah (host). “Indigenous Futurisms.” Kim Kaschor (host).  Spark , CBC. Toronto/Montreal. Jan. 8, 2021.",
     "project": "",
     "group": "Press Coverage",
@@ -5800,7 +5800,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2020",
     "end date": "01/01/2020",
-    "headline": "Interdependence",
+    "headline": "Protocols, Permissions, and Non-Human Communication with the Indigenous Protocol and Artificial Intelligence Working Group",
     "description": "Dryhurst, Mat and Holly Herndon (hosts). “Protocols, Permissions, and Non-Human Communication with the Indigenous Protocol and Artificial Intelligence Working Group.” With  Suzanne Kite .  Interdependence  (podcast). Dec. 22, 2020.",
     "project": "",
     "group": "Press Coverage",
@@ -5812,7 +5812,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2020",
     "end date": "01/01/2020",
-    "headline": "Science Friction",
+    "headline": "Machines as kin or the new colonisers? Indigenous tech revolutionaries rethinking A.I",
     "description": "Mitchell, Natasha (host). “Machines as kin or the new colonisers? Indigenous tech revolutionaries rethinking A.I.” With Angie Abdilla.   Science Friction  (podcast). November 15, 2020.",
     "project": "",
     "group": "Press Coverage",
@@ -5824,7 +5824,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2020",
     "end date": "01/01/2020",
-    "headline": "Are You a Robot?",
+    "headline": "Making Kin with the Machines",
     "description": "Brinkman, Demetrios (host). “Making Kin with the Machines”.  Are You a Robot?  (podcast). October 8, 2020.",
     "project": "",
     "group": "Press Coverage",
@@ -5848,7 +5848,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "Le Devoir",
+    "headline": "Concevoir l",
     "description": "“Concevoir l’intelligence artificielle autrement.”  Le Devoir.  June 2019.  https://www.ledevoir.com/contenu-commandite/556637/concevoir-l-intelligence-artificielle-autrement .",
     "project": "",
     "group": "Press Coverage",
@@ -5860,7 +5860,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "Concordia’s Jason Edward Lewis wants ethical artificial intelligence with an Indigenous worldview",
+    "headline": "Concordia",
     "description": "Murdoch, Andy. “Concordia’s Jason Edward Lewis wants ethical artificial intelligence with an Indigenous worldview.” Concordia University News. April 29, 2019.  http://www.concordia.ca/news/stories/2019/04/30/concordias-jason-lewis-wants-ethical-artificial-intelligence-with-an-indigenous-worldview.html",
     "project": "",
     "group": "Press Coverage",
@@ -5872,7 +5872,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2019",
     "end date": "01/01/2019",
-    "headline": "APTN News",
+    "headline": "Staking a Claim in a Virtual World",
     "description": "APTN News . “Staking a Claim in a Virtual World.” Video interview,  YouTube , 2:24, January 14, 2019.  https://youtu.be/5uayGAhW_Pg  .",
     "project": "",
     "group": "Press Coverage",
@@ -5884,7 +5884,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "High Country News",
+    "headline": "Indigenous peoples are decolonizing virtual worlds",
     "description": "Keating, Cecilia. “Indigenous peoples are decolonizing virtual worlds.”  High Country News . September 6, 2018.",
     "project": "",
     "group": "Press Coverage",
@@ -5896,7 +5896,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "COHDScast",
+    "headline": "Jason Edward Lewis",
     "description": "Couture, Sadie. “Jason Edward Lewis”.  COHDScast , Concordia Centre for Oral History and   Digital Storytelling. June 12, 2018.",
     "project": "",
     "group": "Press Coverage",
@@ -5908,7 +5908,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Voices of VR Podcast",
+    "headline": "Indigenous Futurism & Aboriginal Territories in Cyberspace with Jason Edward Lewis",
     "description": "Bye, Kent. “Indigenous Futurism & Aboriginal Territories in Cyberspace with Jason Edward Lewis”.  Voices of VR Podcast . June 1, 2018.",
     "project": "",
     "group": "Press Coverage",
@@ -5920,7 +5920,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Canada Land Show",
+    "headline": "The Sun Never Sets on AbTeC Island",
     "description": "Pabani, Aliya and Allie Graham. “The Sun Never Sets on AbTeC Island.”  Canada Land Show.  May 3, 2018.",
     "project": "",
     "group": "Press Coverage",
@@ -5932,7 +5932,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Le Devoir",
+    "headline": "La r é conciliation peut-elle se faire par les arts?",
     "description": "Baillargeon, St é phane and Catherine Lalonde. “La r é conciliation peut-elle se faire par les arts?”  Le Devoir.  February 10, 2018.",
     "project": "",
     "group": "Press Coverage",
@@ -5944,7 +5944,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Concordia University Magazine",
+    "headline": "What Does the Future Hold for Indigenous Communities?",
     "description": "Bartlett, Daniel. “What Does the Future Hold for Indigenous Communities?”  Concordia University Magazine  (Winter 2018) 36 - 39.",
     "project": "",
     "group": "Press Coverage",
@@ -5968,7 +5968,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Toronto Star",
+    "headline": "ImagineNATIVE gathers dark VR visions of the future",
     "description": "Whyte, Murray. “ImagineNATIVE gathers dark VR visions of the future.”  Toronto Star.  October 17, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -5980,7 +5980,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Archee : cyberart et cyberculture artistique",
+    "headline": "Artist Interview",
     "description": "Létourneau, André Eric and Cynthia Noury. “Artist Interview.”  Archee : cyberart et cyberculture artistique , September  1,  2017.",
     "project": "",
     "group": "Press Coverage",
@@ -5992,7 +5992,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Bytemarks Café",
+    "headline": "Games and Culture",
     "description": "Lum, Burt and Ryan Ozawa. “Games and Culture.”  Bytemarks Café , Hawiian Public Radio.  August 16, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6004,7 +6004,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "The Globe and Mail",
+    "headline": "Indigenous artists create virtual-reality vision of a future Canada",
     "description": "McGinn, Dave. “Indigenous artists create virtual-reality vision of a future Canada.”  The Globe and Mail.  June 29, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6016,7 +6016,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "CBC News",
+    "headline": "Your Guide to Montreal",
     "description": "Ocelotl Aquirre, Oscar and Nahka Bertrand, Agathe Tournoux. “Your Guide to Montreal’s Hidden Indigenous Character.”  CBC News.  May 28, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6028,7 +6028,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Kamehameha Schools",
+    "headline": "A New Era of Storytelling Blends Technology, Culture",
     "description": "Galdeira, Kyle. “A New Era of Storytelling Blends Technology, Culture.”  Kamehameha Schools.  May 18, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6040,7 +6040,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Le Devoir",
+    "headline": "Imaginer son avenir",
     "description": "Rettino-Parazelli, Karl. “Imaginer son avenir.”  Le Devoir.  May 1, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6052,7 +6052,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "Hex_Wave",
+    "headline": "Episode 3 - Jason Lewis",
     "description": "Létourneau, André Éric. “Episode 3 - Jason Lewis.”  Hex_Wave  by  Hexagram.  April 19, 2017.",
     "project": "",
     "group": "Press Coverage",
@@ -6064,7 +6064,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "The Link",
+    "headline": "Playing in a Decolonized World",
     "description": "Guevara, Emilee. “Playing in a Decolonized World.”  The Link , November 14, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6088,7 +6088,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Concordia University Magazine",
+    "headline": "A Meeting Ground Without Borders",
     "description": "Lejtenyi, Patrick. “A Meeting Ground Without Borders.”  Concordia University Magazine  ( Fall 2016): 51 - 55.",
     "project": "",
     "group": "Press Coverage",
@@ -6100,7 +6100,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "The Atlantic Monthly",
+    "headline": "The Difficult History of Indigenous People in Video Games",
     "description": "Delamont, Kieran. “The Difficult History of Indigenous People in Video Games.”  The Atlantic Monthly , June  2,  2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6112,7 +6112,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "La Presse",
+    "headline": "Revendications territoriales…dans le cyberspace",
     "description": "Benessaieh, Karim. “Revendications territoriales…dans le cyberspace.”  La Presse , May 8, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6124,7 +6124,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Montreal Gazette",
+    "headline": "Milieux Institute: Concordia",
     "description": "Seidman, Karen. “Milieux Institute: Concordia’s cutting-edge hub.”  Montreal Gazette , April 1, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6136,7 +6136,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Aboriginal Peoples Television Network",
+    "headline": "Indigenous students call for more cultural spaces at Concordia University",
     "description": "Fennario, Tom. “Indigenous students call for more cultural spaces at Concordia University.”  Aboriginal Peoples Television Network . April 11, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6148,7 +6148,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Muskrat Magazine",
+    "headline": "Indigenous Video Games You Should Download",
     "description": "“Indigenous Video Games You Should Download.”  Muskrat Magazine , April 1, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6160,7 +6160,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Aboriginal Peoples Television Network",
+    "headline": "Indigenous students call for more cultural spaces at Concordia University",
     "description": "Fennario, Tom. “Indigenous students call for more cultural spaces at Concordia University.”  Aboriginal Peoples Television Network .   April  11,  2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6172,7 +6172,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "The Eastern Door",
+    "headline": "Students petition for more Native engagement",
     "description": "Deer, Jessica. “Students petition for more Native engagement.”  The Eastern Door . Kahnawake  Mohawk Territory, QC. March 31, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6184,7 +6184,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Al Jazeera",
+    "headline": "Reimagining Native Americans in the Arts",
     "description": "“Reimagining Native Americans in the Arts”.  Al Jazeera .   March 22, 2016. (TimeTraveller™)",
     "project": "",
     "group": "Press Coverage",
@@ -6196,7 +6196,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "ICI Montreal",
+    "headline": "Entre inquiétude et espoir: des Autochtones dessinent leur avenir",
     "description": "Provost, Anne-Marie. “Entre inquiétude et espoir: des Autochtones dessinent leur avenir.”  ICI Montreal ,  CBC .   March 7, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6208,7 +6208,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "VICE du Jour Canada",
+    "headline": "Initiative for Indigenous Futures, la présence autochtone dans l",
     "description": "“Initiative for Indigenous Futures, la présence autochtone dans l’avenir.”  VICE du Jour Canada . February 22 ,  2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6220,7 +6220,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Concordian creates visuals for Elton John’ latest",
+    "headline": "Concordian creates visuals for Elton John",
     "description": "Gibbons, James. “Concordian creates visuals for Elton John’ latest.” Concordia University. February 5, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6232,7 +6232,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Edge North",
+    "headline": "Imagining Indigenous Futures",
     "description": "Wohlberg, Megan. “Imagining Indigenous Futures.”  Edge North.   January 29, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6244,7 +6244,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Fully Empowered ‘Digital Natives’",
+    "headline": "Fully Empowered ‘Digital Natives",
     "description": "“Fully Empowered ‘Digital Natives’.” Concordia University Homepag e .  2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6256,7 +6256,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2016",
     "end date": "01/01/2016",
-    "headline": "Fully Empowered ‘Digital Natives’: A new Concordia-led partnership aims to equip Aboriginal youth with tools to shape their future",
+    "headline": "Fully Empowered ‘Digital Natives",
     "description": "Durand, Christian. “Fully Empowered ‘Digital Natives’: A new Concordia-led partnership aims to equip Aboriginal youth with tools to shape their future.” Concordia University. January 25, 2016.",
     "project": "",
     "group": "Press Coverage",
@@ -6292,7 +6292,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2014",
     "end date": "01/01/2014",
-    "headline": "Macleans",
+    "headline": "University Rankings 2015: Methodology",
     "description": "Dwyer, Mary. “University Rankings 2015: Methodology.”  Macleans.  November 6, 2014.",
     "project": "",
     "group": "Press Coverage",
@@ -6304,7 +6304,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2014",
     "end date": "01/01/2014",
-    "headline": "Square Cylinder",
+    "headline": "Poetic Codings @ SJICA",
     "description": "Lautamo, Mikko. “Poetic Codings @ SJICA.”  Square Cylinder . August 6, 2014.",
     "project": "",
     "group": "Press Coverage",
@@ -6316,7 +6316,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Two Row Times",
+    "headline": "Artist Profile: Skawennati – Kahnawake Mohawk",
     "description": "Garlow, Nahnda. “Artist Profile: Skawennati – Kahnawake Mohawk.”  Two Row Times.  December 18, 2013. (Aboriginal Territories in Cyberspace.)",
     "project": "",
     "group": "Press Coverage",
@@ -6328,7 +6328,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Toronto Star",
+    "headline": "Ghost Dance at Ryerson Image Centre: outrage for the past, hope for the future",
     "description": "Whyte, Murray. “Ghost Dance at Ryerson Image Centre: outrage for the past, hope for the future.”  Toronto Star . October 12, 2013.",
     "project": "",
     "group": "Press Coverage",
@@ -6340,7 +6340,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Aboriginal Peoples Television Network",
+    "headline": "Learning to design new worlds",
     "description": "Fennario, Tom. “Learning to design new worlds”.  Aboriginal Peoples Television Network . APTN Montreal. June 19, 2013.",
     "project": "",
     "group": "Press Coverage",
@@ -6352,7 +6352,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Montreal Gazette",
+    "headline": "Read a life story from the Human Library",
     "description": "Scott, Marian. “Read a life story from the Human Library.”  Montreal Gazette.   J anuary 25, 2013.",
     "project": "",
     "group": "Press Coverage",
@@ -6364,7 +6364,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "Montreal Gazette",
+    "headline": "The Human Library",
     "description": "Mennie, James. “The Human Library.”  Montreal Gazette.  January 25, 2013. Audio interview.",
     "project": "",
     "group": "Press Coverage",
@@ -6376,7 +6376,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Premiere Chaine",
+    "headline": "Un premiere jeu video Mohawk réalisé par des autochtones de Kahnawake",
     "description": "“Un premiere jeu video Mohawk réalisé par des autochtones de Kahnawake”. Nouvelles Regionales de Montreal,  Premiere Chaine , Radio-Canada Montreal. Louise Rousseau (Producer), Eve Payette (Reporter). October 20, 2012.",
     "project": "",
     "group": "Press Coverage",
@@ -6388,7 +6388,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "CTV News",
+    "headline": "Aboriginal video game puts modern twist on tradition of storytelling",
     "description": "“Aboriginal video game puts modern twist on tradition of storytelling”.  CTV News , CTV Montreal. Colin Grant (Producer), Aphrodite Salas (Reporter). Oct ober 20,  2012.",
     "project": "",
     "group": "Press Coverage",
@@ -6400,7 +6400,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Click",
+    "headline": "Poetry for Smartphones",
     "description": "“Poetry for Smartphones”,  Click , BBC, London. Colin Grant (Producer), Gareth Mitchell (Host). July 10, 2012.",
     "project": "",
     "group": "Press Coverage",
@@ -6412,7 +6412,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Concordia Magazine",
+    "headline": "The Place to Be is Here",
     "description": "“The Place to Be is Here.”  Concordia Magazine , Concordia University, Montreal, QC. May 7, 2012.",
     "project": "",
     "group": "Press Coverage",
@@ -6424,7 +6424,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Spark",
+    "headline": "Electric Powwows, Speaking Indigenously, and Claiming Cyberspace",
     "description": "“Electric Powwows, Speaking Indigenously, and Claiming Cyberspace.” Jodie Martinson (Producer), Norah Young (Host).  Spark , CBC. Toronto/Montreal. March 3, 2012.",
     "project": "",
     "group": "Press Coverage",
@@ -6436,7 +6436,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2011",
     "end date": "01/01/2011",
-    "headline": "Thinking Out Loud",
+    "headline": "2067: Indigenous Futures",
     "description": "Pelletier, Francine. “2067: Indigenous Futures.”  Thinking Out Loud.  November 27, 2011.",
     "project": "",
     "group": "Press Coverage",
@@ -6448,7 +6448,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2011",
     "end date": "01/01/2011",
-    "headline": "Aboriginal Voices Radio",
+    "headline": "Aboriginal Territories in Cyberspace",
     "description": "“Aboriginal Territories in Cyberspace.” Judith Schuyler (Producer).  Aboriginal Voices Radio , Ottawa, ON. 27 March 2011.",
     "project": "",
     "group": "Press Coverage",
@@ -6460,7 +6460,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Concordia University Magazine",
+    "headline": "From First Nations to Second Life",
     "description": "Di Giorgio, Anna. “From First Nations to Second Life.”  Concordia University Magazine . Concordia University, Montreal, QC. Spring 2009 .",
     "project": "",
     "group": "Press Coverage",
@@ -6472,7 +6472,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Concordia Journal",
+    "headline": "Taking Tradition to Cyberspace",
     "description": "Herland, Karen. “Taking Tradition to Cyberspace.”  Concordia Journal  5, no. 1. Concordia University, Montreal, QC. September 3, 2009.",
     "project": "",
     "group": "Press Coverage",
@@ -6484,7 +6484,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Concordia University Magazine",
+    "headline": "From First Nations to Second Life",
     "description": "Di Giorgio, Anna. “From First Nations to Second Life . ”  Concordia University Magazine . Concordia University, Montreal, QC. Spring 2009 .",
     "project": "",
     "group": "Press Coverage",
@@ -6496,7 +6496,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "Musiques et Cultures Digitales",
+    "headline": "Elektra: Carte blanche a la Maison des Métalos",
     "description": "“Elektra: Carte blanche a la Maison des Métalos.”  Musiques et Cultures Digitales  49, Paris, France. November 2008.",
     "project": "",
     "group": "Press Coverage",
@@ -6508,7 +6508,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "Liberation.fr",
+    "headline": "Elektra, invite fusionnel de la Maison des Métalos",
     "description": "“Elektra, invite fusionnel de la Maison des Métalos .”   Liberation.fr , Paris, France.  September  25, 2008.",
     "project": "",
     "group": "Press Coverage",
@@ -6544,7 +6544,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "National Post",
+    "headline": "Flights of Fancy",
     "description": "“Flights of Fancy.” Christopher De Wolf,  National Post , Toronto, ON. 7 August 2007.",
     "project": "",
     "group": "Press Coverage",
@@ -6568,7 +6568,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "The Star.com",
+    "headline": "Airport Art",
     "description": "“Airport Art.” Peter Goddard,  The Star.com , Toronto, ON. 12 July 2007.",
     "project": "",
     "group": "Press Coverage",
@@ -6580,7 +6580,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "A Review of Everything You Thought We’d Forgotten",
+    "headline": "Romancing the Geek:  A Review of Everything You Thought We",
     "description": "“Romancing the Geek:  A Review of Everything You Thought We’d Forgotten. ” Skawennati Fragnito,  BlackFlash  24. no. 3   (Spring/Summer 2007).",
     "project": "",
     "group": "Press Coverage",
@@ -6592,7 +6592,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "Montreal Gazette",
+    "headline": "Vitalsigns",
     "description": "“Vitalsigns.” Christopher DeWolf,  Montreal Gazette , Montreal, Quebec. 19 April 2007.",
     "project": "",
     "group": "Press Coverage",
@@ -6604,7 +6604,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "CBC National Radio",
+    "headline": "5 á 6",
     "description": "“5 á 6.” Katherine Gomby (Producer).  CBC National Radio , Montreal, Quebec. 27 January 2007.",
     "project": "",
     "group": "Press Coverage",
@@ -6616,7 +6616,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2007",
     "end date": "01/01/2007",
-    "headline": "Montreal Mirror",
+    "headline": "NoiseMakers 2007: Digital graffitist",
     "description": "“NoiseMakers 2007: Digital graffitist.”  Montreal Mirror.  4 January 2007.",
     "project": "",
     "group": "Press Coverage",
@@ -6652,7 +6652,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2006",
     "end date": "01/01/2006",
-    "headline": "Concordia Journal",
+    "headline": "Writing Material: Text-messaging as public art",
     "description": "“Writing Material: Text-messaging as public art.”  Concordia Journal  1, no. 11. 6 April 2006.",
     "project": "",
     "group": "Press Coverage",
@@ -6664,7 +6664,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2005",
     "end date": "01/01/2005",
-    "headline": "Concordia Thursday Report",
+    "headline": "Mobile Digital Commons Net explores politics and poetics",
     "description": "“Mobile Digital Commons Net explores politics and poetics.”  Concordia Thursday Report  21, no. 6. 19 May 2005.",
     "project": "",
     "group": "Press Coverage",
@@ -6676,7 +6676,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2004",
     "end date": "01/01/2004",
-    "headline": "Concordia’s Thursday Report",
+    "headline": "Online community for handheld technology",
     "description": "“Online community for handheld technology.”  Concordia’s Thursday Report  29, no. 3. 7 October 2004.",
     "project": "",
     "group": "Press Coverage",
@@ -6688,7 +6688,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2000",
     "end date": "01/01/2000",
-    "headline": "artbyte",
+    "headline": "Text Tunes",
     "description": "“Text Tunes.”  artbyte,  November-December 2000.",
     "project": "",
     "group": "Press Coverage",
@@ -6712,7 +6712,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2018",
     "end date": "01/01/2018",
-    "headline": "Comparative Litera",
+    "headline": "Remedial Materialism: What Can Comparative Literature and Electronic   Literature Learn from Each Other?",
     "description": "Zeurn , John David. “Remedial Materialism: What Can Comparative Literature and Electronic   Literature Learn from Each Other?”  Comparative Litera ture  70, no. 3 (2018): 295–316.",
     "project": "",
     "group": "Academic Reviews",
@@ -6724,7 +6724,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "OQDOC Bulletin",
+    "headline": "Digital Ephemera and the Digital as Ephemera: on Jason Edward Lewis",
     "description": "Reed, Alan. “ Digital Ephemera and the Digital as Ephemera: on Jason Edward Lewis’ s  P.o.E.M.M. Project.”   M OQDOC Bulletin  26, no. 2 (2017):  14 – 17.",
     "project": "",
     "group": "Academic Reviews",
@@ -6736,7 +6736,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2017",
     "end date": "01/01/2017",
-    "headline": "BC Studies: The British Columbia Quarterly",
+    "headline": "Coded Territories: Tracing Indigenous Pathways in New Media. Eds. Steve Loft & Kerry Swanson. Calgary: University of Alberta Press, 2014. [Review]",
     "description": "McMahon, Rob. “Coded Territories: Tracing Indigenous Pathways in New Media. Eds. Steve Loft & Kerry Swanson. Calgary: University of Alberta Press, 2014. [Review].”  BC Studies: The British Columbia Quarterly  193 (Spring 2017).",
     "project": "",
     "group": "Academic Reviews",
@@ -6784,7 +6784,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2012",
     "end date": "01/01/2012",
-    "headline": "Native North American Art",
+    "headline": "Saying Goodbye",
     "description": "Berlo, Janet Catherine, and Ruth B Phillips.  Native North American Art.  Oxford; New York:   Oxford  U niversity  P ress, 2014. (“Saying Goodbye,” production still from   TimeTraveller ™,  Episode 5, 2012 and discussion)",
     "project": "",
     "group": "Academic Reviews",
@@ -6796,7 +6796,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2013",
     "end date": "01/01/2013",
-    "headline": "In Comparative Textual Media: Transforming the Humanities in the Postprint Era",
+    "headline": "TXTual Practice",
     "description": "Raley, Rita. “TXTual Practice.”  In Comparative Textual Media: Transforming the Humanities in the Postprint Era , edited by  N. Katherine Hayles and Jessica Pressman .  Minneapolis: University of Minnesota Press, 2013.",
     "project": "",
     "group": "Academic Reviews",
@@ -6820,7 +6820,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2011",
     "end date": "01/01/2011",
-    "headline": "Contemporary Literature",
+    "headline": "Living Letterforms: The Ecological Turn in Contemporary Digital Poetics",
     "description": "Raley, Rita. “Living Letterforms: The Ecological Turn in Contemporary Digital Poetics.” In   Contemporary Literature  52, no 4. Madison: University of Wisconsin Press  ( Winter 2011).",
     "project": "",
     "group": "Academic Reviews",
@@ -6832,7 +6832,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2011",
     "end date": "01/01/2011",
-    "headline": "The Mobile Audience: Media Art and Mobile Technologies 5",
+    "headline": "Urban Screens as the Visualization Zone of the City",
     "description": "Struppek, Mirjam. \"Urban Screens as the Visualization Zone of the City’s Invisible   Communication Sphere.\"  The Mobile Audience: Media Art and Mobile Technologies 5  (2011): 160 – 161.",
     "project": "",
     "group": "Academic Reviews",
@@ -6868,7 +6868,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Urban Screen",
+    "headline": "Interactive Media Artworks for Public Space: The Potential of Art to   Influence Consciousness and Behaviour in Relation to Public Spaces",
     "description": "Bounegru, Liliana. “Interactive Media Artworks for Public Space: The Potential of Art to   Influence Consciousness and Behaviour in Relation to Public Spaces.” In  Urban Screen s  Reader,  edited by  Scott McQuire, Meredith Martin, and Sabine Niederer .  Amsterdam:   Institute for Network Cultures ,  2009.",
     "project": "",
     "group": "Academic Reviews",
@@ -6880,7 +6880,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Literary Art in Digital Performance: Case Studies in New",
+    "headline": "List(en)ing Post",
     "description": "Raley, Rita. “List(en)ing Post.” In  Literary Art in Digital Performance: Case Studies in New   Media Art and Criticism , edited by  Francisco J. Ricardo .  New York:  Continuum . 2009.",
     "project": "",
     "group": "Academic Reviews",
@@ -6892,7 +6892,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "The Present and Future of Humanist Inquiry in the",
+    "headline": "Mobile Media Poetics",
     "description": "Raley, Rita. “Mobile Media Poetics.” In  The Present and Future of Humanist Inquiry in the   Digital Field , Digital Arts and Culture 2009, Arts Computation Engineering, UC Irvine   (December 12, 2009).",
     "project": "",
     "group": "Academic Reviews",
@@ -6916,7 +6916,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2009",
     "end date": "01/01/2009",
-    "headline": "Electronic Book Review",
+    "headline": "Where Are We Now?: Orienteering in the Electronic Literature Collection, vol. 2",
     "description": "Zuern, John. “Where Are We Now?: Orienteering in the Electronic Literature Collection, vol. 2.”  Electronic Book Review , 2009. www.electronicbookreview.com/thread/electropoetics/zaftig",
     "project": "",
     "group": "Academic Reviews",
@@ -6928,7 +6928,7 @@ window.__TIMELINE_DATA__ = [
   {
     "start date": "01/01/2008",
     "end date": "01/01/2008",
-    "headline": "SEND: Conversations in Evolving Media",
+    "headline": "Intermedias",
     "description": "Lambertson, Linda. “Intermedias.” Curatorial Essay for  SEND: Conversations in Evolving Media . Institute for Contemporary Art, Portland, ME. 2008.  Hillner, Mathias. “Virtual Typography – A New Approach to Motion Graphics?” http://www.icograda.org/feature/current/articles1471.htm",
     "project": "",
     "group": "Academic Reviews",
