@@ -3,7 +3,6 @@
 // 27 website titles with images; 6 additional cv.xlsx headlines matched.
 window.__PUB_IMAGES__ = {
   "Before Intelligence": "https://jasonlewis.org/wp-content/uploads/2026/03/REDCAT-All-Watched-Over-by-Machines-of-Loving-Grace-Cover-Image.jpg",
-  "Ceyda Yolgörmez and Jason Edward Lewis, 'Reworlding AI Through Future Imaginaries’": "https://jasonlewis.org/wp-content/uploads/2025/12/JEL-ai-in-society.png",
   "The Indigenous Protocol and AI Workshops as Future Imaginary": "https://www.dropbox.com/scl/fi/j7ghebx40t3tpwpxqtd46/Lewis-J.-The-IP-AI-Workshops-as-Future-Imaginary-COVER.jpg?rlkey=sfcecfb1kibs1eeil598d1vda&raw=1",
   "CyberPowWow and the First Wave of Indigenous Digital Media Arts": "https://jasonlewis.org/wp-content/uploads/2025/12/JEL-bytheirwork.png",
   "The Myths of My Descendants": "https://www.dropbox.com/scl/fi/gkuxi9lcjmy7ga6zpb4hd/Lewis-J.-Myths-of-My-Descendents.-Autry-Future-Imaginary-Exhibition-Catalogue.-2024.-COVER.jpg?rlkey=qqxmjcrtkfyrmmizlgpes2qsf&raw=1",
@@ -16,7 +15,7 @@ window.__PUB_IMAGES__ = {
   "Overclock Our Imagination! Mapping the Indigenous Future Imaginary": "https://jasonlewis.org/wp-content/uploads/2023/05/JEL-Site-Pubs-Overclock-Imagination-e1685463996861.png",
   "22nd-Century Proto:typing": "https://jasonlewis.org/wp-content/uploads/2021/11/JL-22nd-Century-Proto-typing.jpg",
   "Future Imaginary Dialogue with Dr. Kim TallBear": "https://jasonlewis.org/wp-content/uploads/2025/12/Enos-DaphneBrochure.png",
-  "An Orderly Assemblage of Biases: Troubling the Monocultural Stack": "https://jasonlewis.org/wp-content/uploads/2019/04/orderly.jpg",
+  "An  Orderly Assemblage of Biases: Troubling the Monocultural Stack": "https://jasonlewis.org/wp-content/uploads/2019/04/orderly.jpg",
   "Preparations for a Haunting: Notes Towards an Indigenous Future Imaginary": "https://jasonlewis.org/wp-content/uploads/2019/04/prepforhaunt.jpg",
   "A Better Dance and Better Prayers: Systems, Structures, and the Future Imaginary in Aboriginal New Media": "https://jasonlewis.org/wp-content/uploads/2019/04/tracing.jpg",
   "Abundant Intelligences: Placing AI Within Indigenous Knowledge Frameworks": "https://jasonlewis.org/wp-content/uploads/2025/04/abundant-intelligences-thumbnail.jpg",
@@ -32,6 +31,7 @@ window.__PUB_IMAGES__ = {
   "Overclock the Imagination! Mapping the Indigenous Future Imaginary": "https://jasonlewis.org/wp-content/uploads/2023/05/JEL-Site-Pubs-Overclock-Imagination-e1685463996861.png",
   "Making Kin with the Machines v.2": "https://jasonlewis.org/wp-content/uploads/2021/11/JL-Making-Kin-with-The-Machines-v2.jpg",
   "Indigenous Protocol and Artificial Intelligence Position Paper": "https://jasonlewis.org/wp-content/uploads/2024/10/Indigenous-Protocol-and-AI.-2020.-PUBLISHED_-1.png",
+  "An Orderly Assemblage of Biases: Troubling the Monocultural Stack": "https://jasonlewis.org/wp-content/uploads/2019/04/orderly.jpg",
   "Preparations for a Haunting: Note Towards an Indigenous Future Imaginary": "https://jasonlewis.org/wp-content/uploads/2019/04/prepforhaunt.jpg",
   "Making Kin with the Machines v.3": "https://jasonlewis.org/wp-content/uploads/2021/11/JL-Making-Kin-with-The-Machines-v2.jpg",
   "From Impoverished Intelligence to Abundant Intelligences": "https://jasonlewis.org/wp-content/uploads/2025/04/abundant-intelligences-thumbnail.jpg"

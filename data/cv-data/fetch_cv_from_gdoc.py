@@ -268,9 +268,34 @@ def extract_title(text):
     """Pull out a title: prefers quoted text, falls back to first sentence."""
     m = re.search(r'["\u201c]([^"\u201d]{4,})["\u201d]', text)
     if m:
-        return m.group(1).strip()
+        return m.group(1).strip().rstrip('.,;').strip()
     parts = re.split(r'(?<=[a-z\)])[.;]', text, maxsplit=1)
     return parts[0].strip()[:200] if parts else text[:200]
+
+
+def extract_italic_title(tag, italic_classes=None):
+    """Extract the first meaningfully-long italic span from a BS4 tag, or None.
+
+    Google Docs publishes italic text as <em>, <i>, <span style="font-style:italic">,
+    or (commonly) <span class="cN"> where the class maps to font-style:italic in the
+    document's <style> block. Pass italic_classes (a set of CSS class names) to
+    catch the class-based variant. Used for bibliography entries where book/journal
+    titles are italicised rather than quoted.
+    """
+    for el in tag.find_all(['em', 'i']):
+        t = el.get_text().strip().rstrip('.,;').strip()
+        if len(t) > 4:
+            return t
+    for span in tag.find_all('span'):
+        style = span.get('style', '')
+        classes = span.get('class', [])
+        is_italic = ('italic' in style or
+                     (italic_classes and any(c in italic_classes for c in classes)))
+        if is_italic:
+            t = span.get_text().strip().rstrip('.,;').strip()
+            if len(t) > 4:
+                return t
+    return None
 
 
 # ── Supervision headline normalisation ───────────────────────────────────────
@@ -332,6 +357,15 @@ def parse_doc(html):
     rows  = []
     group = None
     last  = None
+
+    # Extract CSS class names that correspond to font-style:italic in the GDoc HTML.
+    # GDocs often uses classes like "c14" for italic instead of inline styles.
+    italic_classes = set()
+    for style_tag in soup.find_all('style'):
+        for m in re.finditer(
+                r'\.([\w-]+)[^{]*\{[^}]*font-style\s*:\s*italic',
+                style_tag.string or ''):
+            italic_classes.add(m.group(1))
 
     for tag in soup.find_all(['h1','h2','h3','h4','h5','h6','p','li']):
         raw  = tag.get_text(' ')
@@ -417,7 +451,8 @@ def parse_doc(html):
             row  = {
                 'start date':  d,
                 'end date':    d,
-                'headline':    extract_title(clean_full),
+                # Prefer italic span (book/journal title) over quoted or first-sentence
+                'headline':    extract_italic_title(tag, italic_classes) or extract_title(clean_full),
                 'description': clean_full,
                 'project':     '',
                 'group':       group,

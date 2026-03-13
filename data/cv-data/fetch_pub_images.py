@@ -47,6 +47,7 @@ DISSEMINATION_GROUPS = {
 UNPUBLISHED = {
     "Imagining Otherwise",
     "Future Imaginaries of Indigenous AI",
+    "Collaborating and Community in Aboriginal Territories in Cyberspace",  # no image on jasonlewis.org yet
 }
 
 # Known website publication titles (from jasonlewis.org/category/publication/).
