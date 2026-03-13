@@ -21,6 +21,7 @@ Requires: pip3 install beautifulsoup4
 import html as _html, json, re, sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import unquote
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
@@ -350,6 +351,24 @@ def normalize_supervision(text, group):
     return text, thesis
 
 
+def extract_annotation_url(tag):
+    """Extract the URL from a GDoc {text} or {link} annotation.
+
+    Google Docs encodes these as a literal '{' text node followed by
+    <a href="https://www.google.com/url?q=ACTUAL_URL&...">text</a> (or 'link')
+    followed by a '}' text node. Decodes the Google redirect wrapper and
+    returns the target URL, or '' if none found.
+    """
+    for a in tag.find_all('a'):
+        if a.get_text().strip().lower() in ('text', 'link'):
+            href = a.get('href', '')
+            m = re.search(r'[?&]q=([^&]+)', href)
+            if m:
+                return unquote(m.group(1))
+            return href
+    return ''
+
+
 def tag_to_desc_html(tag, italic_classes):
     """Convert a BS4 tag to an HTML string, wrapping italic runs in <em>.
 
@@ -376,7 +395,10 @@ def tag_to_desc_html(tag, italic_classes):
                 parts.append(f'<em>{_html.escape(inner)}</em>')
             else:
                 parts.append(_html.escape(inner))
-    result = re.sub(r' {2,}', ' ', ''.join(parts)).strip()
+    result = ''.join(parts)
+    # Strip {text} / {link} annotation markers (left by extract_annotation_url)
+    result = re.sub(r'\s*\{\s*(text|link)\s*\}\s*', ' ', result)
+    result = re.sub(r' {2,}', ' ', result).strip()
     return result
 
 
@@ -462,6 +484,7 @@ def parse_doc(html):
                     'end date':    end or start,
                     'headline':    headline,
                     'description': desc,
+                    'headline_url': extract_annotation_url(tag),
                     'project':     '',
                     'group':       group,
                 }
@@ -498,6 +521,7 @@ def parse_doc(html):
                 # For books / standalone works: no quotes → fall back to italic title.
                 'headline':    _strategy3_headline(tag, italic_classes, clean_full),
                 'description': tag_to_desc_html(tag, italic_classes),
+                'headline_url': extract_annotation_url(tag),
                 'project':     '',
                 'group':       group,
             }

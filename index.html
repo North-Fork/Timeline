@@ -1254,7 +1254,7 @@ function normalizeRow(row, format = 'abtec') {
     startRaw,
     endRaw,
     headline:    stripHtml(g('title', 'headline', 'name', 'event')),
-    headlineUrl:       extractUrl(g('headline', 'name', 'event')),
+    headlineUrl:       g('headlineurl') || extractUrl(g('headline', 'name', 'event')),
     headlineLinkLabel: g('headlinelinklabel'),
     description: g('text', 'description', 'desc', 'details', 'notes', 'body'),
     project:     g('project', 'proj'),
