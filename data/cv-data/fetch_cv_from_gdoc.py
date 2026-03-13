@@ -18,7 +18,7 @@ Usage:
 Writes cv-data.js alongside this script.
 Requires: pip3 install beautifulsoup4
 """
-import json, re, sys
+import html as _html, json, re, sys
 from datetime import date
 from pathlib import Path
 from urllib.request import urlopen, Request
@@ -350,6 +350,36 @@ def normalize_supervision(text, group):
     return text, thesis
 
 
+def tag_to_desc_html(tag, italic_classes):
+    """Convert a BS4 tag to an HTML string, wrapping italic runs in <em>.
+
+    All text content is HTML-escaped so the result is safe to use as innerHTML.
+    Non-breaking spaces become regular spaces; {…} annotation blocks are removed.
+    Used for bibliography description fields so book/journal titles render in italic.
+    """
+    parts = []
+    for child in tag.children:
+        if not hasattr(child, 'name'):  # NavigableString
+            txt = re.sub(r'\s*\{[^}]*\}\s*', ' ', str(child).replace('\xa0', ' '))
+            parts.append(_html.escape(txt))
+        else:
+            child_classes = child.get('class', [])
+            child_style   = child.get('style', '')
+            is_italic = (
+                child.name in ('em', 'i') or
+                'italic' in child_style or
+                (italic_classes and any(c in italic_classes for c in child_classes))
+            )
+            inner = re.sub(r'\s*\{[^}]*\}\s*', ' ',
+                           child.get_text().replace('\xa0', ' '))
+            if is_italic:
+                parts.append(f'<em>{_html.escape(inner)}</em>')
+            else:
+                parts.append(_html.escape(inner))
+    result = re.sub(r' {2,}', ' ', ''.join(parts)).strip()
+    return result
+
+
 def _strategy3_headline(tag, italic_classes, clean_full):
     """Pick the best headline for a bibliography entry (Strategy 3 path).
 
@@ -467,7 +497,7 @@ def parse_doc(html):
                 # For book chapters: quoted text is the chapter title (preferred for matching).
                 # For books / standalone works: no quotes → fall back to italic title.
                 'headline':    _strategy3_headline(tag, italic_classes, clean_full),
-                'description': clean_full,
+                'description': tag_to_desc_html(tag, italic_classes),
                 'project':     '',
                 'group':       group,
             }
