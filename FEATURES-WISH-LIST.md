@@ -74,3 +74,16 @@ New publication titles that appear on jasonlewis.org/category/publication/ must 
 manually to `WEBSITE_TITLES` in `fetch_pub_images.py` — the page is JavaScript-rendered
 and cannot be scraped statically. New cover images for existing titles are auto-discovered
 via the WordPress media REST API.
+
+**Three pub images currently using Dropbox URLs (not rendering in Storybox — Dropbox blocks `<img>` loads).**
+Once covers are uploaded to jasonlewis.org, update `MANUAL_MAP` in `fetch_pub_images.py` and regenerate `pub-images.js`:
+- "The Myths of My Descendants"
+- "The Indigenous Protocol and AI Workshops as Future Imaginary"
+- "The Future is Indigenous"
+
+**Future: restructure jasonlewis.org publications as native WP posts with featured images.**
+Currently publications are rendered by a custom plugin/page builder and are not exposed
+via the WP REST API. If each publication were a native WP post (category: publication)
+with its cover set as the featured image, `fetch_pub_images.py` could use
+`/wp-json/wp/v2/posts?categories=4` to get exact title → image pairings automatically —
+no `WEBSITE_TITLES` list, no fuzzy matching, no `MANUAL_MAP` needed.

@@ -41,6 +41,14 @@ DISSEMINATION_GROUPS = {
     'Op-Ed',
 }
 
+# CV headlines for works not yet published / not yet on jasonlewis.org.
+# These are explicitly excluded from image matching to prevent false positives.
+# When a work is published and appears on jasonlewis.org, remove it from here.
+UNPUBLISHED = {
+    "Imagining Otherwise",
+    "Future Imaginaries of Indigenous AI",
+}
+
 # Known website publication titles (from jasonlewis.org/category/publication/).
 # These are the keys used for matching; update list when new titles are added.
 WEBSITE_TITLES = [
@@ -78,8 +86,24 @@ WEBSITE_TITLES = [
 MANUAL_MAP = {
     "Curating Superintelligences":
         "https://jasonlewis.org/wp-content/uploads/2026/03/Curating-Superintelligence_frontcover.jpeg",
+    "Before Intelligence":
+        "https://jasonlewis.org/wp-content/uploads/2026/03/REDCAT-All-Watched-Over-by-Machines-of-Loving-Grace-Cover-Image.jpg",
+    "CyberPowWow and the First Wave of Indigenous Media Arts":
+        "https://jasonlewis.org/wp-content/uploads/2025/12/JEL-bytheirwork.png",
+    "Reworlding AI Through Future Imaginaries":
+        "https://jasonlewis.org/wp-content/uploads/2025/12/JEL-ai-in-society.png",
+    "Expansive & Exuberant: The Future Imaginaries of Solomon Enos":
+        "https://jasonlewis.org/wp-content/uploads/2025/12/Enos-DaphneBrochure.png",
+    "Future Imaginary Dialogue with Dr. Kim TallBear":
+        "https://jasonlewis.org/wp-content/uploads/2025/12/Enos-DaphneBrochure.png",
+    "A Better Dance and Better Prayers: Systems, Structures, and the Future Imaginary in Aboriginal New Media":
+        "https://jasonlewis.org/wp-content/uploads/2019/04/tracing.jpg",
+    "The Future is Indigenous":
+        "https://www.dropbox.com/scl/fi/nvurfc5oj8or5txha693v/Lewis-J-and-Skawennati.-The-Future-Is-Indigenous.-Leonardo-v.-51-no.-4.-2018-Cover.jpeg?rlkey=6ebsf0yrmoydrik82u45g8e7e&raw=1",
+    "The Indigenous Protocol and AI Workshops as Future Imaginary":
+        "https://www.dropbox.com/scl/fi/j7ghebx40t3tpwpxqtd46/Lewis-J.-The-IP-AI-Workshops-as-Future-Imaginary-COVER.jpg?rlkey=sfcecfb1kibs1eeil598d1vda&raw=1",
     "The Myths of My Descendants":
-        "https://jasonlewis.org/wp-content/uploads/2025/04/The-Myths-of-My-Descendants.jpg",
+        "https://www.dropbox.com/scl/fi/gkuxi9lcjmy7ga6zpb4hd/Lewis-J.-Myths-of-My-Descendents.-Autry-Future-Imaginary-Exhibition-Catalogue.-2024.-COVER.jpg?rlkey=qqxmjcrtkfyrmmizlgpes2qsf&raw=1",
     "Building Aboriginal Territories in Cyberspace":
         "https://jasonlewis.org/wp-content/uploads/2025/04/Building-Aboriginal-Territories-in-Cyberspace.jpg",
     "Abundant Intelligences: Placing AI within Indigenous Knowledge Frameworks":
@@ -173,7 +197,7 @@ def best_match(cv_headline: str, website_image_map: dict) -> tuple[str | None, f
             if f1 > best_score:
                 best_score, best_title = f1, site_title
 
-    return (best_title, best_score) if best_score >= 0.50 else (None, 0.0)
+    return (best_title, best_score) if best_score >= 0.60 else (None, 0.0)
 
 
 def fetch_all_media() -> list[dict]:
@@ -263,6 +287,9 @@ def main():
         raw_headline = str(row[h_col]).strip() if row[h_col] else ''
         group        = str(row[g_col]).strip()  if row[g_col]  else ''
         if not raw_headline or group not in DISSEMINATION_GROUPS:
+            continue
+        if raw_headline in UNPUBLISHED:
+            print(f"  –  {raw_headline[:48]:48s} (unpublished, skipped)")
             continue
 
         site_title, score = best_match(raw_headline, website_image_map)
