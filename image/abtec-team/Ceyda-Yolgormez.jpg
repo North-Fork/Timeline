@@ -1,0 +1,792 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+
+	<head profile="http://gmpg.org/xfn/11">
+
+		<title>obx | laboratory for experimental media
+			404 Not Found		</title>
+
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta name="description" content="laboratory for experimental media" />
+		
+		<link rel="stylesheet" type="text/css" href="https://www.obxlabs.net/wp-content/themes/obx2009/style.css" media="screen" />
+		<link rel="shortcut icon" href="https://www.obxlabs.net/wp-content/themes/obx2009/images/favicon.ico" type="image/x-icon" />
+		<link rel="alternate" type="application/rss+xml" title="obx RSS Feed" href="https://www.obxlabs.net/feed/rss" />
+		<link rel="pingback" href="https://www.obxlabs.net/xmlrpc.php" />
+
+		<!--<script src="https://www.obxlabs.net/wp-content/themes/obx2009/js/jquery-1.3.2.js" type="text/javascript" charset="utf-8"></script>-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<!--Isotope Script link-->
+	<script src="https://www.obxlabs.net/wp-content/themes/obx2009/js/isotope.pkgd.js"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+
+				$(".msg_body").hide();
+				$(".msg_head").click(function(){
+					//$(this).parent().children(".msg_body").slideToggle(250);
+
+					$("#msg_body_"+$(this).attr('id')).slideToggle(250);
+
+
+});
+
+
+			// I am sorry for the nastiness of this code...
+				$(".msg_body1").hide();
+				$(".msg_head1").click(function(){
+					$(".msg_body1").slideToggle(250);
+				});
+				$(".msg_body2").hide();
+				$(".msg_head2").click(function(){
+					$(".msg_body2").slideToggle(250);
+				});
+				$(".msg_body3").hide();
+				$(".msg_head3").click(function(){
+					$(".msg_body3").slideToggle(250);
+				});
+				$(".msg_body4").hide();
+				$(".msg_head4").click(function(){
+					$(".msg_body4").slideToggle(250);
+				});
+				$(".msg_body5").hide();
+				$(".msg_head5").click(function(){
+					$(".msg_body5").slideToggle(250);
+				});
+				$(".msg_body6").hide();
+				$(".msg_head6").click(function(){
+					$(".msg_body6").slideToggle(250);
+				});
+				$(".msg_body7").hide();
+				$(".msg_head7").click(function(){
+					$(".msg_body7").slideToggle(250);
+				});
+				$(".msg_body8").hide();
+				$(".msg_head8").click(function(){
+					$(".msg_body8").slideToggle(250);
+				});
+				$(".msg_body9").hide();
+				$(".msg_head9").click(function(){
+					$(".msg_body9").slideToggle(250);
+				});
+				$(".msg_body10").hide();
+				$(".msg_head10").click(function(){
+					$(".msg_body10").slideToggle(250);
+				});
+				$(".msg_body11").hide();
+				$(".msg_head11").click(function(){
+					$(".msg_body11").slideToggle(250);
+				});
+				$(".msg_body12").hide();
+				$(".msg_head12").click(function(){
+					$(".msg_body12").slideToggle(250);
+				});
+				$(".msg_body13").hide();
+				$(".msg_head13").click(function(){
+					$(".msg_body13").slideToggle(250);
+				});
+				$(".msg_body14").hide();
+				$(".msg_head14").click(function(){
+					$(".msg_body14").slideToggle(250);
+				});
+				$(".msg_body15").hide();
+				$(".msg_head15").click(function(){
+					$(".msg_body15").slideToggle(250);
+				});
+				$(".msg_body16").hide();
+				$(".msg_head16").click(function(){
+					$(".msg_body16").slideToggle(250);
+				});
+				$(".msg_body17").hide();
+				$(".msg_head17").click(function(){
+					$(".msg_body17").slideToggle(250);
+				});
+				$(".msg_body18").hide();
+				$(".msg_head18").click(function(){
+					$(".msg_body18").slideToggle(250);
+				});
+				$(".msg_body19").hide();
+				$(".msg_head19").click(function(){
+					$(".msg_body19").slideToggle(250);
+				});
+				$(".msg_body20").hide();
+				$(".msg_head20").click(function(){
+					$(".msg_body20").slideToggle(250);
+				});
+				$(".msg_body21").hide();
+				$(".msg_head21").click(function(){
+					$(".msg_body21").slideToggle(250);
+				});
+				$(".msg_body22").hide();
+				$(".msg_head22").click(function(){
+					$(".msg_body22").slideToggle(250);
+				});
+				$(".msg_body23").hide();
+				$(".msg_head23").click(function(){
+					$(".msg_body23").slideToggle(250);
+				});
+				$(".msg_body24").hide();
+				$(".msg_head24").click(function(){
+					$(".msg_body24").slideToggle(250);
+				});
+				$(".msg_body25").hide();
+				$(".msg_head25").click(function(){
+					$(".msg_body25").slideToggle(250);
+				});
+				$(".msg_body26").hide();
+				$(".msg_head26").click(function(){
+					$(".msg_body26").slideToggle(250);
+				});
+				$(".msg_body27").hide();
+				$(".msg_head27").click(function(){
+					$(".msg_body27").slideToggle(250);
+				});
+				$(".msg_body28").hide();
+				$(".msg_head28").click(function(){
+					$(".msg_body28").slideToggle(250);
+				});
+				$(".msg_body29").hide();
+				$(".msg_head29").click(function(){
+					$(".msg_body29").slideToggle(250);
+				});
+				$(".msg_body30").hide();
+				$(".msg_head30").click(function(){
+					$(".msg_body30").slideToggle(250);
+				});
+				$(".msg_body31").hide();
+				$(".msg_head31").click(function(){
+					$(".msg_body31").slideToggle(250);
+				});
+				$(".msg_body32").hide();
+				$(".msg_head32").click(function(){
+					$(".msg_body32").slideToggle(250);
+				});
+				$(".msg_body33").hide();
+				$(".msg_head33").click(function(){
+					$(".msg_body33").slideToggle(250);
+				});
+				$(".msg_body34").hide();
+				$(".msg_head34").click(function(){
+					$(".msg_body34").slideToggle(250);
+				});
+				$(".msg_body35").hide();
+				$(".msg_head35").click(function(){
+					$(".msg_body35").slideToggle(250);
+				});
+				$(".msg_body36").hide();
+				$(".msg_head36").click(function(){
+					$(".msg_body36").slideToggle(250);
+				});
+				$(".msg_body37").hide();
+				$(".msg_head37").click(function(){
+					$(".msg_body37").slideToggle(250);
+				});
+				$(".msg_body38").hide();
+				$(".msg_head38").click(function(){
+					$(".msg_body38").slideToggle(250);
+				});
+				$(".msg_body39").hide();
+				$(".msg_head39").click(function(){
+					$(".msg_body39").slideToggle(250);
+				});
+				$(".msg_body40").hide();
+				$(".msg_head40").click(function(){
+					$(".msg_body40").slideToggle(250);
+				});
+				$(".msg_body41").hide();
+				$(".msg_head41").click(function(){
+					$(".msg_body41").slideToggle(250);
+				});
+				$(".msg_body42").hide();
+				$(".msg_head42").click(function(){
+					$(".msg_body42").slideToggle(250);
+				});
+				$(".msg_body43").hide();
+				$(".msg_head43").click(function(){
+					$(".msg_body43").slideToggle(250);
+				});
+				$(".msg_body44").hide();
+				$(".msg_head44").click(function(){
+					$(".msg_body44").slideToggle(250);
+				});
+				$(".msg_body45").hide();
+				$(".msg_head45").click(function(){
+					$(".msg_body45").slideToggle(250);
+				});
+				$(".msg_body46").hide();
+				$(".msg_head46").click(function(){
+					$(".msg_body46").slideToggle(250);
+				});
+				$(".msg_body47").hide();
+				$(".msg_head47").click(function(){
+					$(".msg_body47").slideToggle(250);
+				});
+				$(".msg_body48").hide();
+				$(".msg_head48").click(function(){
+					$(".msg_body48").slideToggle(250);
+				});
+				$(".msg_body49").hide();
+				$(".msg_head49").click(function(){
+					$(".msg_body49").slideToggle(250);
+				});
+				$(".msg_body50").hide();
+				$(".msg_head50").click(function(){
+					$(".msg_body50").slideToggle(250);
+				});
+				$(".msg_body51").hide();
+				$(".msg_head51").click(function(){
+					$(".msg_body51").slideToggle(250);
+				});
+				$(".msg_body52").hide();
+				$(".msg_head52").click(function(){
+					$(".msg_body52").slideToggle(250);
+				});
+				$(".msg_body53").hide();
+				$(".msg_head53").click(function(){
+					$(".msg_body53").slideToggle(250);
+				});
+				$(".msg_body54").hide();
+				$(".msg_head54").click(function(){
+					$(".msg_body54").slideToggle(250);
+				});
+				$(".msg_body55").hide();
+				$(".msg_head55").click(function(){
+					$(".msg_body55").slideToggle(250);
+				});
+				$(".msg_body56").hide();
+				$(".msg_head56").click(function(){
+					$(".msg_body56").slideToggle(250);
+				});
+				$(".msg_body57").hide();
+				$(".msg_head57").click(function(){
+					$(".msg_body57").slideToggle(250);
+				});
+				$(".msg_body58").hide();
+				$(".msg_head58").click(function(){
+					$(".msg_body58").slideToggle(250);
+				});
+				$(".msg_body59").hide();
+				$(".msg_head59").click(function(){
+					$(".msg_body59").slideToggle(250);
+				});
+				$(".msg_body60").hide();
+				$(".msg_head60").click(function(){
+					$(".msg_body60").slideToggle(250);
+				});
+
+
+				$(".msg_body61").hide();
+				$(".msg_head61").click(function(){
+					$(".msg_body61").slideToggle(250);
+				});
+				$(".msg_body62").hide();
+				$(".msg_head62").click(function(){
+					$(".msg_body62").slideToggle(250);
+				});
+				$(".msg_body63").hide();
+				$(".msg_head63").click(function(){
+					$(".msg_body63").slideToggle(250);
+				});
+				$(".msg_body64").hide();
+				$(".msg_head64").click(function(){
+					$(".msg_body64").slideToggle(250);
+				});
+				$(".msg_body65").hide();
+				$(".msg_head65").click(function(){
+					$(".msg_body65").slideToggle(250);
+				});
+				$(".msg_body66").hide();
+				$(".msg_head66").click(function(){
+					$(".msg_body66").slideToggle(250);
+				});
+				$(".msg_body67").hide();
+				$(".msg_head67").click(function(){
+					$(".msg_body67").slideToggle(250);
+				});
+				$(".msg_body68").hide();
+				$(".msg_head68").click(function(){
+					$(".msg_body68").slideToggle(250);
+				});
+				$(".msg_body69").hide();
+				$(".msg_head69").click(function(){
+					$(".msg_body69").slideToggle(250);
+				});
+				$(".msg_body70").hide();
+				$(".msg_head70").click(function(){
+					$(".msg_body70").slideToggle(250);
+				});
+
+
+				$(".msg_body71").hide();
+				$(".msg_head71").click(function(){
+					$(".msg_body71").slideToggle(250);
+				});
+				$(".msg_body72").hide();
+				$(".msg_head72").click(function(){
+					$(".msg_body72").slideToggle(250);
+				});
+				$(".msg_body73").hide();
+				$(".msg_head73").click(function(){
+					$(".msg_body73").slideToggle(250);
+				});
+				$(".msg_body74").hide();
+				$(".msg_head74").click(function(){
+					$(".msg_body74").slideToggle(250);
+				});
+				$(".msg_body75").hide();
+				$(".msg_head75").click(function(){
+					$(".msg_body75").slideToggle(250);
+				});
+				$(".msg_body76").hide();
+				$(".msg_head76").click(function(){
+					$(".msg_body76").slideToggle(250);
+				});
+				$(".msg_body77").hide();
+				$(".msg_head77").click(function(){
+					$(".msg_body77").slideToggle(250);
+				});
+				$(".msg_body78").hide();
+				$(".msg_head78").click(function(){
+					$(".msg_body78").slideToggle(250);
+				});
+				$(".msg_body79").hide();
+				$(".msg_head79").click(function(){
+					$(".msg_body69").slideToggle(250);
+				});
+				$(".msg_body80").hide();
+				$(".msg_head80").click(function(){
+					$(".msg_body80").slideToggle(250);
+				});
+				$(".msg_body81").hide();
+				$(".msg_head81").click(function(){
+					$(".msg_body81").slideToggle(250);
+				});
+				$(".msg_body82").hide();
+				$(".msg_head82").click(function(){
+					$(".msg_body82").slideToggle(250);
+				});
+				$(".msg_body83").hide();
+				$(".msg_head83").click(function(){
+					$(".msg_body83").slideToggle(250);
+				});
+				$(".msg_body84").hide();
+				$(".msg_head84").click(function(){
+					$(".msg_body84").slideToggle(250);
+				});
+
+				$(".msg_body90").hide();
+				$(".msg_head90").click(function(){
+					$(".msg_body90").slideToggle(250);
+				});
+				$(".msg_body91").hide();
+				$(".msg_head91").click(function(){
+					$(".msg_body91").slideToggle(250);
+				});
+				$(".msg_body92").hide();
+				$(".msg_head92").click(function(){
+					$(".msg_body92").slideToggle(250);
+				});
+				$(".msg_body93").hide();
+				$(".msg_head93").click(function(){
+					$(".msg_body93").slideToggle(250);
+				});
+				$(".msg_body94").hide();
+				$(".msg_head94").click(function(){
+					$(".msg_body94").slideToggle(250);
+				});
+				$(".msg_body95").hide();
+				$(".msg_head95").click(function(){
+					$(".msg_body95").slideToggle(250);
+				});
+				$(".msg_body96").hide();
+				$(".msg_head96").click(function(){
+					$(".msg_body96").slideToggle(250);
+				});
+				$(".msg_body97").hide();
+				$(".msg_head97").click(function(){
+					$(".msg_body97").slideToggle(250);
+				});
+				$(".msg_body98").hide();
+				$(".msg_head98").click(function(){
+					$(".msg_body98").slideToggle(250);
+				});
+				$(".msg_body99").hide();
+				$(".msg_head99").click(function(){
+					$(".msg_body99").slideToggle(250);
+				});
+				$(".msg_body100").hide();
+				$(".msg_head100").click(function(){
+					$(".msg_body100").slideToggle(250);
+				});
+
+
+
+
+
+				//Isotope Script
+				(function($){
+
+					var $container = $('#documents'),
+
+					// create a clone that will be used for measuring container width
+					$containerProxy = $container.clone().empty().css({ visibility: 'hidden' });
+					$container.after( $containerProxy );
+
+			// get the first item to use for measuring columnWidth
+			//var $item = $container.find('.document-item').eq(0);
+			// $container.imagesLoaded(function(){
+			// $(window).smartresize( function() {
+			//
+			//   // calculate columnWidth
+			//   var colWidth = Math.floor( $containerProxy.width() / 2 ); // Change this number to your desired amount of columns
+			//
+			//   // set width of container based on columnWidth
+			//   $container.css({
+			//       width: colWidth * 2 // Change this number to your desired amount of columns
+			//   })
+			//   .isotope({
+			//
+			//     // disable automatic resizing when window is resized
+			//     resizable: false,
+			//
+			//     // set columnWidth option for masonry
+			//     masonry: {
+			//       columnWidth: colWidth
+			//     }
+			//   });
+			//
+			//   // trigger smartresize for first time
+			// }).smartresize();
+			//  });
+
+				// filter items when filter link is clicked
+				$('#filters a').click(function(){
+				$('#filters a.active').removeClass('active');
+				var selector = $(this).attr('data-filter');
+				$container.isotope({ filter: selector, animationEngine : "css" });
+				$(this).addClass('active');
+				return false;
+			});
+			} ) ( jQuery );
+
+
+		});//END OF MAIN FUNCTION Document .ready
+
+			/*Horizental scrolling o the Documents page*/
+	// 	$(function(){
+	//  	$("#documents").wrapInner("<table cellspacing='30'><tr>");
+	//  	$(".post").wrap("<td>");
+	//  });
+	</script>
+
+<!-- privacy policy added by SHM on 18/12/23 -->
+		<script src=https://adsys2.concordia.ca/CMP/cookiepolicy.js></script>
+		<script>LoadCookieManager(4,'CookiePolicy.html')</script>
+
+
+		<meta name='robots' content='max-image-preview:large' />
+<style id='wp-img-auto-sizes-contain-inline-css' type='text/css'>
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id='wp-emoji-styles-inline-css' type='text/css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://www.obxlabs.net/wp-includes/css/dist/block-library/style.min.css?ver=6.9.4' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-term-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-term-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+<script type="text/javascript" src="https://www.obxlabs.net/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://www.obxlabs.net/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
+<link rel="https://api.w.org/" href="https://www.obxlabs.net/wp-json/" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.obxlabs.net/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.9.4" />
+<meta name="generator" content="Elementor 3.34.1; features: additional_custom_breakpoints; settings: css_print_method-external, google_font-enabled, font_display-auto">
+			<style>
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
+				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
+					background-image: none !important;
+				}
+				@media screen and (max-height: 1024px) {
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+				@media screen and (max-height: 640px) {
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
+					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
+						background-image: none !important;
+					}
+				}
+			</style>
+					<style type="text/css" id="wp-custom-css">
+			/* Container for the image and text */
+.msg_head {
+    position: relative;
+    width: 293px;  /* Adjust as needed */
+    max-width: 100%; /* Ensures responsiveness */
+    height: auto; /* Allow dynamic height based on image */
+    display: inline-block; /* Prevents extra spacing issues */
+    overflow: hidden;
+}
+
+/* Ensure images are fully responsive */
+.msg_head img {
+    width: 100%;
+    height: auto; /* Maintains aspect ratio */
+    display: block; /* Prevents unwanted space below the image */
+}
+
+/* Text overlay */
+.undergraduateresearchassistantstext {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Slight transparency for better readability */
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+}
+
+/* Ensure text does not overflow */
+.undergraduateresearchassistantstext span {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Adds "..." if text is too long */
+    max-width: 100%;
+}
+
+		</style>
+		
+
+<style type="text/css">
+#content {
+
+	position:relative;
+
+}
+#content img:first-child {
+	margin-bottom:10px;
+}
+#content span.img-caption {
+    background:url(images/caption-bg.png);
+    color:#FFF;
+    display:block;
+    font-size:14px;
+    height:26px;
+	line-height:26px;
+}
+#content span.img-caption em {
+    font-style:normal;
+    display:block;
+	padding-left:5px;
+	font-size:13px;
+	font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+</style>
+
+<script>
+// google analytics script
+console.log("loaded google analytics");
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-1076083-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+
+		<link type="text/css" rel="stylesheet" href="/custom/alttag/jquery.capty.css"/>
+		<script type="text/javascript" src="/custom/alttag/jquery.capty.min.js"></script>
+
+
+
+	</head>
+
+<body>
+
+	<div id="page-wrap">
+		<!-- Black space fills up gap between top logo and content -->
+		<div id="black-space"></div>
+		
+		<!-- Top bar contains logo and social media icons -->
+		<div id="top-bar">
+				<div class="link-icons">
+					<a href="http://vimeo.com/obx"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/vimeo_32.png"/></a>
+					<a href="http://www.flickr.com/photos/obxstudios/"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/flickr_32.png"/></a>
+					<a href="https://www.youtube.com/channel/UCCFkXkwhJN-2IgrXoeiZZPA"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/youtube_32.png"/></a>
+					<a href="https://www.obxlabs.net/feed"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/rss_32.png"/></a>
+				</div>
+				<div class="clear"></div>
+
+			<div id="menu-bar">
+				
+				<ul class="nav IR">
+				  <!-- <li class=""> -->
+					<!-- <a href="/blog/"><em></em>Blog</a> -->
+				  <!-- </li> -->
+				  <li class="people">
+					<a href="https://www.obxlabs.net/people/"><em></em>People</a>
+				  </li>
+				  <li class="docs">
+					<a href="https://www.obxlabs.net/docs/"><em></em>Docs</a>
+				  </li>
+				  <li class="home_selected">
+					<a href="https://www.obxlabs.net/"><em></em>Works</a>
+				  </li>
+				</ul>
+			</div>
+
+			<h1 id="logo">
+				<a href="http://www.obxlabs.net/">
+					<img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/ObxLogo-NoBorder-Color.png">
+				</a>
+			</h1>
+<!-- 					<div id="intro-paragraph">
+						<span>Obx Labs</span> is interested in living letterforms, massively multi-contributor texts and time-travelling provocateurs. We create artwork that utilizes and motivates the software that we develop and the technologies we repurpose. Our main goal is to provide both the inspiration and the means for others to push the boundaries of computationally-based expression.
+					</div> -->
+			<div class="clear"></div>
+
+		</div>
+
+<div id="content">
+			</div>
+
+		<div class="clear"></div>
+
+		<div id="push"></div>
+
+	</div>
+
+	<div id="footer">
+		<div id="footer-inside">
+			
+			<div id="footer-1">
+				<h2 id="contact-header">
+					Contact
+				</h2>
+				<p>	Director: Jason E. Lewis<br/>
+					<br/>
+					Obx Labs<br/>
+					Concordia University / Hexagram <br/>
+					1515 st. Catherine West EV-11.615 <br/>
+					Montreal, QC, H3G 1M8<br/>
+					514.848.2424 ext.5935
+					<br/>
+					<a href="mailto:info@obxlabs.net">info@obxlabs.net</a>
+				</p>
+			</div>
+
+			<div id="footer-2">
+				<form method="get" id="searchform" action="https://www.obxlabs.net/">
+	<input type="text" value="" name="s" id="s" />
+	<input type="submit" id="searchsubmit" value="Search" class="button" />
+</form>
+				<!-- <a href="http://obxlabs.net/lists/?p=subscribe">subscribe to our newsletter</a><br/> -->
+				
+<!-- 				<div class="footer-link-icons">
+					<a href="http://vimeo.com/obx"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/vimeo_32.png"/></a>
+					<a href="http://www.flickr.com/photos/obxstudios/"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/flickr_32.png"/></a>
+					<a href="http://www.youtube.com/user/obxlabs"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/youtube_32.png"/></a>
+					<a href="https://www.obxlabs.net/feed"><img src="https://www.obxlabs.net/wp-content/themes/obx2009/images/icons/rss_32.png"/></a>
+				</div> -->
+			
+			</div>
+
+	
+
+			<!-- <div class="clear"></div> -->
+			<!-- <br/><br/> -->
+			<!-- <p style="text-align:center;">all work &copy; 2001 &ndash; 2009 Jason E. Lewis  </p> -->
+			<!-- <p style="text-align:center;"><a href="http://www.obxlabs.net">obxlabs.net</a> is proudly powered by <a href="http://wordpress.org/"><img src="/images/icons/wordpress_32.png"/></a>  |  <a href="/wp-admin/">login</a></p> -->
+		</div>
+	</div>
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/obx2009/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+			<script>
+				const lazyloadRunObserver = () => {
+					const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
+					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+						entries.forEach( ( entry ) => {
+							if ( entry.isIntersecting ) {
+								let lazyloadBackground = entry.target;
+								if( lazyloadBackground ) {
+									lazyloadBackground.classList.add( 'e-lazyloaded' );
+								}
+								lazyloadBackgroundObserver.unobserve( entry.target );
+							}
+						});
+					}, { rootMargin: '200px 0px 200px 0px' } );
+					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+						lazyloadBackgroundObserver.observe( lazyloadBackground );
+					} );
+				};
+				const events = [
+					'DOMContentLoaded',
+					'elementor/lazyload/observe',
+				];
+				events.forEach( ( event ) => {
+					document.addEventListener( event, lazyloadRunObserver );
+				} );
+			</script>
+			<script type="text/javascript" src="https://www.obxlabs.net/wp-includes/js/jquery/ui/core.min.js?ver=1.13.3" id="jquery-ui-core-js"></script>
+<script type="text/javascript" src="https://www.obxlabs.net/wp-includes/js/jquery/ui/tooltip.min.js?ver=1.13.3" id="jquery-ui-tooltip-js"></script>
+<script type="text/javascript" src="https://www.obxlabs.net/wp-content/plugins/spawning-ai/includes/../js/scripts.js?ver=1.0.0" id="spawning-ai-script-js"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://www.obxlabs.net/wp-includes/js/wp-emoji-release.min.js?ver=6.9.4"}}
+</script>
+<script type="module">
+/* <![CDATA[ */
+/*! This file is auto-generated */
+const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(window._wpemojiSettings=a,"wpEmojiSettingsSupports"),s=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const a=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===a[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,a){let r;const o=(r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),s=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(e=>{s[e]=t(o,e,n,a)}),s}function r(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}a.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(s),u.toString(),c.toString(),p.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"});const r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=e=>{i(n=e.data),r.terminate(),t(n)})}catch(e){}i(n=f(s,u,c,p))}t(n)}).then(e=>{for(const n in e)a.supports[n]=e[n],a.supports.everything=a.supports.everything&&a.supports[n],"flag"!==n&&(a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&a.supports[n]);var t;a.supports.everythingExceptFlag=a.supports.everythingExceptFlag&&!a.supports.flag,a.supports.everything||((t=a.source||{}).concatemoji?r(t.concatemoji):t.wpemoji&&t.twemoji&&(r(t.twemoji),r(t.wpemoji)))});
+//# sourceURL=https://www.obxlabs.net/wp-includes/js/wp-emoji-loader.min.js
+/* ]]> */
+</script>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1076083-1");
+pageTracker._trackPageview();
+} catch(err) {}</script></body>
+
+
+
+
+</html>
