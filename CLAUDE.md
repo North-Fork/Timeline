@@ -183,7 +183,9 @@ Can also be triggered manually: **Actions → Weekly CV update → Run workflow*
 
 **People portrait images — technical notes:**
 - `people-images.js` sets `window.__PEOPLE_IMAGES__` — loaded via `<script src>` in `<head>`; falls back to `{}` if missing
-- Keys are `headline` values from the team xlsx; values are full image URLs from obxlabs.net/people
+- Keys are `headline` values from the team xlsx; values are local `image/abtec-team/` paths
+- Portraits appear in three places: 25×25 circle on timeline bar, 75×74px rect in hover tooltip, full-size in Storybox media area
+- `currentFormat` module-level var set by `parse()` so `drawEventBar()` can gate portrait rendering on `people` format
 - `openDrawer()` checks `__PEOPLE_IMAGES__[ev.headline]` when no other media is set
 - Regenerate: `python3 data/fetch_people_images.py [path/to/team.xlsx]`
 - Fuzzy matching: normalised (lowercase, diacritics stripped, hyphens→spaces) then exact → substring → word-set overlap ≥ 2
