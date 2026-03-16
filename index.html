@@ -1508,6 +1508,7 @@
     ];
 
     // ── State ────────────────────────────────────────────────────────────────
+    let currentFormat = 'abtec';
     let events = [];
     let groups = [];
     let orgs = [];
@@ -1933,6 +1934,7 @@
       _visEvsDirty = true;  // new dataset — invalidate visEvs cache
       _tickCacheKey = '';    // new date range — invalidate tick cache
       const format = detectFormat(rows);
+      currentFormat = format;
       const titleEl = document.getElementById('sidebar-title-text');
       const mobileTitleEl = document.getElementById('mobile-title');
       const t = FORMAT_TITLES[format] ?? 'Timeline';
@@ -2625,8 +2627,27 @@
       const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
       g.appendChild(rect);
 
+      // People format — circular portrait at left edge of bar
+      const PHOTO_SIZE = 25;
+      const portraitUrl = currentFormat === 'people'
+        ? (window.__PEOPLE_IMAGES__ || {})[ev.headline] : null;
+      if (portraitUrl) {
+        const imgY = barTop + Math.round((BAR_H - PHOTO_SIZE) / 2);
+        const imgEl = mk('image');
+        imgEl.setAttribute('href', portraitUrl);
+        imgEl.setAttribute('x', x1 + 1);
+        imgEl.setAttribute('y', imgY);
+        imgEl.setAttribute('width',  PHOTO_SIZE);
+        imgEl.setAttribute('height', PHOTO_SIZE);
+        imgEl.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+        imgEl.style.clipPath = 'circle(50%)';
+        imgEl.style.pointerEvents = 'none';
+        g.appendChild(imgEl);
+      }
+      const photoOffset = portraitUrl ? PHOTO_SIZE + 4 : 6;
+
       if (barW > 22) {
-        const lx = Math.max(x1 + 6, LABEL_W + 2);
+        const lx = Math.max(x1 + photoOffset, LABEL_W + 2);
         const avail = barW - (lx - x1) - 6;
         const maxCh = Math.max(0, Math.floor(avail / 7));
         if (maxCh > 1) {
