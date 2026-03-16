@@ -2060,6 +2060,15 @@
         ? [..._savedOrder.filter(g => groups.includes(g)), ...groups.filter(g => !_savedOrder.includes(g))]
         : [...groups];
 
+      // People format: always use canonical role order regardless of localStorage
+      if (format === 'people') {
+        const PEOPLE_ROLE_ORDER = ['Primary Investigator', 'Co-director', 'Postdoctoral Fellow', 'PhD', 'Masters', 'Undergraduate'];
+        groupOrder = [
+          ...PEOPLE_ROLE_ORDER.filter(r => groups.includes(r)),
+          ...groups.filter(g => !PEOPLE_ROLE_ORDER.includes(g)),
+        ];
+      }
+
       // CV only — category sub-groups (e.g. Art / Dissemination / Supervision parents),
       //           dimension labels, and program sub-groups (Tri-council, Concordia, etc.)
       const catSubGroups = format === 'cv' ? CVFormat.catSubGroupsFor(groups, events) : null;
