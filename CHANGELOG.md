@@ -1,5 +1,29 @@
 # Changelog
 
+## Session 22 — 2026-03-15  ·  tag: V.03.06-Timeline-Carts-Draft
+
+### Cards view for People / Team timeline
+- **Cards toggle** — "Cards" button appears in the zoom controls whenever a people-format file is loaded; hidden for all other formats
+- **Cards on (amber)** — each person renders as a 75×75px portrait + name text + thin colored extent bar below the photo; row height expands to 104px to accommodate
+- **Cards off (gray)** — reverts to standard bars with 25px circular vignette at left edge + 75×74px portrait in hover tooltip (the V.03.06-Timeline-Vignettes behavior)
+- `peopleCards` state variable; defaults to `false` on every file load — user must click Cards to activate
+- Tooltip portrait suppressed in cards mode (portrait already full-size on the bar)
+- `PEOPLE_PHOTO`, `PEOPLE_BAR_H`, `PEOPLE_LANE_H`, `PEOPLE_ROW_H` constants added for cards layout geometry
+- `.tb-btn.active` CSS class added (amber highlight) for toggle button active state
+- `FEATURES-WISH-LIST.md` — "Refining Cards View" section added with 7 refinement items
+
+### Research Team section — Storybox
+- Rewrote role ordering: flat list replacing the old RA-grouped sub-level block
+- Canonical order: Primary Investigator, Co-director, Postdoctoral Fellow, PhD, Masters, Undergraduate, Research Staff
+- `ROLE_ORDER` array drives display label mapping (e.g. `RA-PhD` → "PhD") and sort position
+- Removed Staff and unrecognised-role fallback (not present in team data)
+
+### People format category row order
+- Timeline rows now always load in canonical role order for people format, ignoring any saved localStorage order from other formats
+- Order: Primary Investigator, Co-director, Postdoctoral Fellow, PhD, Masters, Undergraduate
+
+---
+
 ## Session 21 — 2026-03-15  ·  tag: V.03.06-Timeline-Vignettes
 
 ### Portrait vignettes on timeline and hover
