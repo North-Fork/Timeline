@@ -3188,66 +3188,39 @@
         : '';
       const teamEl = document.getElementById('d-team');
       if (ev.teamMembers) {
-        // Parse segments into {role, names} objects
+        // Parse "Role: Name, Name; Role: Name" into [{role, names}]
         const parsed = ev.teamMembers.split(';').map(s => s.trim()).filter(Boolean).map(seg => {
           const colon = seg.indexOf(':');
           return colon === -1 ? { role: seg, names: '' } : { role: seg.slice(0, colon).trim(), names: seg.slice(colon + 1).trim() };
         });
 
-        // Collect RA sub-levels
-        const RA_LEVELS = [
-          { key: 'RA-Undergraduate', label: 'Undergraduate' },
-          { key: 'RA-Masters', label: 'Masters' },
-          { key: 'RA-PhD', label: 'PhD' },
+        // Canonical display order; keys are lowercase for matching
+        const ROLE_ORDER = [
+          { key: 'primary investigator', label: 'Primary Investigator' },
+          { key: 'co-director',          label: 'Co-director' },
+          { key: 'postdoctoral fellow',  label: 'Postdoctoral Fellow' },
+          { key: 'ra-phd',              label: 'PhD' },
+          { key: 'ra-masters',          label: 'Masters' },
+          { key: 'ra-undergraduate',    label: 'Undergraduate' },
+          { key: 'research staff',      label: 'Research Staff' },
+          { key: 'staff',               label: 'Staff' },
         ];
-        const raMap = {};
-        RA_LEVELS.forEach(l => { raMap[l.key] = null; });
-        parsed.forEach(p => { if (raMap.hasOwnProperty(p.role)) raMap[p.role] = p.names; });
-        const hasRA = RA_LEVELS.some(l => raMap[l.key] !== null);
-        const raCount = RA_LEVELS.reduce((n, l) => raMap[l.key] !== null ? n + raMap[l.key].split(',').length : n, 0);
+        const knownKeys = new Set(ROLE_ORDER.map(r => r.key));
 
-        // Non-RA roles in display order
-        const NON_RA_ORDER = ['Primary Investigator', 'Co-director', 'Co-investigator', 'Co-investigators', 'Staff'];
-        const nonRA = NON_RA_ORDER.map(r => parsed.find(p => p.role.toLowerCase() === r.toLowerCase())).filter(Boolean);
-        // Also catch any unrecognised roles
-        const knownRoles = new Set([...RA_LEVELS.map(l => l.key.toLowerCase()), ...NON_RA_ORDER.map(r => r.toLowerCase())]);
-        parsed.filter(p => !knownRoles.has(p.role.toLowerCase())).forEach(p => nonRA.push(p));
+        // Build ordered list: known roles first (in ROLE_ORDER sequence), then any unrecognised
+        const roleMap = {};
+        parsed.forEach(p => { roleMap[p.role.toLowerCase()] = p; });
+        const ordered = [
+          ...ROLE_ORDER.map(r => roleMap[r.key] ? { ...roleMap[r.key], label: r.label } : null).filter(Boolean),
+          ...parsed.filter(p => !knownKeys.has(p.role.toLowerCase())),
+        ];
 
-        let html = '';
-
-        // Research Assistant block
-        if (hasRA) {
-          const raLabel = raCount > 1 ? 'Research Assistants' : 'Research Assistant';
-          html += `<div class="d-team-group"><span class="d-team-role">${raLabel}</span>`;
-          RA_LEVELS.forEach(l => {
-            if (raMap[l.key] === null) return;
-            const names = raMap[l.key].split(',').map(s => s.trim()).filter(Boolean);
-            const namesHtml = names.length === 2
-              ? `<span class="d-team-name">${names.join(' and ')}</span>`
-              : names.map(n => `<span class="d-team-name">${n}</span>`).join('');
-            html += `<div class="d-team-ra-level"><span class="d-team-sublabel">${l.label}</span>${namesHtml}</div>`;
-          });
-          html += `</div>`;
-        }
-
-        // Remaining roles
-        const ROLE_PLURAL = {
-          'co-investigator': ['Co-investigator', 'Co-investigators'],
-          'co-investigators': ['Co-investigator', 'Co-investigators'],
-          'primary investigator': ['Primary Investigator', 'Primary Investigators'],
-          'primary investigators': ['Primary Investigator', 'Primary Investigators'],
-        };
-        nonRA.forEach(p => {
-          let namesHtml = '';
-          let names = [];
-          if (p.names) {
-            names = p.names.split(',').map(s => s.trim()).filter(Boolean);
-            namesHtml = '<br>' + (names.length === 2 ? names.join(' and ') : names.map(n => `<span class="d-team-name">${n}</span>`).join(''));
-          }
-          const pair = ROLE_PLURAL[p.role.toLowerCase()];
-          const label = pair ? (names.length > 1 ? pair[1] : pair[0]) : p.role;
-          html += `<div class="d-team-group"><span class="d-team-role">${label}</span>${namesHtml}</div>`;
-        });
+        const html = ordered.map(p => {
+          const names = p.names ? p.names.split(',').map(s => s.trim()).filter(Boolean) : [];
+          const namesHtml = names.length === 0 ? '' :
+            '<br>' + names.map(n => `<span class="d-team-name">${n}</span>`).join('');
+          return `<div class="d-team-group"><span class="d-team-role">${p.label || p.role}</span>${namesHtml}</div>`;
+        }).join('');
 
         teamEl.innerHTML = `<h3>Research Team</h3>${html}`;
       } else {
