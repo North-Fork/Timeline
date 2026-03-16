@@ -974,6 +974,15 @@
       letter-spacing: 0.04em;
     }
 
+    #tooltip .tt-photo {
+      display: block;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-top: 8px;
+    }
+
     /* ── Bottom axis ──────────────────────────────────────────── */
     #tl-bottom {
       position: sticky;
@@ -1432,6 +1441,7 @@
     <div class="tt-headline" id="tt-headline"></div>
     <div class="tt-desc" id="tt-desc"></div>
     <div class="tt-date" id="tt-date"></div>
+    <img class="tt-photo" id="tt-photo" src="" alt="" style="display:none">
   </div>
 
   <!-- Storybox -->
@@ -1596,6 +1606,14 @@
         ? `${fmtDate(ev.start)} – ${endLabel}`
         : fmtDate(ev.start);
       document.getElementById('tt-date').textContent = dateStr;
+      const photoEl = document.getElementById('tt-photo');
+      const portraitUrl = (window.__PEOPLE_IMAGES__ || {})[ev.headline];
+      if (portraitUrl) {
+        photoEl.src = portraitUrl;
+        photoEl.style.display = 'block';
+      } else {
+        photoEl.style.display = 'none';
+      }
       tooltip.style.display = 'block';
       const tw = tooltip.offsetWidth;
       const th = tooltip.offsetHeight;
