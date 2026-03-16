@@ -1,5 +1,22 @@
 # Changelog
 
+## Session 20 — 2026-03-15  ·  tag: V.03.05-Team
+
+### People / Team timeline format
+- New `people` format: add a `format` column with value `people` to any xlsx; `detectFormat()` reads it and sets the sidebar title to **AbTeC People**
+- `FORMAT_TITLES` extended: `{ abtec, cv, people }`; falls through to `cv` normalizeRow branch (group/org/etc. map correctly)
+- `data/fetch_people_images.py` — scrapes `https://www.obxlabs.net/people`; fuzzy-matches names from team xlsx; writes `data/people-images.js` (`window.__PEOPLE_IMAGES__`)
+- `image/abtec-team/` — 76 team portraits downloaded as `FirstName-LastName.ext`; Jason Lewis added manually (his name div is hidden on the people page)
+- `data/people-images.js` — keys are xlsx headline values; values are local `image/abtec-team/` paths
+- `openDrawer()` shows portrait when `ev.headline` matches a `__PEOPLE_IMAGES__` key and no other media is set
+- Bios scraped from `div.msg_body` on obxlabs.net/people; personal URLs picked preferring h5 URL-text links, skipping institutional domains; written to xlsx `description` + `headline_url` columns
+- `data/timeline-data/ra-team-data.js` — Python-generated JS from RA team xlsx (bypasses SheetJS for testing)
+
+### Bug fixes
+- **xlsx drag-and-drop lost long cell values** — `readAsBinaryString` + `type:'binary'` mishandles large UTF-8 shared string tables; switched to `readAsArrayBuffer` + `type:'array'` (current SheetJS best practice)
+- **Tooltip showed full bio on hover** — now shows name, category, and dates only; full bio reserved for Storybox
+- **`"present"` in end date** — parsed as today's date at load time; displayed literally as "present" in both hover tooltip and Storybox date range
+
 ## Session 19 — 2026-03-15
 
 ### ORCID support

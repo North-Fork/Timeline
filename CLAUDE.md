@@ -70,6 +70,7 @@ Contains static assets required at runtime. **Always include in any handoff fold
 | File | Purpose |
 |---|---|
 | `logo.png` | AbTeC logo rendered as a watermark in the timeline SVG |
+| `abtec-team/` | 76 team portraits as `FirstName-LastName.ext`, referenced by `data/people-images.js` |
 
 ### data/ Directory
 
@@ -90,6 +91,7 @@ data/
     ├── timeline-data.xlsx        active AbTeC data (Timeline-AbTeC* branches)
     ├── make_data_js.py           converts xlsx → timeline-data.js
     ├── timeline-data.js          generated JS with embedded data (auto-load)
+    ├── ra-team-data.js           Python-generated JS from RA team xlsx (people format, for testing)
     ├── timeline-test-data-synthetic.xlsx     synthetic test data (main branch)
     ├── timeline-test-data-handcrafted.xlsx   handcrafted test data
     └── *.xlsx                    older/reference versions
@@ -120,6 +122,7 @@ Key columns used by the parser (`normalizeRow`):
 | Media Caption | mediaCaption | Caption shown below media |
 | Media Credit | mediaCredit | Credit shown below media |
 | Team Members | teamMembers | Format: `Role: Name(s); Role: Name(s)` |
+| format | (meta) | Optional. Value `people` → detected as people format, title = "AbTeC People" |
 
 ### How Components Interact
 
@@ -128,7 +131,7 @@ timeline.html (browser)
   ├─ on load: <script src="data/timeline-data/timeline-data.js">  ← works with file://
   │    └─ OR: user drag-and-drops .xlsx / .csv / .txt / .json onto the page
   │    └─ OR: user pastes gDoc URL, gSheet URL, or ORCID iD into URL field
-  ├─ detectFormat(rows) → 'abtec' (has Category col) or 'cv'
+  ├─ detectFormat(rows) → 'abtec' (has Category col) | 'cv' | 'people' (has format=people col)
   ├─ normalizeRow() maps raw columns → internal event objects
   ├─ redraw() renders everything to SVG
   │    ├─ #tl-header  (sticky top)    ← time axis
