@@ -1352,7 +1352,7 @@
       <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
       <button class="tb-btn sb-btn" id="btn-fit" title="Fit all events in view">Fit</button>
       <button class="tb-btn sb-btn" id="btn-today" title="Scroll to today">Today</button>
-      <button class="tb-btn sb-btn active" id="btn-cards" title="Toggle portrait cards on/off" style="display:none">Cards</button>
+      <button class="tb-btn sb-btn" id="btn-cards" title="Toggle portrait cards on/off" style="display:none">Cards</button>
       <div id="view-hint">
         <span class="hint-desktop">zoom timeline density &#8594;<br>spacebar + mousewheel / trackpad</span>
         <span class="hint-mobile">zoom timeline density &#8594; horizontal pinch</span>
@@ -1534,7 +1534,7 @@
 
     // ── State ────────────────────────────────────────────────────────────────
     let currentFormat = 'abtec';
-    let peopleCards = true;   // when true, people format renders portrait cards instead of bars
+    let peopleCards = false;  // activated only by user clicking the Cards button
     let events = [];
     let groups = [];
     let orgs = [];
@@ -1977,7 +1977,11 @@
       if (titleEl) titleEl.textContent = t;
       if (mobileTitleEl) mobileTitleEl.textContent = t;
       const cardsBtn = document.getElementById('btn-cards');
-      if (cardsBtn) cardsBtn.style.display = format === 'people' ? '' : 'none';
+      if (cardsBtn) {
+        cardsBtn.style.display = format === 'people' ? '' : 'none';
+        cardsBtn.classList.remove('active');  // always reset to off on new file load
+      }
+      peopleCards = false;  // reset on every load; user must re-enable explicitly
 
       const parsed = rows.map((r, i) => {
         const nr = normalizeRow(r, format);
