@@ -3212,9 +3212,10 @@
         }
       }
 
-      // People portrait — show headshot when headline matches a known team member
+      // People portrait — show headshot when headline matches a known team member (people format only)
       if (!mediaEl.innerHTML.trim()) {
-        const portraitUrl = (window.__PEOPLE_IMAGES__ || {})[ev.headline];
+        const portraitUrl = currentFormat === 'people'
+          ? (window.__PEOPLE_IMAGES__ || {})[ev.headline] : null;
         if (portraitUrl) {
           mediaEl.innerHTML = `<img src="${portraitUrl}" alt="${ev.headline.replace(/"/g, '&quot;')}" style="max-width:100%;border-radius:4px">`;
         }
