@@ -1590,8 +1590,9 @@
       _cancelHide();
       document.getElementById('tt-headline').textContent = ev.headline;
       document.getElementById('tt-desc').textContent = ev.group || '';
+      const endLabel = ev.endIsPresent ? 'present' : fmtDate(ev.end);
       const dateStr = ev.end > ev.start
-        ? `${fmtDate(ev.start)} – ${fmtDate(ev.end)}`
+        ? `${fmtDate(ev.start)} – ${endLabel}`
         : fmtDate(ev.start);
       document.getElementById('tt-date').textContent = dateStr;
       tooltip.style.display = 'block';
@@ -1942,6 +1943,7 @@
         if (end < start) end = start;
         return {
           id: i, start, end,
+          endIsPresent: /^present$/i.test(String(nr.endRaw).trim()),
           startTs: start.getTime(), endTs: end.getTime(),
           headline: nr.headline || '(Untitled)',
           headlineUrl: nr.headlineUrl || '',
@@ -3063,7 +3065,7 @@
       titleEl.textContent = ev.headline;
       titleEl.style.color = color;
       const duration = ev.end > ev.start
-        ? `${fmtDate(ev.start)} → ${fmtDate(ev.end)}`
+        ? `${fmtDate(ev.start)} → ${ev.endIsPresent ? 'present' : fmtDate(ev.end)}`
         : fmtDate(ev.start);
       // Trust assumption: data is user-controlled (own xlsx/GSheet); ev.group is not sanitized.
       document.getElementById('d-meta').innerHTML = `<div>${duration}</div><div>${ev.group}</div>`;
