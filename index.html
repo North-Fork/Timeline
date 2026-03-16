@@ -1606,7 +1606,8 @@
         : fmtDate(ev.start);
       document.getElementById('tt-date').textContent = dateStr;
       const photoEl = document.getElementById('tt-photo');
-      const portraitUrl = (window.__PEOPLE_IMAGES__ || {})[ev.headline];
+      const portraitUrl = currentFormat === 'people'
+        ? (window.__PEOPLE_IMAGES__ || {})[ev.headline] : null;
       if (portraitUrl) {
         photoEl.src = portraitUrl;
         photoEl.style.display = 'block';
