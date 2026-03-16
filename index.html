@@ -1589,7 +1589,7 @@
     function showTooltip(ev, x, y) {
       _cancelHide();
       document.getElementById('tt-headline').textContent = ev.headline;
-      document.getElementById('tt-desc').innerHTML = linkify(ev.description || '');
+      document.getElementById('tt-desc').textContent = ev.group || '';
       const dateStr = ev.end > ev.start
         ? `${fmtDate(ev.start)} – ${fmtDate(ev.end)}`
         : fmtDate(ev.start);
