@@ -2,6 +2,24 @@
 
 ---
 
+## Refining Cards View (People / Team timeline)
+
+The "Cards" toggle in the zoom controls switches between two people-format rendering modes:
+- **Cards on** — full 75×75px portrait + name text + thin colored extent bar below the photo
+- **Cards off** — standard colored bars with 25px circular vignette at left edge + 75×74px portrait on hover tooltip
+
+Areas to refine in the Cards view:
+
+- **Name placement** — currently top-left next to portrait (y=+18); consider vertically centering next to photo or showing below it
+- **Extent bar position** — currently sits just below the portrait (y=portrait+4); could be under the name instead, or spanning only the name width
+- **Portrait clipping** — currently rectangular; consider rounded corners or a subtle border/shadow
+- **Cards view on hover** — tooltip still fires; could suppress it entirely (portrait already visible) or show dates-only tooltip
+- **Row density** — with 104px rows, the timeline can feel sparse; consider tighter spacing or a compact cards variant
+- **No-portrait fallback** — shows a colored placeholder rect; could show initials instead
+- **Cards toggle persistence** — resets to "on" each time a people file is loaded; consider persisting across loads
+
+---
+
 ## Smart Mapper
 
 Heuristic-first, Claude API fallback importer for arbitrary input files — see `PLANNING.md` for full design.

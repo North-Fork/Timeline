@@ -683,6 +683,16 @@
       color: #fff;
     }
 
+    .tb-btn.active {
+      background: #92400e;
+      color: #fcd34d;
+    }
+
+    .tb-btn.active:hover {
+      background: #b45309;
+      color: #fef3c7;
+    }
+
     #event-count {
       font-size: 11px;
       color: #6b7280;
@@ -1342,6 +1352,7 @@
       <button class="tb-btn" id="btn-zoomout" title="Zoom out">－</button>
       <button class="tb-btn sb-btn" id="btn-fit" title="Fit all events in view">Fit</button>
       <button class="tb-btn sb-btn" id="btn-today" title="Scroll to today">Today</button>
+      <button class="tb-btn sb-btn active" id="btn-cards" title="Toggle portrait cards on/off" style="display:none">Cards</button>
       <div id="view-hint">
         <span class="hint-desktop">zoom timeline density &#8594;<br>spacebar + mousewheel / trackpad</span>
         <span class="hint-mobile">zoom timeline density &#8594; horizontal pinch</span>
@@ -1507,6 +1518,11 @@
     const BAR_Y = (ROW_H - BAR_H) / 2;
     const LANE_H = BAR_H + 8;  // height per lane
     const LANE_PAD = 10;          // top/bottom padding within a row
+    // People format — portrait card layout
+    const PEOPLE_PHOTO  = 75;    // portrait square size (px)
+    const PEOPLE_BAR_H  = 5;     // thin extent bar height under portrait
+    const PEOPLE_LANE_H = 94;    // lane height: portrait(75) + gap(4) + bar(5) + spacing(10)
+    const PEOPLE_ROW_H  = 104;   // minimum row height for people format
     const NS = 'http://www.w3.org/2000/svg';
 
     // ── Color palette (per category) ─────────────────────────────────────────
@@ -1518,6 +1534,7 @@
 
     // ── State ────────────────────────────────────────────────────────────────
     let currentFormat = 'abtec';
+    let peopleCards = true;   // when true, people format renders portrait cards instead of bars
     let events = [];
     let groups = [];
     let orgs = [];
@@ -1606,7 +1623,8 @@
         : fmtDate(ev.start);
       document.getElementById('tt-date').textContent = dateStr;
       const photoEl = document.getElementById('tt-photo');
-      const portraitUrl = currentFormat === 'people'
+      // Tooltip portrait only in bars mode — in cards mode the portrait is already full-size on the bar
+      const portraitUrl = (currentFormat === 'people' && !peopleCards)
         ? (window.__PEOPLE_IMAGES__ || {})[ev.headline] : null;
       if (portraitUrl) {
         photoEl.src = portraitUrl;
@@ -1958,6 +1976,8 @@
       const t = FORMAT_TITLES[format] ?? 'Timeline';
       if (titleEl) titleEl.textContent = t;
       if (mobileTitleEl) mobileTitleEl.textContent = t;
+      const cardsBtn = document.getElementById('btn-cards');
+      if (cardsBtn) cardsBtn.style.display = format === 'people' ? '' : 'none';
 
       const parsed = rows.map((r, i) => {
         const nr = normalizeRow(r, format);
@@ -2429,7 +2449,9 @@
           }
         }
         laneCounts[g] = Math.max(1, laneEnds.length);
-        rowHeights[g] = Math.max(ROW_H, laneCounts[g] * LANE_H + LANE_PAD * 2);
+        rowHeights[g] = (currentFormat === 'people' && peopleCards)
+          ? Math.max(PEOPLE_ROW_H, laneCounts[g] * PEOPLE_LANE_H + LANE_PAD * 2)
+          : Math.max(ROW_H, laneCounts[g] * LANE_H + LANE_PAD * 2);
       }
     }
 
@@ -2642,10 +2664,52 @@
         g.setAttribute('opacity', '0.15');
       }
       evG.appendChild(g);
+
+      // ── People format: portrait card (photo + name + thin extent bar) ──────
+      if (currentFormat === 'people' && peopleCards) {
+        const portraitUrl = (window.__PEOPLE_IMAGES__ || {})[ev.headline];
+        // Invisible hit rect covering the full card area
+        g.appendChild(mk('rect', {
+          x: x1, y: barTop,
+          width: Math.max(barW, PEOPLE_PHOTO + 160), height: PEOPLE_PHOTO,
+          fill: 'transparent'
+        }));
+        // Portrait (or colored placeholder)
+        if (portraitUrl) {
+          const imgEl = mk('image');
+          imgEl.setAttribute('href', portraitUrl);
+          imgEl.setAttribute('x', x1);
+          imgEl.setAttribute('y', barTop);
+          imgEl.setAttribute('width',  PEOPLE_PHOTO);
+          imgEl.setAttribute('height', PEOPLE_PHOTO);
+          imgEl.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+          imgEl.style.pointerEvents = 'none';
+          g.appendChild(imgEl);
+        } else {
+          g.appendChild(mk('rect', {
+            x: x1, y: barTop, width: PEOPLE_PHOTO, height: PEOPLE_PHOTO,
+            fill: color, rx: 4, opacity: 0.4
+          }));
+        }
+        // Name
+        g.appendChild(svgTxt(x1 + PEOPLE_PHOTO + 8, barTop + 18, ev.headline, {
+          fill: '#f0f0f0', 'font-size': 13, 'font-weight': '600',
+          style: 'pointer-events:none'
+        }));
+        // Thin colored extent bar directly below portrait
+        g.appendChild(mk('rect', {
+          x: x1, y: barTop + PEOPLE_PHOTO + 4,
+          width: barW, height: PEOPLE_BAR_H,
+          fill: color, rx: 2, opacity: 0.82
+        }));
+        return;
+      }
+
+      // ── Standard bar ──────────────────────────────────────────────────────
       const rect = mk('rect', { x: x1, y: barTop, width: barW, height: BAR_H, fill: color, rx: 4, opacity: 0.82 });
       g.appendChild(rect);
 
-      // People format — circular portrait at left edge of bar
+      // People format (bars mode) — 25px circular portrait at left edge of bar
       const PHOTO_SIZE = 25;
       const portraitUrl = currentFormat === 'people'
         ? (window.__PEOPLE_IMAGES__ || {})[ev.headline] : null;
@@ -2900,7 +2964,8 @@
         for (const ev of visEvs) {
           if (groupY[ev.group] === undefined) continue;
           const rY = groupY[ev.group];
-          const barTop = rY + LANE_PAD + (ev.lane || 0) * LANE_H;
+          const lH = (currentFormat === 'people' && peopleCards) ? PEOPLE_LANE_H : LANE_H;
+          const barTop = rY + LANE_PAD + (ev.lane || 0) * lH;
           drawEventBar(evG, ev, barTop, groupColor[ev.group], W, visEvs);
         }
       } else {
@@ -3264,6 +3329,12 @@
     document.getElementById('btn-zoomout').addEventListener('click', doZoomOut);
     document.getElementById('btn-fit').addEventListener('click', fitAll);
     document.getElementById('btn-today').addEventListener('click', doToday);
+    document.getElementById('btn-cards').addEventListener('click', () => {
+      peopleCards = !peopleCards;
+      document.getElementById('btn-cards').classList.toggle('active', peopleCards);
+      computeLanes();
+      redraw();
+    });
 
     // ── Search ────────────────────────────────────────────────────────────────
     let searchResults = [], searchIdx = -1, searchQuery = '', searchMode = 'absolute';
