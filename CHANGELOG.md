@@ -5,7 +5,9 @@
 ### Portrait vignettes on timeline and hover
 - **Timeline bars** — `people` format events show a 25×25 circular portrait at the left edge of each bar; text label shifts right to avoid overlap; events without a matched photo render as normal bars
 - **Hover tooltip** — portrait shown as a 75×74px rectangle below the category/date fields; hidden for events without a photo
-- `currentFormat` module-level state variable added so `drawEventBar()` can check the active format without threading it through call arguments
+- **Storybox** — portrait shown as fallback media when no other media is set (people format only)
+- All three portrait display sites (bar, tooltip, Storybox) gated on `currentFormat === 'people'`; AbTeC and CV timelines are unaffected
+- `currentFormat` module-level state variable added so `drawEventBar()`, `showTooltip()`, and `openDrawer()` can check the active format without threading it through call arguments
 
 ## Session 20 — 2026-03-15  ·  tag: V.03.05-Team
 
