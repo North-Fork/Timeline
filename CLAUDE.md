@@ -55,13 +55,24 @@ No build step, no framework, no bundler. Application code is split across three 
 | `index.html` | App shell — HTML structure, inline CSS, core JS |
 | `utilities/cv-utilities.js` | CV format module — exports `window.CVFormat` |
 | `serve.sh` | Starts `python3 -m http.server 8000` (required for auto-load fetch) |
-| `package-handoff.sh` | Syncs all current files into `Handoff-File-Drop/` and zips it — always use this instead of zipping manually |
+| `package-handoff.sh` | Builds CV handoff → `Handoff/Handoff-File-Drop/` + zip — always use this instead of zipping manually |
+| `package-handoff-people.sh` | Builds People timeline handoff → `Handoff/Handoff-People/` + zip — auto-loads `ra-team-data.js`, includes all 76 portraits |
 | `README.md` | End-user usage instructions |
 | `CHANGELOG.md` | Session-by-session change log (update at end of every session) |
 | `FEATURES-WISH-LIST.md` | Planned features and known limitations |
 | `.gitattributes` | Configures `bd merge` driver for `.beads/issues.jsonl` |
 | `AGENTS.md` | Beads agent landing-the-plane instructions |
 | `.github/workflows/update-cv.yml` | GitHub Actions: weekly CV + pub-images auto-update |
+
+### Handoff/ Directory
+
+Generated artifacts — **not committed to git** (excluded by `.gitignore`). Run the relevant script from the project root to rebuild.
+
+| Subdirectory | Script | Contents | Auto-loads |
+|---|---|---|---|
+| `Handoff-File-Drop/` + `.zip` | `bash package-handoff.sh` | CV handoff with file-drop UI visible | `cv-data-public.js` (Research-Creation CV) |
+| `Handoff-No-File-Drop/` | (manual) | CV handoff with file-drop UI hidden | `cv-data-public.js` |
+| `Handoff-People/` + `.zip` | `bash package-handoff-people.sh` | People / Team timeline; includes all 76 portraits in `image/abtec-team/` | `ra-team-data.js` |
 
 ### image/ Directory
 

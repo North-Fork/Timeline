@@ -36,8 +36,4 @@ data/themes-data/
 ARCHIVE/
 
 # ── Local handoff packages (generated artifacts, not committed) ──────────────
-handoff/
-Handoff-File-Drop/
-Handoff-File-Drop.zip
-Handoff-People/
-Handoff-People.zip
+Handoff/

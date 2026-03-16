@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# package-handoff.sh — sync and zip Handoff-File-Drop
+# package-handoff.sh — sync and zip Handoff/Handoff-File-Drop
 #
-# Copies all current source files into Handoff-File-Drop, then zips it.
+# Copies all current source files into Handoff/Handoff-File-Drop, then zips it.
 # Run this from the Timeline-JEL root before sending the handoff.
 #
 # Usage:
 #   bash package-handoff.sh
 
 set -e
-HANDOFF="Handoff-File-Drop"
+HANDOFF="Handoff/Handoff-File-Drop"
 
 echo "Syncing files into $HANDOFF…"
 
@@ -59,7 +59,7 @@ print('  Patched index.html')
 PYEOF
 
 # Zip
-ZIP="Handoff-File-Drop.zip"
+ZIP="Handoff/Handoff-File-Drop.zip"
 rm -f "$ZIP"
 zip -r "$ZIP" "$HANDOFF" --exclude "*.DS_Store"
 echo "✓ Created $ZIP"

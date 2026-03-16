@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # package-handoff-people.sh — build a self-contained People timeline handoff
 #
-# Produces Handoff-People/ and Handoff-People.zip.
+# Produces Handoff/Handoff-People/ and Handoff/Handoff-People.zip.
 # Auto-loads ra-team-data.js (the AbTeC People / RA team data).
 #
 # Usage:
 #   bash package-handoff-people.sh
 
 set -e
-DEST="Handoff-People"
+DEST="Handoff/Handoff-People"
 
 echo "Building $DEST…"
 rm -rf "$DEST"
@@ -55,7 +55,7 @@ print('  Patched index.html')
 PYEOF
 
 # Zip
-ZIP="Handoff-People.zip"
+ZIP="Handoff/Handoff-People.zip"
 rm -f "$ZIP"
 zip -r "$ZIP" "$DEST" --exclude "*.DS_Store"
 echo "✓ Created $ZIP"
