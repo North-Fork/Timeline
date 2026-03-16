@@ -3203,17 +3203,13 @@
           { key: 'ra-masters',          label: 'Masters' },
           { key: 'ra-undergraduate',    label: 'Undergraduate' },
           { key: 'research staff',      label: 'Research Staff' },
-          { key: 'staff',               label: 'Staff' },
         ];
-        const knownKeys = new Set(ROLE_ORDER.map(r => r.key));
 
-        // Build ordered list: known roles first (in ROLE_ORDER sequence), then any unrecognised
         const roleMap = {};
         parsed.forEach(p => { roleMap[p.role.toLowerCase()] = p; });
-        const ordered = [
-          ...ROLE_ORDER.map(r => roleMap[r.key] ? { ...roleMap[r.key], label: r.label } : null).filter(Boolean),
-          ...parsed.filter(p => !knownKeys.has(p.role.toLowerCase())),
-        ];
+        const ordered = ROLE_ORDER
+          .map(r => roleMap[r.key] ? { ...roleMap[r.key], label: r.label } : null)
+          .filter(Boolean);
 
         const html = ordered.map(p => {
           const names = p.names ? p.names.split(',').map(s => s.trim()).filter(Boolean) : [];
