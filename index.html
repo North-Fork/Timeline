@@ -3207,7 +3207,7 @@
         const raCount = RA_LEVELS.reduce((n, l) => raMap[l.key] !== null ? n + raMap[l.key].split(',').length : n, 0);
 
         // Non-RA roles in display order
-        const NON_RA_ORDER = ['Staff', 'Co-investigator', 'Co-investigators', 'Primary Investigator'];
+        const NON_RA_ORDER = ['Primary Investigator', 'Co-director', 'Co-investigator', 'Co-investigators', 'Staff'];
         const nonRA = NON_RA_ORDER.map(r => parsed.find(p => p.role.toLowerCase() === r.toLowerCase())).filter(Boolean);
         // Also catch any unrecognised roles
         const knownRoles = new Set([...RA_LEVELS.map(l => l.key.toLowerCase()), ...NON_RA_ORDER.map(r => r.toLowerCase())]);
