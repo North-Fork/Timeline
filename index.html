@@ -1784,6 +1784,7 @@
     // ── Data parsing ─────────────────────────────────────────────────────────
     function pDate(v) {
       const s = String(v).trim();
+      if (/^present$/i.test(s)) return new Date();
       const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
       if (!m) return null;
       let yr = +m[3];
