@@ -2,6 +2,12 @@
 
 ---
 
+## Smart Mapper
+
+Heuristic-first, Claude API fallback importer for arbitrary input files — see `PLANNING.md` for full design.
+
+---
+
 ## Storybox (event detail drawer)
 
 - Pre-fetch Flickr CDN URLs into Media Thumbnail column (batch noembed script, ~1 req/sec)

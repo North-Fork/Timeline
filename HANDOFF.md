@@ -2,18 +2,32 @@
 
 Files to upload via FTP to test the current CV build on the website.
 
+## Packaging
+
+Run this from the project root to sync all current files and produce `Handoff-File-Drop.zip`:
+
+```bash
+bash package-handoff.sh
+```
+
+This is the only supported way to package a handoff — do not zip the folder manually, as `data/taglines.js` and other files may be stale.
+
 ---
 
-## Files to upload
+## Files included
 
 | File | Destination on server |
 |---|---|
 | `index.html` | root |
-| `cv.js` | root |
+| `utilities/cv-utilities.js` | `utilities/` |
+| `image/logo.png` | `image/` |
+| `data/taglines.js` | `data/` |
 | `data/cv-data/cv-data-public.js` | `data/cv-data/` |
 | `data/cv-data/pub-images.js` | `data/cv-data/` |
 
-> **Note:** `data/timeline-data/timeline-data.js` and all other files can be left as-is on the server — only the four files above changed.
+> **Note:** `data/timeline-data/timeline-data.js` and all other files can be left as-is on the server — only the files above changed.
+
+> **Required:** The `image/` directory must always be included in any handoff — it contains the AbTeC logo rendered in the timeline.
 
 ---
 
@@ -31,7 +45,7 @@ Files to upload via FTP to test the current CV build on the website.
 - Book chapter entries show the **chapter title** as the headline (not the volume title), enabling cover image lookup
 - **More Info** links now appear in the Storybox for entries that have a `{text}` or `{link}` annotation in the Google Doc
 - Publication **cover images** improved: correct title matching for chapters, new entries added
-- CV-specific code extracted into `cv.js` (no functional change — internal refactor)
+- CV-specific code extracted into `utilities/cv-utilities.js` (no functional change — internal refactor)
 
 ---
 

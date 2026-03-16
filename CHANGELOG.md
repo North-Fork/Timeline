@@ -1,5 +1,49 @@
 # Changelog
 
+## Session 19 — 2026-03-15
+
+### ORCID support
+- New `utilities/orcid-utilities.js` — exports `window.ORCIDFormat` with `detect()`, `parse()`, `fetchByID()`
+- Parses all ORCID sections: Works, Employment, Education, Funding, Distinctions, Service, Memberships, Invited Positions
+- Fetches live from the ORCID public API (no auth required); also accepts dropped `.json` export files
+- Tested against ORCID iD `0000-0003-0130-8544` — 87 events parsed across 10 groups
+
+### Unified URL load field
+- Collapsed Google Sheets, Google Doc, and ORCID inputs into a single field (`#url-box`) with auto-detection
+- Detection order: ORCID iD / URL → Google Doc URL → Google Sheets URL
+- Old `GSHEET_LS_KEY` → `URL_LS_KEY`; localStorage remembers last input across all types
+
+### File drop updates
+- Added `.json` handler in `load()` for ORCID export files
+- Drop-zone hint text updated: "Drop Events (.xlsx, .csv) or CV (.xlsx, .txt, .json)"
+- File input `accept` updated to include `.json`
+
+### Restructured utilities
+- `cv.js` → `utilities/cv-utilities.js`
+- `utilities/orcid-utilities.js` added alongside it
+- All path references updated in `index.html`, `test.html`, `CLAUDE.md`, `HANDOFF.md`
+
+### Externalized logo and taglines
+- Logo renamed: `image/AbTeCLogo-Horizontal-Primary.png` → `image/logo.png`
+- Pre-history / post-history watermark text externalized to `data/taglines.js` (loaded via `<script src>`, works with `file://`)
+- Watermark variable names updated: `pastWatermarkG` → `preHistoryWatermarkG`, `futureWatermarkG` → `postHistoryWatermarkG`
+- Watermark rendering now dynamic — supports any number of lines at 110px spacing
+
+### Handoff packaging
+- `Handoff-File-Drop/` — self-contained handoff folder with File section visible; auto-loads `cv-data-public.js`
+- `Handoff-No-File-Drop/` — handoff folder with File section hidden
+- `package-handoff.sh` — syncs all current source files into `Handoff-File-Drop/`, applies handoff-specific patches, and zips; always use this instead of zipping manually
+- `image/` directory and `data/taglines.js` now included in all handoff folders
+
+### Planning and docs
+- `PLANNING.md` — full design spec for Smart Mapper (heuristic-first, Claude API fallback)
+- `FEATURES-WISH-LIST.md` — Smart Mapper entry added with pointer to `PLANNING.md`
+- `README.md` — Loading Data section rewritten; CV methods expanded to four (added ORCID)
+- `CLAUDE.md` — updated for all structural changes; `image/` directory section added
+- `HANDOFF.md` — packaging instructions added; `package-handoff.sh` documented
+
+---
+
 ## Session 18 — 2026-03-12
 
 ### CV Storybox — description fidelity improvements

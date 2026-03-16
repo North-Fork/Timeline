@@ -42,24 +42,34 @@ bd create --title="Issue title" --type=task|bug|feature --priority=2
 
 ### Overview
 
-No build step, no framework, no bundler. Application code is split across two files:
+No build step, no framework, no bundler. Application code is split across three files:
 
 - `index.html` — HTML structure, inline CSS, core JS (AbTeC timeline, rendering, interaction)
-- `cv.js` — CV-specific code (parsers, GDoc loader, theme system, drawer helpers); exports `window.CVFormat`
+- `utilities/cv-utilities.js` — CV-specific code (parsers, GDoc loader, theme system, drawer helpers); exports `window.CVFormat`
+- `utilities/orcid-utilities.js` — ORCID record parser; exports `window.ORCIDFormat`
 
 ### Root Files
 
 | File | Purpose |
 |---|---|
 | `index.html` | App shell — HTML structure, inline CSS, core JS |
-| `cv.js` | CV format module — exports `window.CVFormat` |
+| `utilities/cv-utilities.js` | CV format module — exports `window.CVFormat` |
 | `serve.sh` | Starts `python3 -m http.server 8000` (required for auto-load fetch) |
+| `package-handoff.sh` | Syncs all current files into `Handoff-File-Drop/` and zips it — always use this instead of zipping manually |
 | `README.md` | End-user usage instructions |
 | `CHANGELOG.md` | Session-by-session change log (update at end of every session) |
 | `FEATURES-WISH-LIST.md` | Planned features and known limitations |
 | `.gitattributes` | Configures `bd merge` driver for `.beads/issues.jsonl` |
 | `AGENTS.md` | Beads agent landing-the-plane instructions |
 | `.github/workflows/update-cv.yml` | GitHub Actions: weekly CV + pub-images auto-update |
+
+### image/ Directory
+
+Contains static assets required at runtime. **Always include in any handoff folder.**
+
+| File | Purpose |
+|---|---|
+| `logo.png` | AbTeC logo rendered as a watermark in the timeline SVG |
 
 ### data/ Directory
 
@@ -73,6 +83,7 @@ data/
 │   ├── generate_cv_xlsx.py       converts cv.txt → cv.xlsx
 │   ├── fetch_cv_from_gdoc.py     fetches all three Google Doc CV sections → cv-data.js
 │   └── fetch_pub_images.py       fetches WP media API → pub-images.js
+├── taglines.js                   pre-history and post-history watermark text; edit directly, loaded via <script src>
 └── timeline-data/
     ├── timeline-data.xlsx        active AbTeC data (Timeline-AbTeC* branches)
     ├── make_data_js.py           converts xlsx → timeline-data.js
@@ -113,7 +124,8 @@ Key columns used by the parser (`normalizeRow`):
 ```
 timeline.html (browser)
   ├─ on load: <script src="data/timeline-data/timeline-data.js">  ← works with file://
-  │    └─ OR: user drag-and-drops an .xlsx onto the page
+  │    └─ OR: user drag-and-drops .xlsx / .csv / .txt / .json onto the page
+  │    └─ OR: user pastes gDoc URL, gSheet URL, or ORCID iD into URL field
   ├─ detectFormat(rows) → 'abtec' (has Category col) or 'cv'
   ├─ normalizeRow() maps raw columns → internal event objects
   ├─ redraw() renders everything to SVG
@@ -138,7 +150,7 @@ timeline.html (browser)
 | `Timeline-AbTeC-Prototype` | (archived) | superseded by Timeline-AbTeC |
 | `Timeline-CV` | (archived) | CV support folded into Timeline-AbTeC-Media |
 
-**CV data:** All CV support (`detectFormat()`, `normalizeRow()` in `index.html`; `parseCVText()`, GDoc parser, theme system, drawer helpers in `cv.js` via `window.CVFormat`). No branch switch needed.
+**CV data:** All CV support (`detectFormat()`, `normalizeRow()` in `index.html`; `parseCVText()`, GDoc parser, theme system, drawer helpers in `utilities/cv-utilities.js` via `window.CVFormat`). No branch switch needed.
 To view CV data: drag `data/cv-data/cv.xlsx` onto the timeline, or swap the `<script src>`
 on line 9 to `data/cv-data/cv-data.js`. Format is auto-detected; sidebar title updates.
 

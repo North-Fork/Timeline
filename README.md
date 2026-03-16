@@ -69,16 +69,26 @@ Browsers other than Chrome/Brave block local file access, so the data cannot loa
 
 ## Loading Data
 
-Three ways to load data:
-
 **1. Pre-generated local file (default, fastest)**
 The timeline loads `timeline-data.xlsx` automatically on startup via the pre-built `data/timeline-data/timeline-data.js` file.
 
 **2. Drag and drop**
-Drag any `.xlsx` or `.csv` file onto the drop zone in the sidebar.
+Drag a file onto the drop zone in the sidebar, or click **Browse for file**. Supported formats:
 
-**3. Google Sheets**
-Paste a published Google Sheets URL into the URL field in the sidebar and click **Load** (or press Enter). The sheet must be published to the web (**File → Share → Publish to web**). The URL is remembered between sessions but is never fetched automatically — click Load each time you want to refresh.
+| File type | Use for |
+|-----------|---------|
+| `.xlsx` / `.csv` | Events (research/project data) or CV |
+| `.txt` | CV plain text |
+| `.json` | ORCID record export |
+
+**3. URL / ID field**
+Paste a URL or ID into the field below the drop zone and click **Load** (or press Enter). The value is remembered between sessions but never fetched automatically. Supported inputs:
+
+| Input | What it loads |
+|-------|--------------|
+| Google Sheets URL | Published spreadsheet (must be published to web via **File → Share → Publish to web**) |
+| Google Doc URL | Published CV Google Doc |
+| ORCID iD | Bare iD (`0000-0001-5000-0007`) or full URL (`https://orcid.org/…`) — fetched live from the ORCID public API |
 
 ---
 
@@ -215,7 +225,7 @@ Recognised team roles (in display order): `RA-Undergraduate`, `RA-Masters`, `RA-
 
 The CV Data handling is currently optimized to read Jason Lewis' CV format. It is not a general purpose CV parser yet, though if you format your CV in a similar way, it should work.
 
-There is no auto-loaded CV file — you must load CV data manually each session using one of the three methods below.
+There is no auto-loaded CV file — you must load CV data manually each session using one of the four methods below.
 
 **Method 1 — Drag and drop (or Browse) a `.txt` file**
 
@@ -230,6 +240,10 @@ Paste the published URL of a Google Doc CV into the URL field and click **Load**
 **Method 3 — From an Excel or CSV file (`.xlsx` / `.csv`)**
 
 The file should have a `Group` column (the CV section name, e.g. *Employment*, *Books*, *Solo Exhibitions*) plus `start date`, `end date`, `headline`, and `description` columns. Drag the file onto the drop zone or use **Browse file**. Run `data/cv-data/make_cv_data_js.py` to pre-generate a local data file that loads automatically on startup (advanced use).
+
+**Method 4 — Load from ORCID**
+
+Paste your ORCID iD (e.g. `0000-0001-5000-0007`) or full ORCID URL into the URL field and click **Load**. The timeline fetches your public record live from the ORCID API and displays all sections — Works, Employment, Education, Funding, Distinctions, Service, Memberships, and Invited Positions. Alternatively, export your ORCID record as a `.json` file from orcid.org and drag it onto the drop zone.
 
 **Converting your CV to the right format**
 

@@ -754,7 +754,7 @@ function runTests(fw) {
   assert(fw.CVFormat.DISSEMINATION_GROUPS.has('Journal Articles'), 'Journal Articles member');
   assert(!fw.CVFormat.DISSEMINATION_GROUPS.has('Employment'),      'Employment not member');
 
-  section('AbTeC format unaffected by cv.js');
+  section('AbTeC format unaffected by utilities/cv-utilities.js');
   const abRows = [{ category:'Workshops', year:'2022', headline:'Test' }];
   assert(fw.detectFormat(abRows) === 'abtec', 'detectFormat still returns abtec');
   const abEv = fw.normalizeRow(abRows[0], 'abtec');
