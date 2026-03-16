@@ -19,6 +19,8 @@
      utilities/cv-utilities.js : CV parser, theme system, Storybox helpers (exports window.CVFormat) -->
 <script>if (!window.__PUB_IMAGES__) window.__PUB_IMAGES__ = {};</script>
 <script src="data/cv-data/pub-images.js"></script>
+<script>if (!window.__PEOPLE_IMAGES__) window.__PEOPLE_IMAGES__ = {};</script>
+<script src="data/people-images.js"></script>
 <script src="utilities/cv-utilities.js"></script>
 <script src="utilities/orcid-utilities.js"></script>
 <style>
@@ -2589,6 +2591,14 @@ async function openDrawer(ev) {
     const imgUrl = CVFormat.lookupPubImage(ev, window.__PUB_IMAGES__ || {});
     if (imgUrl) {
       mediaEl.innerHTML = `<img src="${imgUrl}" alt="${ev.headline.replace(/"/g, '&quot;')}" style="max-width:100%;border-radius:4px">`;
+    }
+  }
+
+  // People portrait — show headshot when headline matches a known team member
+  if (!mediaEl.innerHTML.trim()) {
+    const portraitUrl = (window.__PEOPLE_IMAGES__ || {})[ev.headline];
+    if (portraitUrl) {
+      mediaEl.innerHTML = `<img src="${portraitUrl}" alt="${ev.headline.replace(/"/g, '&quot;')}" style="max-width:100%;border-radius:4px">`;
     }
   }
 

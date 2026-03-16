@@ -22,6 +22,7 @@ cp image/logo.png                     "$HANDOFF/image/logo.png"
 
 # Data
 cp data/taglines.js                   "$HANDOFF/data/taglines.js"
+cp data/people-images.js              "$HANDOFF/data/people-images.js"
 cp data/cv-data/cv-data-public.js     "$HANDOFF/data/cv-data/cv-data-public.js"
 cp data/cv-data/pub-images.js         "$HANDOFF/data/cv-data/pub-images.js"
 

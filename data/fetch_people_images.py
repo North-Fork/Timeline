@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""
+Fetch https://www.obxlabs.net/people, match names against the team xlsx,
+and write data/people-images.js (sets window.__PEOPLE_IMAGES__).
+
+Usage:
+    python3 data/fetch_people_images.py [path/to/team.xlsx]
+
+If no xlsx path is given, just generates a full site → image lookup
+without filtering to xlsx names.
+"""
+import json, re, sys, unicodedata
+from pathlib import Path
+from urllib.request import urlopen, Request
+from urllib.error import URLError
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    sys.exit('pip install beautifulsoup4')
+
+PEOPLE_URL = 'https://www.obxlabs.net/people'
+NO_IMAGE   = 'no-name.png'   # placeholder — skip these
+OUT        = Path(__file__).parent / 'people-images.js'
+
+# ── Normalise a name for fuzzy matching ───────────────────────────────────────
+def norm(s):
+    """Lowercase, strip accents, replace hyphens/apostrophes with spaces, collapse spaces."""
+    s = unicodedata.normalize('NFD', s)
+    s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')  # strip diacritics
+    s = s.replace('-', ' ').replace("'", ' ')  # hyphens/apostrophes → space
+    s = re.sub(r'[^a-z0-9 ]', '', s.lower())
+    return ' '.join(s.split())
+
+# ── Fetch the people page ─────────────────────────────────────────────────────
+def fetch_site_people():
+    """Returns dict: normalised_name → (display_name, image_url)."""
+    print(f'Fetching {PEOPLE_URL}…')
+    req = Request(PEOPLE_URL, headers={'User-Agent': 'Mozilla/5.0'})
+    html = urlopen(req, timeout=15).read().decode('utf-8', errors='replace')
+    soup = BeautifulSoup(html, 'html.parser')
+
+    people = {}
+    # Each person card: <div class="msg_head ..."><img src="..."><div>Name</div></div>
+    for img in soup.find_all('img'):
+        src = img.get('src', '')
+        if NO_IMAGE in src or not src:
+            continue
+        # Must be inside a msg_head div
+        parent = img.parent
+        if not parent or 'msg_head' not in ' '.join(parent.get('class', [])):
+            continue
+        # Name is in the <div> sibling immediately after the <img>
+        name_div = img.find_next_sibling('div')
+        if not name_div:
+            continue
+        display_name = name_div.get_text(strip=True)
+        if not display_name:
+            continue
+        # Make absolute URL
+        if src.startswith('/'):
+            src = 'https://www.obxlabs.net' + src
+        people[norm(display_name)] = (display_name, src)
+
+    print(f'  Found {len(people)} people with images on site')
+    return people
+
+# ── Load names from xlsx (optional) ──────────────────────────────────────────
+def load_xlsx_names(path):
+    try:
+        import openpyxl
+    except ImportError:
+        sys.exit('pip install openpyxl')
+    wb = openpyxl.load_workbook(path)
+    ws = wb.active
+    headers = [str(c.value).strip().lower().replace(' ', '_') if c.value else ''
+               for c in ws[1]]
+    hi = headers.index('headline') if 'headline' in headers else 2
+    names = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        v = row[hi]
+        if v:
+            names.append(str(v).strip())
+    return names
+
+# ── Fuzzy match: xlsx name → site person ──────────────────────────────────────
+def best_match(xlsx_name, site_people):
+    """Try exact, then subset-of-words, then word overlap."""
+    key = norm(xlsx_name)
+
+    # 1. Exact normalised match
+    if key in site_people:
+        return site_people[key]
+
+    # 2. One name is a subset of the other (handles "Sara England" ↔ "Sara Nicole England")
+    for skey, val in site_people.items():
+        if key in skey or skey in key:
+            return val
+
+    # 3. Word-set overlap ≥ 2 words (handles accent/hyphen variants)
+    kwords = set(key.split())
+    best, best_score = None, 0
+    for skey, val in site_people.items():
+        swords = set(skey.split())
+        score  = len(kwords & swords)
+        if score >= 2 and score > best_score:
+            best, best_score = val, score
+
+    return best
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+def main():
+    site_people = fetch_site_people()
+
+    xlsx_path = sys.argv[1] if len(sys.argv) > 1 else None
+    if xlsx_path:
+        xlsx_names = load_xlsx_names(xlsx_path)
+        print(f'  Matching {len(xlsx_names)} names from xlsx…')
+    else:
+        # Use all site names
+        xlsx_names = [v[0] for v in site_people.values()]
+
+    matched, unmatched = {}, []
+    for name in xlsx_names:
+        result = best_match(name, site_people)
+        if result:
+            display, url = result
+            matched[name] = url
+        else:
+            unmatched.append(name)
+
+    print(f'\n✓ Matched:   {len(matched)}')
+    if unmatched:
+        print(f'✗ Unmatched: {len(unmatched)}')
+        for n in sorted(unmatched):
+            print(f'    {n}')
+
+    # Write JS
+    OUT.write_text(
+        '// Generated by data/fetch_people_images.py — re-run to refresh.\n'
+        '// Keys are headline values from the team xlsx.\n'
+        f'window.__PEOPLE_IMAGES__ = {json.dumps(matched, indent=2, ensure_ascii=False)};\n',
+        encoding='utf-8',
+    )
+    print(f'\n✓ Written {OUT}')
+
+if __name__ == '__main__':
+    main()
