@@ -1,4 +1,4 @@
-// Generated from AbTeC-RA-Timeline-Parsed-04.xlsx
+// Generated from AbTeC-RA-Timeline-Parsed-05.xlsx
 window.__TIMELINE_DATA__ = [
   {
     "start date": "01/05/2015",
@@ -11,7 +11,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/11/2021",
@@ -24,7 +25,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.nimanavab.com/"
+    "headline_url": "http://www.nimanavab.com/",
+    "format": "people"
   },
   {
     "start date": "02/17/2015",
@@ -37,7 +39,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://pangattack.bandcamp.com/"
+    "headline_url": "http://pangattack.bandcamp.com/",
+    "format": "people"
   },
   {
     "start date": "03/02/2015",
@@ -50,7 +53,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/06/2020",
@@ -63,7 +67,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/17/2018",
@@ -76,7 +81,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/04/2020",
@@ -89,7 +95,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.asas.website"
+    "headline_url": "http://www.asas.website",
+    "format": "people"
   },
   {
     "start date": "05/06/2024",
@@ -102,7 +109,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://github.com/estineali"
+    "headline_url": "https://github.com/estineali",
+    "format": "people"
   },
   {
     "start date": "05/17/2021",
@@ -115,7 +123,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2023",
@@ -128,7 +137,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2023",
@@ -141,7 +151,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/05/2017",
@@ -154,7 +165,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "07/10/2015",
@@ -167,7 +179,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "07/20/2013",
@@ -180,7 +193,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/28/2022",
@@ -193,7 +207,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/30/2018",
@@ -206,7 +221,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/01/2014",
@@ -219,7 +235,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.reimerstein.com"
+    "headline_url": "http://www.reimerstein.com",
+    "format": "people"
   },
   {
     "start date": "09/01/2020",
@@ -232,7 +249,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/01/2023",
@@ -245,7 +263,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/01/2024",
@@ -258,7 +277,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://hdmaxi.xyz"
+    "headline_url": "http://hdmaxi.xyz",
+    "format": "people"
   },
   {
     "start date": "09/02/2014",
@@ -271,7 +291,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.benesiinaabandan.com"
+    "headline_url": "http://www.benesiinaabandan.com",
+    "format": "people"
   },
   {
     "start date": "09/06/2021",
@@ -284,7 +305,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://linktr.ee/studioekosi"
+    "headline_url": "http://linktr.ee/studioekosi",
+    "format": "people"
   },
   {
     "start date": "09/09/2016",
@@ -297,7 +319,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/19/2019",
@@ -310,7 +333,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://maizelongboat.itch.io/terra-nova"
+    "headline_url": "https://maizelongboat.itch.io/terra-nova",
+    "format": "people"
   },
   {
     "start date": "09/25/2015",
@@ -323,7 +347,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://kaiatanoron.format.com/"
+    "headline_url": "http://kaiatanoron.format.com/",
+    "format": "people"
   },
   {
     "start date": "09/29/2014",
@@ -336,7 +361,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "10/27/2020",
@@ -349,7 +375,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/26/2015",
@@ -362,7 +389,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/30/2019",
@@ -375,7 +403,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "02/08/2015",
@@ -388,7 +417,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/24/2015",
@@ -401,7 +431,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/03/2021",
@@ -414,7 +445,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2023",
@@ -427,7 +459,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/13/2022",
@@ -440,7 +473,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/27/2016",
@@ -453,7 +487,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/01/2022",
@@ -466,7 +501,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/08/2017",
@@ -479,7 +515,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/04/2017",
@@ -492,7 +529,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/15/2020",
@@ -505,7 +543,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/30/2019",
@@ -518,7 +557,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2024",
@@ -531,20 +571,36 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
-    "start date": "01/06/2014",
-    "end date": "02/28/2029",
-    "headline": "Skawennati Fragnito",
-    "description": "Recipient of the 2011 Eiteljorg Contemporary Art Fellowship, Skawennati is recognized as a pioneering New Media artist. Her art, addressing history, the future, and change, has been widely exhibited across Canada, the United States and Australia. Best-known works include: CyberPowWow (1997-2004), the Aboriginally-determined, on-line gallery and chat space; Imagining Indians in the 25th Century (2001), a web-based paper doll/time-travel journal; and her current production, TimeTraveller™ (2008- ), a multi-platform project featuring nine short machinima episodes, a series of digital prints, and a 3D print, Hunter Mega-Figurine. Its website, www.TimeTravellerTM.com, won imagineNative’s 2009 Best New Media Award. A founding member of the First Nations artist collective, Nation to Nation, she has been active in the Artist-Run Network and sat on the board at Galerie Oboro. She has contributed texts to a wide range of publications including a chapter in the upcoming book Community-Based Multiliteracies and Digital Media Projects: Questioning Assumptions and Exploring Realities and an article in the Canadian Journal of Communication – Media Arts Revisited. Skawennati is Co-Director, with Jason E. Lewis, of Aboriginal Territories in Cyberspace, (AbTeC) a network of artists and academics who are investigating and creating Aboriginal virtual environments. She holds a BFA from Concordia University in Montreal. Please visit www.skawennati.com to learn more.",
+    "start date": "09/01/2004",
+    "end date": "present",
+    "headline": "Jason Edward Lewis",
+    "description": "Jason Edward Lewis is a digital media theorist, poet, and software designer exploring computation as a creative and cultural material. Lewis is deeply committed to developing intriguing new forms of expression by working on conceptual, critical, and technical levels simultaneously. He is the University Research Chair in Computational Media and the Indigenous Future Imaginary as well Professor of Computation Arts at Concordia University. Lewis is Hawaiian & Samoan, was born and raised in northern California, and currently lives in Montreal.\n\nLewis co-directs Abundant Intelligences, the Indigenous Futures Research Centre, Aboriginal Territories in Cyberspace, and the Skins Workshops on Aboriginal Storytelling and Video Game Design. He directed the Initiative for Indigenous Futures and co-directed the Indigenous Protocol and AI Workshops.\n\nLewis’ creative and production work has been featured at Ars Electronica, Mobilefest, Elektra, Urban Screens, ISEA, SIGGRAPH, FILE and the Hawaiian International Film Festival, among other venues, and has been recognized with the inaugural Robert Coover Award for Best Work of Electronic Literature, two Prix Ars Electronica Honorable Mentions, several imagineNATIVE Best New Media awards and multiple solo exhibitions. His research interests include emergent media theory and history, and methodologies for conducting art-led technology research. In addition to being lead author on the award-winning “Making Kin with the Machines” essay and editor of the groundbreaking Indigenous Protocol and Artificial Intelligence Position Paper, he has contributed chapters in collected editions covering Indigenous futures, mobile media, video game design, machinima and experimental pedagogy with Indigenous communities.\n\nLewis has worked in a range of industrial research settings, including Interval Research, US West's Advanced Technology Group, and the Institute for Research on Learning, and, at the turn of the century, he founded and ran a research studio for the venture capital firm Arts Alliance.\n\nLewis is a Fellow of the Royal Society of Canada, a Jane Lombard Fellow, and a former Trudeau and Carnegie Fellow. He received a B.S. in Symbolic Systems (Cognitive Science) and B.A. in German Studies (Philosophy) from Stanford University, and an M.Phil. in Design from the Royal College of Art. https://www.jasonlewis.org",
     "project": "",
-    "group": "Research Associate",
+    "group": "Primary Investigator",
     "org": "",
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.skawennati.com"
+    "headline_url": "http://www.skawennati.com",
+    "format": "people"
+  },
+  {
+    "start date": "01/06/2014",
+    "end date": "present",
+    "headline": "Skawennati Fragnito",
+    "description": "Recipient of the 2011 Eiteljorg Contemporary Art Fellowship, Skawennati is recognized as a pioneering New Media artist. Her art, addressing history, the future, and change, has been widely exhibited across Canada, the United States and Australia. Best-known works include: CyberPowWow (1997-2004), the Aboriginally-determined, on-line gallery and chat space; Imagining Indians in the 25th Century (2001), a web-based paper doll/time-travel journal; and her current production, TimeTraveller™ (2008- ), a multi-platform project featuring nine short machinima episodes, a series of digital prints, and a 3D print, Hunter Mega-Figurine. Its website, www.TimeTravellerTM.com, won imagineNative’s 2009 Best New Media Award. A founding member of the First Nations artist collective, Nation to Nation, she has been active in the Artist-Run Network and sat on the board at Galerie Oboro. She has contributed texts to a wide range of publications including a chapter in the upcoming book Community-Based Multiliteracies and Digital Media Projects: Questioning Assumptions and Exploring Realities and an article in the Canadian Journal of Communication – Media Arts Revisited. Skawennati is Co-Director, with Jason E. Lewis, of Aboriginal Territories in Cyberspace, (AbTeC) a network of artists and academics who are investigating and creating Aboriginal virtual environments. She holds a BFA from Concordia University in Montreal. Please visit www.skawennati.com to learn more.",
+    "project": "",
+    "group": "Co-director",
+    "org": "",
+    "program": "",
+    "funding_group": "",
+    "category_group": "",
+    "headline_url": "http://www.skawennati.com",
+    "format": "people"
   },
   {
     "start date": "01/10/2024",
@@ -557,11 +613,12 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/04/2016",
-    "end date": "07/01/2025",
+    "end date": "present",
     "headline": "Nancy Townsend",
     "description": "As Associate Producer at AbTeC, Nancy contributes in some way to every project being considered. She assists in 3D artwork, compositing effects, video editing, general project management and is even happy to provide coffee once in a while if the staff is feeling down. With a BFA in Computation Arts, she previously worked as research assistant at three Concordia media labs until graduation and then ventured out into International Relocation Consulting, followed by freelance video editing and eventually project management at Minority Media. She has returned to AbTeC as a now seasoned professional, eager to exercise her creative side once more",
     "project": "",
@@ -570,7 +627,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/06/2015",
@@ -583,7 +641,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2021",
@@ -596,7 +655,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/16/2017",
@@ -609,7 +669,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/16/2017",
@@ -622,11 +683,12 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/05/2023",
-    "end date": "02/29/2028",
+    "end date": "12/15/2025",
     "headline": "Anna Kalakutskaya",
     "description": "Anna is a Finance Manager at the OBX Lab. She holds a Diploma in Business Administration from John Molson School of Business and Master’s Degree in Economics.\nWith more than a decade of experience in project management and operations within creative industries, Anna has consistently excelled in high-pressure environments. She was overseeing the financial aspects of various international film and animation projects, and managing complex budgets and timelines.\nAt OBX Lab, Anna’s responsibilities include managing budgets for major AI grants to ensure the financial success of these projects and provide regular reporting to stakeholders.",
     "project": "",
@@ -635,11 +697,12 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/15/2023",
-    "end date": "02/28/2028",
+    "end date": "11/1/2024",
     "headline": "Manuelle Friere",
     "description": "",
     "project": "",
@@ -648,7 +711,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "10/05/2022",
@@ -661,7 +725,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://kahentawaks2008.myportfolio.com/home"
+    "headline_url": "https://kahentawaks2008.myportfolio.com/home",
+    "format": "people"
   },
   {
     "start date": "10/10/2023",
@@ -674,7 +739,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/22/2023",
@@ -687,7 +753,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/04/2016",
@@ -700,7 +767,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.alexandriashaw.com"
+    "headline_url": "http://www.alexandriashaw.com",
+    "format": "people"
   },
   {
     "start date": "01/04/2016",
@@ -713,7 +781,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/04/2016",
@@ -726,7 +795,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/05/2015",
@@ -739,7 +809,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.chrls.com"
+    "headline_url": "http://www.chrls.com",
+    "format": "people"
   },
   {
     "start date": "01/05/2015",
@@ -752,7 +823,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://cvjulianglasspiloneng.webs.com/"
+    "headline_url": "https://cvjulianglasspiloneng.webs.com/",
+    "format": "people"
   },
   {
     "start date": "01/06/2015",
@@ -765,7 +837,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.naiade-aoun.com"
+    "headline_url": "http://www.naiade-aoun.com",
+    "format": "people"
   },
   {
     "start date": "01/07/2019",
@@ -778,7 +851,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/08/2016",
@@ -791,7 +865,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/09/2014",
@@ -804,7 +879,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/09/2017",
@@ -817,7 +893,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.saboudreault.ca"
+    "headline_url": "http://www.saboudreault.ca",
+    "format": "people"
   },
   {
     "start date": "01/09/2017",
@@ -830,7 +907,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.v-os.ca"
+    "headline_url": "http://www.v-os.ca",
+    "format": "people"
   },
   {
     "start date": "01/09/2017",
@@ -843,7 +921,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "01/13/2014",
@@ -856,7 +935,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "02/01/2017",
@@ -869,7 +949,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "02/09/2017",
@@ -882,7 +963,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "02/19/2024",
@@ -895,7 +977,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "02/19/2024",
@@ -908,7 +991,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://hdmaxi.xyz"
+    "headline_url": "http://hdmaxi.xyz",
+    "format": "people"
   },
   {
     "start date": "02/25/2024",
@@ -921,7 +1005,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/02/2015",
@@ -934,7 +1019,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/05/2018",
@@ -947,7 +1033,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "03/05/2018",
@@ -960,7 +1047,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://kahentawaks2008.myportfolio.com/home"
+    "headline_url": "https://kahentawaks2008.myportfolio.com/home",
+    "format": "people"
   },
   {
     "start date": "03/25/2024",
@@ -973,7 +1061,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/01/2018",
@@ -986,7 +1075,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/02/2019",
@@ -999,7 +1089,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/03/2024",
@@ -1012,7 +1103,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/04/2016",
@@ -1025,7 +1117,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/05/2024",
@@ -1038,7 +1131,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/17/2017",
@@ -1051,7 +1145,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/17/2023",
@@ -1064,7 +1159,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://wawali.ca"
+    "headline_url": "http://wawali.ca",
+    "format": "people"
   },
   {
     "start date": "04/26/2017",
@@ -1077,7 +1173,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/29/2024",
@@ -1090,7 +1187,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/29/2024",
@@ -1103,7 +1201,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "04/30/2018",
@@ -1116,7 +1215,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/03/2016",
@@ -1129,7 +1229,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.liannemaritzer.com"
+    "headline_url": "http://www.liannemaritzer.com",
+    "format": "people"
   },
   {
     "start date": "05/06/2024",
@@ -1142,7 +1243,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/06/2024",
@@ -1155,7 +1257,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/08/2017",
@@ -1168,7 +1271,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/08/2023",
@@ -1181,7 +1285,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://sarahhm.art"
+    "headline_url": "http://sarahhm.art",
+    "format": "people"
   },
   {
     "start date": "05/13/2019",
@@ -1194,7 +1299,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/16/2022",
@@ -1207,7 +1313,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://sharon-ku.github.io/portfolio/"
+    "headline_url": "http://sharon-ku.github.io/portfolio/",
+    "format": "people"
   },
   {
     "start date": "05/18/2023",
@@ -1220,7 +1327,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "05/19/2021",
@@ -1233,7 +1341,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.anthonylumdesigns.ca"
+    "headline_url": "http://www.anthonylumdesigns.ca",
+    "format": "people"
   },
   {
     "start date": "06/01/2021",
@@ -1246,7 +1355,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/01/2023",
@@ -1259,7 +1369,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/04/2018",
@@ -1272,7 +1383,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/10/2013",
@@ -1285,7 +1397,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.brunonadeau.com"
+    "headline_url": "http://www.brunonadeau.com",
+    "format": "people"
   },
   {
     "start date": "06/11/2019",
@@ -1298,7 +1411,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "06/18/2018",
@@ -1311,7 +1425,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.lucaslarochelle.com"
+    "headline_url": "http://www.lucaslarochelle.com",
+    "format": "people"
   },
   {
     "start date": "06/24/2019",
@@ -1324,7 +1439,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "07/01/2013",
@@ -1337,7 +1453,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/15/2023",
@@ -1350,7 +1467,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/16/2021",
@@ -1363,7 +1481,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://ca.linkedin.com/in/alanna-mitchell-b0296076"
+    "headline_url": "https://ca.linkedin.com/in/alanna-mitchell-b0296076",
+    "format": "people"
   },
   {
     "start date": "08/29/2017",
@@ -1376,7 +1495,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "08/31/2020",
@@ -1389,7 +1509,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/01/2013",
@@ -1402,7 +1523,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.fredericdesign.net"
+    "headline_url": "http://www.fredericdesign.net",
+    "format": "people"
   },
   {
     "start date": "09/03/2018",
@@ -1415,7 +1537,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://waylonwilson.com"
+    "headline_url": "http://waylonwilson.com",
+    "format": "people"
   },
   {
     "start date": "09/04/2017",
@@ -1428,7 +1551,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.valeriebourdon.com"
+    "headline_url": "http://www.valeriebourdon.com",
+    "format": "people"
   },
   {
     "start date": "09/08/2013",
@@ -1441,7 +1565,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/08/2014",
@@ -1454,7 +1579,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "09/16/2013",
@@ -1467,7 +1593,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.chrisdrogaris.com"
+    "headline_url": "http://www.chrisdrogaris.com",
+    "format": "people"
   },
   {
     "start date": "09/16/2013",
@@ -1480,7 +1607,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "http://www.sergemaheu.com"
+    "headline_url": "http://www.sergemaheu.com",
+    "format": "people"
   },
   {
     "start date": "09/23/2016",
@@ -1493,7 +1621,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "10/27/2017",
@@ -1506,7 +1635,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "10/27/2017",
@@ -1519,7 +1649,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/09/2015",
@@ -1532,7 +1663,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/13/2023",
@@ -1545,7 +1677,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/14/2016",
@@ -1558,7 +1691,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/14/2016",
@@ -1571,7 +1705,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/18/2014",
@@ -1584,7 +1719,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "11/18/2015",
@@ -1597,7 +1733,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   },
   {
     "start date": "12/08/2016",
@@ -1610,7 +1747,8 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": "https://emmaforgues.ca/"
+    "headline_url": "https://emmaforgues.ca/",
+    "format": "people"
   },
   {
     "start date": "12/28/2015",
@@ -1623,6 +1761,7 @@ window.__TIMELINE_DATA__ = [
     "program": "",
     "funding_group": "",
     "category_group": "",
-    "headline_url": ""
+    "headline_url": "",
+    "format": "people"
   }
 ];

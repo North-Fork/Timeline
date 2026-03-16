@@ -1839,6 +1839,10 @@
     function detectFormat(rows) {
       if (!rows.length) return 'abtec';
       const keys = Object.keys(rows[0]).map(k => k.trim().toLowerCase().replace(/[\s_]+/g, ''));
+      if (keys.includes('format')) {
+        const fmt = String(rows[0]['format'] ?? rows[1]?.['format'] ?? '').trim().toLowerCase();
+        if (fmt) return fmt;
+      }
       return keys.includes('category') ? 'abtec' : 'cv';
     }
 
@@ -1918,7 +1922,7 @@
       }
     }
 
-    const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline' };
+    const FORMAT_TITLES = { abtec: 'AbTeC Timeline', cv: 'CV Timeline', people: 'AbTeC People' };
 
     // CV only — publication cover image group set (used in openDrawer to trigger image lookup)
     const DISSEMINATION_GROUPS = CVFormat.DISSEMINATION_GROUPS;
