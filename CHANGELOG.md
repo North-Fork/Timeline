@@ -1,5 +1,31 @@
 # Changelog
 
+## Session 24 — 2026-04-02
+
+### Fix: file drop-zone hidden on narrow windows
+- `index.html`: the `@media (hover: none), (max-width: 1024px)` block was hiding `#drop-zone` on any window ≤1024px wide, not just touch devices; added a `@media (hover: hover)` override to restore it on desktop/trackpad regardless of window width
+
+### Export: List now offers Markdown or CSV format
+- "List" button replaced with a **List ▾** dropdown that opens a menu above it with two choices: `.md — Markdown` and `.csv — Spreadsheet`
+- CSV export includes columns: Start Date, End Date, Group, Headline, Description, Org, Program, Project; fields are properly quoted (commas and embedded quotes handled); filename uses the sidebar title, e.g. `CV-Timeline-List-1991-2026.csv`
+- Dropdown closes on item selection or click-outside
+
+---
+
+## Session 23 — 2026-03-16
+
+### Pre-fetch Flickr CDN URLs script (Timeline-013)
+- `data/timeline-data/fetch_flickr_thumbs.py` — batch script that calls noembed.com for every row whose Media column has a Flickr URL and whose Media Thumbnail column is empty; writes the returned CDN `.jpg` URL into Media Thumbnail so the live app loads drawer images without any runtime noembed calls
+- Resumable: saves a `flickr_thumb_cache.json` sidecar after each successful fetch; on re-run, cached URLs are applied instantly with no network request
+- ~1.1 s delay between live requests to avoid rate-limiting noembed
+- Automatically regenerates `timeline-data.js` when targeting `timeline-data.xlsx`; prints a reminder for other files
+- Usage: `cd data/timeline-data && python3 fetch_flickr_thumbs.py [optional-filename.xlsx]`
+
+### CV Storybox: media embeds from description text (Timeline-eu6)
+- `extractMediaUrlFromText()` helper added — extracts the first Vimeo/YouTube/Flickr/SoundCloud URL embedded in free text; Vimeo pattern matches numeric IDs only, so trailing citation junk like `.2012` is not captured
+- `renderMedia()` Case 4: if no `ev.media` / thumbnail / image URL is set, scans `ev.description` for a media URL and recurses with it; Documentaries entries with embedded Vimeo links now display an embedded player in the Storybox
+- `parseCVText()` and `parseGDoc()` in `cv-utilities.js`: strip leading `Obx Labs.` attribution prefix from Documentaries headlines before `gdocExtractTitle()` extracts the title fragment, so the actual documentary title ("Skins 2.0: Skins Summer Institute") is used rather than "Obx Labs"
+
 ## Session 22 — 2026-03-15  ·  tag: V.03.06-Timeline-Carts-Draft
 
 ### Cards view for People / Team timeline

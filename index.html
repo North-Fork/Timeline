@@ -180,6 +180,41 @@
       flex: 1;
     }
 
+    /* ── List export dropdown ───────────────────────────────────────────────── */
+    .export-list-wrap {
+      position: relative;
+      flex: 1;
+    }
+    .export-list-wrap .sb-btn {
+      width: 100%;
+    }
+    .export-list-menu {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 0;
+      min-width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      z-index: 50;
+      overflow: hidden;
+    }
+    .export-list-menu.open { display: block; }
+    .export-list-menu button {
+      display: block;
+      width: 100%;
+      padding: 6px 12px;
+      background: none;
+      border: none;
+      color: #e5e7eb;
+      font-size: 12px;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .export-list-menu button:hover { background: #374151; }
+
     /* ── View section ───────────────────────────────────────────────────────── */
     #sidebar-views-section {
       border-top: 1px solid #374151;
@@ -1278,6 +1313,11 @@
       }
     }
 
+    /* Restore drop-zone on desktop/trackpad (hover: hover) even if window is narrow */
+    @media (hover: hover) {
+      #drop-zone { display: flex !important; }
+    }
+
     /* ── Phone-only overrides (≤767px) ──────────────────────────────────────── */
     @media (max-width: 767px) {
       #sidebar {
@@ -1414,7 +1454,13 @@
         <div class="sf-subsection" id="sidebar-export">
           <div class="sf-sublabel">Export</div>
           <div class="print-btns">
-            <button class="tb-btn sb-btn" id="btn-export-md" title="Export event list as Markdown">List</button>
+            <div class="export-list-wrap">
+              <button class="tb-btn sb-btn" id="btn-list-toggle" title="Export event list">List ▾</button>
+              <div id="export-list-menu" class="export-list-menu">
+                <button id="btn-export-md">.md — Markdown</button>
+                <button id="btn-export-csv">.csv — Spreadsheet</button>
+              </div>
+            </div>
             <button class="tb-btn sb-btn" id="btn-export" title="Export timeline as PDF">Timeline</button>
           </div>
         </div>
@@ -3109,6 +3155,15 @@
       return events.filter(isEventVisible).sort((a, b) => a.startTs - b.startTs);
     }
 
+    // Extract the first recognisable media URL embedded in free text (e.g. CV descriptions).
+    // Uses per-domain patterns so trailing junk like ".2012" (common in CV citations) isn't captured.
+    // Vimeo IDs are purely numeric; YouTube/Flickr/SoundCloud paths stop at whitespace or sentence punctuation.
+    const MEDIA_URL_RE = /https?:\/\/(?:(?:www\.)?vimeo\.com\/\d+|(?:www\.)?youtube\.com\/(?:watch\?[^\s]*?v=|embed\/)[\w-]+|youtu\.be\/[\w-]+|(?:www\.)?flickr\.com\/[^\s.,;)"'\]]+|(?:www\.)?soundcloud\.com\/[^\s.,;)"'\]]+)/i;
+    function extractMediaUrlFromText(text) {
+      const m = text.match(MEDIA_URL_RE);
+      return m ? m[0] : '';
+    }
+
     async function renderMedia(ev, container) {
       container.innerHTML = '';
 
@@ -3167,6 +3222,13 @@
           if (activeDrawerId === targetId)
             container.innerHTML = `<a href="${flickrUrl}" target="_blank" style="color:#6366f1">View photo ↗</a>${metaHtml(ev.mediaCaption, ev.mediaCredit)}`;
         }
+        return;
+      }
+
+      // Case 4: URL embedded in description text (common in CV entries, e.g. Documentaries with Vimeo links)
+      const descUrl = extractMediaUrlFromText(ev.description || '');
+      if (descUrl) {
+        await renderMedia({ ...ev, media: descUrl }, container);
         return;
       }
 
@@ -3733,8 +3795,17 @@
       parse(rows);
     }
 
+    // ── List export dropdown toggle ───────────────────────────────────────────
+    const listMenu = document.getElementById('export-list-menu');
+    document.getElementById('btn-list-toggle').addEventListener('click', e => {
+      e.stopPropagation();
+      listMenu.classList.toggle('open');
+    });
+    document.addEventListener('click', () => listMenu.classList.remove('open'));
+
     // ── Markdown Export ───────────────────────────────────────────────────────
     document.getElementById('btn-export-md').addEventListener('click', () => {
+      listMenu.classList.remove('open');
       if (!events.length) return;
 
       const title = document.getElementById('sidebar-title-text').textContent;
@@ -3771,6 +3842,49 @@
       const y1md = visEvs[0].start.getFullYear();
       const y2md = visEvs[visEvs.length - 1].end.getFullYear();
       a.download = `AbTeC-Timeline-List-${y1md}-${y2md}.md`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    });
+
+    // ── CSV Export ────────────────────────────────────────────────────────────
+    document.getElementById('btn-export-csv').addEventListener('click', () => {
+      listMenu.classList.remove('open');
+      if (!events.length) return;
+
+      const visEvs = getVisibleEvents();
+
+      // Wrap a field value in double-quotes, escaping any internal double-quotes.
+      const q = v => {
+        const s = (v == null ? '' : String(v)).replace(/\r?\n/g, ' ');
+        return (s.includes(',') || s.includes('"') || s.includes('\n'))
+          ? '"' + s.replace(/"/g, '""') + '"'
+          : s;
+      };
+
+      const headers = ['Start Date', 'End Date', 'Group', 'Headline', 'Description', 'Org', 'Program', 'Project'];
+      const rows = [headers.join(',')];
+      for (const e of visEvs) {
+        const dateStr  = s => s instanceof Date ? fmtDate(s) : '';
+        const endStr   = e.end > e.start ? dateStr(e.end) : dateStr(e.start);
+        rows.push([
+          q(dateStr(e.start)),
+          q(endStr),
+          q(e.group),
+          q(e.headline),
+          q(e.description),
+          q(e.org),
+          q(e.program),
+          q(e.project),
+        ].join(','));
+      }
+
+      const blob = new Blob([rows.join('\r\n')], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const y1 = visEvs[0].start.getFullYear();
+      const y2 = visEvs[visEvs.length - 1].end.getFullYear();
+      const title = document.getElementById('sidebar-title-text').textContent.replace(/\s+/g, '-');
+      a.download = `${title}-List-${y1}-${y2}.csv`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 10000);
     });
