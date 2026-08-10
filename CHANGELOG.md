@@ -27,7 +27,7 @@
 #### File section redesign
 - Replaced separate `#sidebar-files` (inside `#filters`) and `#sidebar-print` with a unified `#sidebar-file-section` containing two named subsections: **Import** and **Export**
 - Section header styled to match the **Filters** header (same `color: #9ca3af`, `font-size: 12px`, `font-weight: 700`, `border-bottom`)
-- Partial-width divider (`border-top: 1px solid #374151; margin: 0 8px`) separates Import from Export
+- Partial-width divider (`border-top: 1px solid #B5B7B9; margin: 0 8px`) separates Import from Export
 - Section labelled **File** (singular); collapses/expands via click on header with ▶ arrow indicator
 - Loads **collapsed by default** on touch devices; expanded on desktop
 - `buildFilters()` no longer saves/restores `#sidebar-files` — it now lives outside `#filters`
