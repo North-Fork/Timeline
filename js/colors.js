@@ -13,8 +13,8 @@ const COLORS = {
   textDim:     '#4b5563',  // dim label text
   textMuted:   '#6b7280',  // muted text, month-axis mid ticks
   textSubtle:  '#ffffff',  // subtle text, month-axis year ticks
-  textLight:   '#ffffff',  // light label text
-  white:       '#ffffff',  // white text / strokes
+  textLight:   '#000000',  // light label text
+  white:       '#000000',  // white text / strokes
   accent:      '#6366f1',  // primary accent (links, buttons, highlights)
   watermark:   '#fbab1b',  // past/future watermark text
   success:     '#22c55e',  // success status text
