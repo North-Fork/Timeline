@@ -111,14 +111,19 @@ function load(file) {
 
 // ── Google Sheets loader ──────────────────────────────────────────────────
 const GSHEET_LS_KEY = 'timeline-gsheet-url';
-const GSHEET_PROXY  = 'https://corsproxy.io/?'; // third-party CORS proxy — sends full URL to corsproxy.io; acceptable for public Google Sheets/Docs only
+const GSHEET_PROXY  = 'https://api.allorigins.win/raw?url='; // CORS proxy — no default response caching (unlike corsproxy.io, which caches at the edge by default)
+
+// Default sheet shown on first load (until the user loads a different one,
+// at which point their choice is remembered in localStorage instead).
+const DEFAULT_GSHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTSm4iN6wJTrWnm0DGzig23MmxbfdL7-n6f81RJv8Z3WYvvDXYPsdnK_WuKyRH0HN1mTo4wiJubJ-5-/pubhtml';
 
 const gsheetInput  = document.getElementById('gsheet-input');
 const gsheetStatus = document.getElementById('gsheet-status');
 
-// Pre-fill from localStorage (but don't fetch)
+// Pre-fill from localStorage if the user has loaded a sheet before,
+// otherwise fall back to the default sheet (but don't fetch yet).
 const savedGSheetUrl = localStorage.getItem(GSHEET_LS_KEY);
-if (savedGSheetUrl) gsheetInput.value = savedGSheetUrl;
+gsheetInput.value = savedGSheetUrl || DEFAULT_GSHEET_URL;
 
 function parseGSheetUrl(url) {
   url = url.trim();
@@ -422,6 +427,7 @@ async function loadFromGDoc(url) {
     pubUrl = pubUrl.replace(/\/document\/d\/([^\/]+).*$/, '/document/d/$1/pub');
   }
 
+  const bust = `&t=${Date.now()}`;
   const tryFetch = async u => {
     const r = await fetch(u, { cache: 'no-store' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -430,10 +436,10 @@ async function loadFromGDoc(url) {
 
   let html;
   try {
-    html = await tryFetch(pubUrl);
+    html = await tryFetch(pubUrl + (pubUrl.includes('?') ? bust : `?${bust.slice(1)}`));
   } catch {
     try {
-      html = await tryFetch(GSHEET_PROXY + encodeURIComponent(pubUrl));
+      html = await tryFetch(GSHEET_PROXY + encodeURIComponent(pubUrl + (pubUrl.includes('?') ? bust : `?${bust.slice(1)}`)));
     } catch (ex) {
       gsheetStatus.textContent = 'Failed: ' + ex.message;
       gsheetStatus.style.color = COLORS.error;

@@ -1,18 +1,37 @@
 /* Color Variables─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */
+/*
 :root {
-  --color-bg-dark: #111827;      /* main dark background (canvas, inputs) */
-  --color-panel-bg: #1f2937;     /* sidebar / header / panel background */
-  --color-border: #374151;       /* borders, dividers, default gridlines */
-  --color-text: #e5e7eb;         /* primary body text */
-  --color-text-light: #d1d5db;   /* light label text */
+  --color-bg-dark: #111827;      /* main dark background (canvas, inputs) 
+  --color-panel-bg: #1f2937;     /* sidebar / header / panel background 
+  --color-border: #374151;       /* borders, dividers, default gridlines 
+  --color-text: #e5e7eb;         /* primary body text 
+  --color-text-light: #d1d5db;   /* light label text 
+  --color-text-subtle: #9ca3af;  /* subtle secondary text 
+  --color-text-muted: #6b7280;   /* muted tertiary text 
+  --color-text-dim: #4b5563;     /* dim placeholder / faint text 
+  --color-white: #ffffff;        /* white text / active states 
+  --color-accent: #6366f1;       /* primary accent (links, focus, checkboxes) 
+  --color-accent-light: #818cf8; /* accent hover state 
+  --color-amber: #f59e0b;        /* amber highlight (titles, resizer) 
+  --color-amber-dark: #d97706;   /* amber hover/active state 
+  --color-green: #10b981;        /* collaborator tag accent 
+}
+*/
+
+:root {
+  --color-bg-dark: #f0f3f5;      /* main dark background (canvas, inputs) */
+  --color-panel-bg: #f0f3f5;     /* sidebar / header / panel background */
+  --color-border: #dde0e1;       /* borders, dividers, default gridlines */
+  --color-text: #444547;         /* primary body text */
+  --color-text-light: #7e8082;   /* light label text */
   --color-text-subtle: #9ca3af;  /* subtle secondary text */
-  --color-text-muted: #6b7280;   /* muted tertiary text */
+  --color-text-muted: #b5b7b9;   /* muted tertiary text */
   --color-text-dim: #4b5563;     /* dim placeholder / faint text */
   --color-white: #ffffff;        /* white text / active states */
-  --color-accent: #6366f1;       /* primary accent (links, focus, checkboxes) */
-  --color-accent-light: #818cf8; /* accent hover state */
-  --color-amber: #f59e0b;        /* amber highlight (titles, resizer) */
-  --color-amber-dark: #d97706;   /* amber hover/active state */
+  --color-accent: #0b3fac;       /* primary accent (links, focus, checkboxes) */
+  --color-accent-light: #0b3fac; /* accent hover state */
+  --color-amber: #fbab1b;        /* amber highlight (titles, resizer) */
+  --color-amber-dark: #fbab1b;   /* amber hover/active state */
   --color-green: #10b981;        /* collaborator tag accent */
 }
 

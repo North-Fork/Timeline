@@ -88,23 +88,16 @@ window.addEventListener('focus',  () => { if (events.length) redraw(); });
 }
 
 // ── Auto-load ─────────────────────────────────────────────────────────────
-// Priority 1: pre-generated JS data (works with file:// double-click).
-// Priority 2: fetch the xlsx directly (requires http/https server).
-// Priority 3: synthetic test data fallback.
-if (window.__TIMELINE_DATA__) {
-  parse(window.__TIMELINE_DATA__);
-} else if (location.protocol !== 'file:') {
-  fetch('data/timeline-data/timeline-data.xlsx')
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-    .then(buf => {
-      const wb   = XLSX.read(buf, { type: 'array' });
-      const rows = sheetToRows(wb.Sheets[wb.SheetNames[0]]);
-      parse(rows);
-    })
-    .catch(() => loadTestData());
-} else {
-  loadTestData();
-}
+// Priority 1: the Google Sheet currently in the input box (default sheet,
+// or whichever one the user loaded last — see DEFAULT_GSHEET_URL above).
+// Priority 2: synthetic test data fallback if that fetch fails.
+(async () => {
+  const initialGSheetUrl = gsheetInput.value.trim();
+  if (initialGSheetUrl) {
+    if (isGDocUrl(initialGSheetUrl)) await loadFromGDoc(initialGSheetUrl); else await loadFromGSheet(initialGSheetUrl);
+  }
+  if (!events.length) loadTestData();
+})();
 
 // ── Synthetic test data ───────────────────────────────────────────────────
 function loadTestData() {
